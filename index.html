@@ -104,7 +104,6 @@ body{
 .quote-bar{
   background:white;border-radius:var(--radius);
   box-shadow:var(--shadow);padding:14px 20px;margin-bottom:20px;
-  border-left:4px solid var(--green-light);
   display:flex;align-items:center;gap:10px;
 }
 .quote-bar .q-icon{font-size:20px;}
@@ -146,12 +145,12 @@ body{
   box-shadow:0 8px 28px rgba(0,0,0,0.1);
 }
 .showcase-card:active{transform:translateY(-1px);}
-.sc-v0{border-left:4px solid var(--green);}
-.sc-v0:hover{border-color:var(--green);background:linear-gradient(135deg,white,var(--green-pale));}
-.sc-v1{border-left:4px solid #FF6B8A;}
-.sc-v1:hover{border-color:#FF6B8A;background:linear-gradient(135deg,white,#FFF0F5);}
-.sc-v2{border-left:4px solid #F4A259;}
-.sc-v2:hover{border-color:#F4A259;background:linear-gradient(135deg,white,#FFF8E7);}
+.sc-v0{background:linear-gradient(135deg,white,var(--green-pale));}
+.sc-v0:hover{background:linear-gradient(135deg,var(--green-pale),white);}
+.sc-v1{background:linear-gradient(135deg,white,#FFF0F5);}
+.sc-v1:hover{background:linear-gradient(135deg,#FFF0F5,white);}
+.sc-v2{background:linear-gradient(135deg,white,#FFF8E7);}
+.sc-v2:hover{background:linear-gradient(135deg,#FFF8E7,white);}
 
 .sc-icon{font-size:40px;flex-shrink:0;margin-top:2px;}
 .sc-info{flex:1;min-width:0;}
@@ -488,8 +487,8 @@ body{
 <div class="page" id="page-prompts">
   <div class="section-title">💡 用提示词定制你的工作台</div>
 
-  <div class="card" style="background:linear-gradient(135deg,#E8F5E9,#F1F8E9);border-left:4px solid var(--green);">
-    <div class="card-title">🤖 AI 生成 → 你的专属工作台</div>
+  <div class="card" style="background:linear-gradient(135deg,#E8F5E9,#F1F8E9);">
+    <div class="card-title">🤖 AI 生成你的专属工作台</div>
     <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
       这个案例集里的工作台，都是用 AI 提示词生成的。你可以把下面的提示词复制下来，发给任意 AI 编程工具，就能生成属于你自己的个性化工作台！
       <br><br>
@@ -517,30 +516,8 @@ body{
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">🎨 定制灵感</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">🎨</div>
-        换配色 / 主题色
-      </div>
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">📝</div>
-        增删功能模块
-      </div>
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">🔤</div>
-        改字体 / 语言
-      </div>
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">📱</div>
-        iPad 主屏幕适配
-      </div>
-    </div>
-  </div>
-
   <!-- 提示词 1：生活工作台 -->
-  <div class="prompt-card" style="border-left:4px solid #FF6B8A;">
+  <div class="prompt-card" style="">
     <div class="pc-header">
       <span class="pc-icon">🌸</span>
       <span class="pc-name">生活工作台</span>
@@ -564,7 +541,7 @@ body{
   </div>
 
   <!-- 提示词 2：考研工作台 -->
-  <div class="prompt-card" style="border-left:4px solid #F4A259;">
+  <div class="prompt-card" style="">
     <div class="pc-header">
       <span class="pc-icon">🥔</span>
       <span class="pc-name">考研工作台</span>
@@ -586,7 +563,7 @@ body{
 <div class="page" id="page-submit">
   <div class="section-title">📤 投稿你的工作台</div>
 
-  <div class="card" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-left:4px solid #FFB74D;">
+  <div class="card" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);">
     <div class="card-title">💡 欢迎投稿</div>
     <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
       你也制作了自己的工作台吗？欢迎投稿展示！我们会审核后将其加入案例集。
