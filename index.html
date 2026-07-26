@@ -317,9 +317,11 @@ body{
     <li class="nav-item" data-page="prompts" style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
       <span class="nav-icon">💡</span>用提示词定制
     </li>
+    <!-- 投稿入口暂隐藏，待后端存储就绪后取消注释
     <li class="nav-item" data-page="submit">
       <span class="nav-icon">📤</span>投稿你的工作台
     </li>
+    -->
   </ul>
 </aside>
 
@@ -511,6 +513,7 @@ body{
   </div>
 
   <!-- 标签切换：下载源文件（默认）| 复制提示词 -->
+  <div style="text-align:center;font-size:14px;color:var(--text-light);margin-bottom:12px;">两种方式，都可以做出专属工作台 ✨</div>
   <div class="method-tabs">
     <button class="method-tab active" data-tab="download">📥 下载源文件</button>
     <button class="method-tab" data-tab="prompt">📋 复制提示词</button>
@@ -604,8 +607,8 @@ body{
   </div>
 </div>
 
-<!-- ===== 投稿 ===== -->
-<div class="page" id="page-submit">
+<!-- ===== 投稿（暂隐藏，待后端就绪后放开）===== -->
+<div class="page" id="page-submit" style="display:none;">
   <div class="section-title">📤 投稿你的工作台</div>
 
   <div class="card" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);">
