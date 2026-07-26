@@ -649,6 +649,29 @@ textarea::placeholder,input::placeholder{color:var(--text-muted);}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js">
 </script>
 
+<!-- ===== 备份弹窗 ===== -->
+<div class="modal-overlay" id="backupModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeBackupBtn">✕</button>
+    <div class="mb-title">💾 数据备份</div>
+    <div class="mb-desc">
+      你的所有数据存储在浏览器本地（localStorage）。建议定期备份，以防数据丢失。
+      <br><br>
+      <strong>当前格式：</strong>JSON（JavaScript 对象表示法）<br>
+      包含：日常记录 + 自定义设置（标题、副标题、头像等）<br>
+      <em style="font-size:12px;">后续版本将支持多文件压缩包（JSON + 图片 + 资源文件）</em>
+    </div>
+    <div class="mb-info" id="backupInfo">加载中…</div>
+    <div class="flex" style="gap:10px;flex-wrap:wrap;">
+      <button class="mb-btn mb-btn-pri" id="modalExportBtn">📤 导出备份</button>
+      <button class="mb-btn mb-btn-out" id="modalImportBtn">📥 导入恢复</button>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-bg);">
+      <button class="mb-btn mb-btn-dan" id="resetSettingsBtn">🔄 重置所有设置为默认</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===================================================================
 // 🥔 考研日记 · 完整应用逻辑
@@ -1623,29 +1646,6 @@ document.getElementById('resetSettingsBtn').addEventListener('click',function(){
   showToast('🔄 已恢复默认设置');
 });
 </script>
-
-<!-- ===== 备份弹窗 ===== -->
-<div class="modal-overlay" id="backupModal">
-  <div class="modal-box">
-    <button class="modal-close" id="closeBackupBtn">✕</button>
-    <div class="mb-title">💾 数据备份</div>
-    <div class="mb-desc">
-      你的所有数据存储在浏览器本地（localStorage）。建议定期备份，以防数据丢失。
-      <br><br>
-      <strong>当前格式：</strong>JSON（JavaScript 对象表示法）<br>
-      包含：日常记录 + 自定义设置（标题、副标题、头像等）<br>
-      <em style="font-size:12px;">后续版本将支持多文件压缩包（JSON + 图片 + 资源文件）</em>
-    </div>
-    <div class="mb-info" id="backupInfo">加载中…</div>
-    <div class="flex" style="gap:10px;flex-wrap:wrap;">
-      <button class="mb-btn mb-btn-pri" id="modalExportBtn">📤 导出备份</button>
-      <button class="mb-btn mb-btn-out" id="modalImportBtn">📥 导入恢复</button>
-    </div>
-    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-bg);">
-      <button class="mb-btn mb-btn-dan" id="resetSettingsBtn">🔄 重置所有设置为默认</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
