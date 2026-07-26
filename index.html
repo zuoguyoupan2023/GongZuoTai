@@ -75,11 +75,6 @@ body{
   box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 .nav-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0;}
-.nav-item .pill{
-  margin-left:auto;font-size:10px;padding:1px 8px;border-radius:20px;
-  background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);
-}
-
 /* ===== 主内容 ===== */
 .main{
   margin-left:var(--sidebar-w);flex:1;min-height:100vh;
@@ -165,8 +160,6 @@ body{
 .sc-desc{font-size:13px;color:var(--text-light);line-height:1.7;}
 .sc-features{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
 .sc-features span{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--gray-bg);color:var(--text-light);}
-.sc-arrow{font-size:20px;color:var(--gray);flex-shrink:0;align-self:center;transition:all 0.3s;}
-.showcase-card:hover .sc-arrow{transform:translateX(5px);color:var(--text);}
 
 /* 作者区 */
 .creator-section{
@@ -301,23 +294,18 @@ body{
     </li>
     <li class="nav-item" data-page="v0">
       <span class="nav-icon">📋</span>胡楚靓工作台
-      <span class="pill">v0</span>
     </li>
     <li class="nav-item" data-page="v1">
       <span class="nav-icon">🌸</span>生活工作台
-      <span class="pill">v1</span>
     </li>
     <li class="nav-item" data-page="v2">
       <span class="nav-icon">🥔</span>考研工作台
-      <span class="pill">v2</span>
     </li>
     <li class="nav-item" data-page="prompts" style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
       <span class="nav-icon">💡</span>用提示词定制
-      <span class="pill" style="background:rgba(168,213,186,0.2);color:#A8D5BA;">教程</span>
     </li>
     <li class="nav-item" data-page="submit">
       <span class="nav-icon">📤</span>投稿你的工作台
-      <span class="pill" style="background:rgba(255,183,77,0.2);color:#FFB74D;">beta</span>
     </li>
   </ul>
 </aside>
@@ -372,7 +360,6 @@ body{
           <span>📝 内容复盘</span><span>🎻 小提琴</span><span>📚 英语</span><span>⏱️ 番茄钟</span>
         </div>
       </div>
-      <span class="sc-arrow">→</span>
     </a>
 
     <a href="v1/" class="showcase-card sc-v1" style="text-decoration:none;color:inherit;">
@@ -385,7 +372,6 @@ body{
           <span>💰 理财</span><span>📱 自媒体</span><span>📰 新闻</span><span>📝 复盘</span>
         </div>
       </div>
-      <span class="sc-arrow">→</span>
     </a>
 
     <a href="v2/" class="showcase-card sc-v2" style="text-decoration:none;color:inherit;">
@@ -398,7 +384,6 @@ body{
           <span>✅ 阶段任务</span><span>⏱️ 番茄钟</span><span>📝 OCR</span><span>🥔 土豆</span>
         </div>
       </div>
-      <span class="sc-arrow">→</span>
     </a>
   </div>
 
@@ -508,7 +493,49 @@ body{
     <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
       这个案例集里的工作台，都是用 AI 提示词生成的。你可以把下面的提示词复制下来，发给任意 AI 编程工具，就能生成属于你自己的个性化工作台！
       <br><br>
-      <strong>支持的 AI 工具：</strong>Claude Code · Codex CLI · Cursor · Windsurf · GitHub Copilot · Workbuddy 等
+      <strong>支持的 AI 工具：</strong>Workbuddy · Trae · Claude Code · Codex CLI · Cursor · Windsurf · GitHub Copilot 等
+    </div>
+  </div>
+
+  <!-- 使用指南 -->
+  <div class="card">
+    <div class="card-title">📖 如何使用</div>
+    <div class="tool-tip">
+      <span class="step-num">1</span><strong>复制提示词</strong> — 点击下方提示词卡片上的「复制」按钮
+    </div>
+    <div class="tool-tip">
+      <span class="step-num">2</span><strong>打开 AI 编程工具</strong> — 推荐使用 <strong>Workbuddy</strong> · <strong>Trae</strong> · Claude Code · Codex CLI
+    </div>
+    <div class="tool-tip">
+      <span class="step-num">3</span><strong>粘贴提示词</strong> — 把复制的提示词发给 AI，AI 会自动生成一个完整的 HTML 文件
+    </div>
+    <div class="tool-tip">
+      <span class="step-num">4</span><strong>自定义修改</strong> — 让 AI 调整颜色、增减功能、修改布局，直到满意为止
+    </div>
+    <div class="tool-tip">
+      <span class="step-num">5</span><strong>分享你的作品</strong> — 制作完成后，通过「投稿」提交你的工作台！
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎨 定制灵感</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
+        <div style="font-size:24px;margin-bottom:4px;">🎨</div>
+        换配色 / 主题色
+      </div>
+      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
+        <div style="font-size:24px;margin-bottom:4px;">📝</div>
+        增删功能模块
+      </div>
+      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
+        <div style="font-size:24px;margin-bottom:4px;">🔤</div>
+        改字体 / 语言
+      </div>
+      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
+        <div style="font-size:24px;margin-bottom:4px;">📱</div>
+        iPad 主屏幕适配
+      </div>
     </div>
   </div>
 
@@ -552,48 +579,6 @@ body{
 
 【其他要求】顶部显示日期+考研倒计时+当前阶段+每日励志语录轮换，所有代码整合为单文件，Tesseract.js通过CDN引入，适配三端设备无纸化学习</div>
       <button class="copy-btn" onclick="copyPrompt('promptCode2',this)">📋 复制</button>
-  </div>
-
-  <!-- 使用指南 -->
-  <div class="card">
-    <div class="card-title">📖 如何使用</div>
-    <div class="tool-tip">
-      <span class="step-num">1</span><strong>复制提示词</strong> — 点击上方「复制」按钮，选择你想要的风格
-    </div>
-    <div class="tool-tip">
-      <span class="step-num">2</span><strong>打开 AI 编程工具</strong> — 推荐使用 <strong>Claude Code</strong>（终端运行 <code style="background:#E8F5E9;padding:2px 6px;border-radius:4px;font-size:12px;">claude</code>）或 <strong>Codex CLI</strong>
-    </div>
-    <div class="tool-tip">
-      <span class="step-num">3</span><strong>粘贴提示词</strong> — 把复制的提示词粘贴给 AI，AI 会自动生成一个完整的 HTML 文件
-    </div>
-    <div class="tool-tip">
-      <span class="step-num">4</span><strong>自定义修改</strong> — 你可以让 AI 调整颜色、增加功能、修改布局，直到满意为止
-    </div>
-    <div class="tool-tip">
-      <span class="step-num">5</span><strong>分享你的作品</strong> — 制作完成后，通过「投稿」提交你的工作台，让更多人看到！
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🎨 定制灵感</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">🎨</div>
-        换配色 / 主题色
-      </div>
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">📝</div>
-        增删功能模块
-      </div>
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">🔤</div>
-        改字体 / 语言
-      </div>
-      <div style="background:#F5F4F0;border-radius:8px;padding:14px;text-align:center;font-size:13px;color:var(--text-light);">
-        <div style="font-size:24px;margin-bottom:4px;">📱</div>
-        iPad 主屏幕适配
-      </div>
-    </div>
   </div>
 </div>
 
