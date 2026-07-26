@@ -495,7 +495,7 @@ textarea{min-height:80px;resize:vertical;line-height:1.6;}
     <button class="modal-close" id="closeBackupBtn">✕</button>
     <div class="mb-title">💾 数据备份</div>
     <div class="mb-desc">
-      你的所有数据存储在浏览器本地（localStorage）。建议定期备份，以防数据丢失。
+      你的所有数据存储在浏览器本地（IndexedDB + localStorage 双重保障）。建议定期备份，以防数据丢失。
       <br><br>
       <strong>当前格式：</strong>JSON（JavaScript 对象表示法）<br>
       包含：日常记录 + 自定义设置（图标、标题、昵称、头像等）<br>
@@ -817,7 +817,7 @@ function updateBackupInfo(){
     '📅 已记录 <span>'+(days||'0')+'</span> 天数据<br>'+
     '👤 当前昵称: <span>'+s.username+'</span><br>'+
     '📄 备份格式: <span>JSON</span>（含日常记录+设置+头像）<br>'+
-    '💾 localStorage 使用量: <span>'+(new Blob([JSON.stringify(d)]).size/1024).toFixed(1)+'KB</span>';
+    '💾 数据大小: <span>'+(new Blob([JSON.stringify(d)]).size/1024).toFixed(1)+'KB</span>';
 }
 document.getElementById('openBackupBtn').addEventListener('click',function(){
   updateBackupInfo();

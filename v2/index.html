@@ -655,7 +655,7 @@ textarea::placeholder,input::placeholder{color:var(--text-muted);}
     <button class="modal-close" id="closeBackupBtn">✕</button>
     <div class="mb-title">💾 数据备份</div>
     <div class="mb-desc">
-      你的所有数据存储在浏览器本地（localStorage）。建议定期备份，以防数据丢失。
+      你的所有数据存储在浏览器本地（IndexedDB + localStorage 双重保障）。建议定期备份，以防数据丢失。
       <br><br>
       <strong>当前格式：</strong>JSON（JavaScript 对象表示法）<br>
       包含：日常记录 + 自定义设置（标题、副标题、头像等）<br>

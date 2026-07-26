@@ -12,3 +12,6 @@ demo_image.png
 
 # macOS 系统文件
 .DS_Store
+
+# 本地工具脚本（含 API Key 调用的识图工具）
+glm-vision.js
