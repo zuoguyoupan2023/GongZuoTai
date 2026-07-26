@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>📋 工作台 · 案例集</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --green:#2E7D32;
+  --green-light:#4CAF50;
+  --green-pale:#E8F5E9;
+  --green-bg:#F1F8E9;
+  --white:#FFFFFF;
+  --gray-bg:#F5F5F5;
+  --gray:#9E9E9E;
+  --gray-light:#E0E0E0;
+  --text:#212121;
+  --text-light:#757575;
+  --shadow:0 2px 12px rgba(46,125,50,0.08);
+  --radius:14px;
+  --radius-sm:8px;
+  --sidebar-w:220px;
+}
+body{
+  font-family:-apple-system,'PingFang SC','Helvetica Neue',sans-serif;
+  background:var(--gray-bg);
+  color:var(--text);
+  min-height:100vh;display:flex;
+}
+
+/* ===== 侧边栏 ===== */
+.sidebar{
+  width:var(--sidebar-w);height:100vh;position:fixed;left:0;top:0;
+  background:linear-gradient(180deg,#1B5E20 0%,#2E7D32 60%,#388E3C 100%);
+  display:flex;flex-direction:column;z-index:100;
+  box-shadow:2px 0 16px rgba(0,0,0,0.12);
+}
+.sidebar-header{
+  padding:28px 20px 18px;text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.sidebar-logo{font-size:36px;display:block;margin-bottom:4px;}
+.sidebar-title{font-size:16px;font-weight:700;color:white;letter-spacing:2px;}
+.sidebar-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;}
+
+.sidebar-profile{
+  display:flex;align-items:center;gap:10px;padding:14px 18px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.sidebar-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;
+  font-size:17px;color:white;flex-shrink:0;
+}
+.sidebar-name{font-size:13px;font-weight:600;color:white;}
+.sidebar-status{font-size:10px;color:rgba(255,255,255,0.5);}
+.sidebar-status::before{content:'●';color:#81C784;margin-right:4px;}
+
+.nav-list{
+  flex:1;overflow-y:auto;padding:10px 8px;list-style:none;
+}
+.nav-list::-webkit-scrollbar{width:3px;}
+.nav-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:3px;}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:all 0.2s;margin-bottom:1px;user-select:none;
+  color:rgba(255,255,255,0.75);font-size:13px;font-weight:500;
+}
+.nav-item:hover{background:rgba(255,255,255,0.1);color:white;transform:translateX(3px);}
+.nav-item.active{
+  background:rgba(255,255,255,0.18);color:white;font-weight:700;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.nav-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0;}
+.nav-item .pill{
+  margin-left:auto;font-size:10px;padding:1px 8px;border-radius:20px;
+  background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);
+}
+
+/* ===== 主内容 ===== */
+.main{
+  margin-left:var(--sidebar-w);flex:1;min-height:100vh;
+  padding:28px 32px 40px;overflow-y:auto;
+  background:var(--gray-bg);
+}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-thumb{background:var(--gray-light);border-radius:4px;}
+
+/* 顶部栏 */
+.top-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:12px;
+}
+.top-left{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.date-box{
+  background:white;padding:10px 18px;border-radius:var(--radius-sm);
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;
+}
+.date-box .d-icon{font-size:20px;}
+.date-box .d-text{font-size:13px;font-weight:600;color:var(--text);}
+.date-box .d-text .hl{color:var(--green);}
+
+/* 语录条 */
+.quote-bar{
+  background:white;border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:14px 20px;margin-bottom:20px;
+  border-left:4px solid var(--green-light);
+  display:flex;align-items:center;gap:10px;
+}
+.quote-bar .q-icon{font-size:20px;}
+.quote-bar .q-text{font-size:14px;color:var(--text-light);flex:1;}
+
+/* 页面 */
+.page{display:none;animation:fadeIn 0.35s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+.section-title{
+  font-size:18px;font-weight:700;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+
+/* 卡片 */
+.card{
+  background:white;border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px;margin-bottom:16px;
+}
+.card-title{
+  font-size:16px;font-weight:700;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+
+/* 首页 - 大展示卡 */
+.showcase-grid{
+  display:grid;grid-template-columns:1fr;gap:18px;
+}
+.showcase-card{
+  background:white;border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:24px;
+  display:flex;gap:20px;align-items:flex-start;
+  cursor:pointer;transition:all 0.3s;
+  border:1px solid transparent;
+}
+.showcase-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 28px rgba(0,0,0,0.1);
+}
+.showcase-card:active{transform:translateY(-1px);}
+.sc-v0{border-left:4px solid var(--green);}
+.sc-v0:hover{border-color:var(--green);background:linear-gradient(135deg,white,var(--green-pale));}
+.sc-v1{border-left:4px solid #FF6B8A;}
+.sc-v1:hover{border-color:#FF6B8A;background:linear-gradient(135deg,white,#FFF0F5);}
+.sc-v2{border-left:4px solid #F4A259;}
+.sc-v2:hover{border-color:#F4A259;background:linear-gradient(135deg,white,#FFF8E7);}
+
+.sc-icon{font-size:40px;flex-shrink:0;margin-top:2px;}
+.sc-info{flex:1;min-width:0;}
+.sc-name{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.sc-tag{font-size:10px;font-weight:600;padding:2px 10px;border-radius:20px;}
+.sc-desc{font-size:13px;color:var(--text-light);line-height:1.7;}
+.sc-features{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.sc-features span{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--gray-bg);color:var(--text-light);}
+.sc-arrow{font-size:20px;color:var(--gray);flex-shrink:0;align-self:center;transition:all 0.3s;}
+.showcase-card:hover .sc-arrow{transform:translateX(5px);color:var(--text);}
+
+/* 作者区 */
+.creator-section{
+  background:white;border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:24px;margin-bottom:16px;
+}
+.creator-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.creator-avatar{font-size:44px;}
+.creator-info{flex:1;}
+.creator-name{font-size:18px;font-weight:700;}
+.creator-desc{font-size:13px;color:var(--text-light);margin-top:2px;}
+.creator-badge{
+  display:inline-block;font-size:11px;padding:4px 14px;border-radius:20px;
+  background:var(--green-pale);color:var(--green);font-weight:600;
+}
+.creator-text{font-size:14px;color:var(--text-light);line-height:1.8;}
+
+/* ===== v0 详情页 ===== */
+.version-hero{
+  background:linear-gradient(135deg,#E8F5E9,#C8E6C9);
+  border-radius:var(--radius);padding:28px 24px;margin-bottom:16px;
+}
+.version-hero .vh-icon{font-size:44px;}
+.version-hero .vh-name{font-size:22px;font-weight:900;margin:6px 0 4px;}
+.version-hero .vh-tagline{font-size:14px;color:var(--text-light);}
+
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.feature-item{
+  background:var(--gray-bg);border-radius:var(--radius-sm);
+  padding:14px;text-align:center;font-size:13px;font-weight:600;
+}
+.feature-item .fi-icon{font-size:24px;display:block;margin-bottom:4px;}
+
+/* 按钮 */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 28px;border:none;border-radius:50px;
+  font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;
+  font-family:inherit;text-decoration:none;
+}
+.btn-pri{background:var(--green);color:white;box-shadow:0 4px 14px rgba(46,125,50,0.35);}
+.btn-pri:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(46,125,50,0.45);}
+.btn-pri:active{transform:scale(0.97);}
+.btn-pink{background:linear-gradient(135deg,#FF6B8A,#E85D7A);color:white;box-shadow:0 4px 14px rgba(255,107,138,0.35);}
+.btn-pink:hover{transform:translateY(-2px);}
+.btn-orange{background:linear-gradient(135deg,#F4A259,#E8873A);color:white;box-shadow:0 4px 14px rgba(244,160,89,0.35);}
+.btn-orange:hover{transform:translateY(-2px);}
+
+/* 表单 */
+.field-group{margin-bottom:14px;}
+.field-group label{display:block;font-size:12px;font-weight:600;color:var(--text-light);margin-bottom:4px;}
+.field-group input,.field-group textarea{
+  width:100%;border:1.5px solid var(--gray-light);border-radius:8px;
+  padding:10px 14px;font-size:14px;font-family:inherit;color:var(--text);
+  background:white;outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.field-group input:focus,.field-group textarea:focus{border-color:var(--green);}
+
+/* Footer */
+.footer{
+  text-align:center;padding:16px 0;font-size:12px;color:var(--gray);margin-top:8px;
+}
+.footer a{color:var(--text-light);text-decoration:none;cursor:pointer;}
+.footer a:hover{text-decoration:underline;}
+
+/* ===== 响应式 ===== */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);width:240px;transition:transform 0.3s;z-index:200;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:16px;}
+  .menu-btn{display:flex!important;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.25);z-index:199;}
+  .overlay.show{display:block;}
+  .feature-grid{grid-template-columns:1fr 1fr;}
+}
+.menu-btn{
+  display:none;position:fixed;top:12px;left:12px;z-index:150;
+  width:40px;height:40px;border-radius:10px;background:white;
+  border:1px solid var(--gray-light);align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;box-shadow:var(--shadow);
+}
+.overlay{display:none;}
+@media(min-width:1024px){.showcase-grid{grid-template-columns:1fr;}.main{padding:32px 40px 40px;}}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<!-- ===== 侧边栏 ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo">📋</span>
+    <div class="sidebar-title">工作台</div>
+    <div class="sidebar-sub">创 作 者 · 案 例 集</div>
+  </div>
+  <div class="sidebar-profile">
+    <div class="sidebar-avatar">🏠</div>
+    <div>
+      <div class="sidebar-name">案例合集</div>
+      <div class="sidebar-status">3 个工作台</div>
+    </div>
+  </div>
+  <ul class="nav-list">
+    <li class="nav-item active" data-page="home">
+      <span class="nav-icon">🏠</span>首页概览
+    </li>
+    <li class="nav-item" data-page="v0">
+      <span class="nav-icon">📋</span>胡楚靓工作台
+      <span class="pill">v0</span>
+    </li>
+    <li class="nav-item" data-page="v1">
+      <span class="nav-icon">🌸</span>生活工作台
+      <span class="pill">v1</span>
+    </li>
+    <li class="nav-item" data-page="v2">
+      <span class="nav-icon">🥔</span>考研工作台
+      <span class="pill">v2</span>
+    </li>
+    <li class="nav-item" data-page="submit" style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+      <span class="nav-icon">📤</span>投稿你的工作台
+      <span class="pill" style="background:rgba(255,183,77,0.2);color:#FFB74D;">beta</span>
+    </li>
+  </ul>
+</aside>
+
+<!-- ===== 主内容 ===== -->
+<main class="main" id="mainContent">
+
+<!-- 顶部栏 -->
+<div class="top-bar">
+  <div class="top-left">
+    <div class="date-box">
+      <span class="d-icon">📅</span>
+      <span class="d-text" id="dateDisplay"></span>
+    </div>
+  </div>
+</div>
+
+<!-- 语录 -->
+<div class="quote-bar">
+  <span class="q-icon">💬</span>
+  <span class="q-text">创作者们的工作台灵感合集 · 选择你喜欢的版本开始使用吧</span>
+</div>
+
+<!-- ===== 首页概览 ===== -->
+<div class="page active" id="page-home">
+  <div class="section-title">🏠 工作台 · 创作者案例集</div>
+
+  <div class="creator-section">
+    <div class="creator-header">
+      <div class="creator-avatar">👩‍🎤</div>
+      <div class="creator-info">
+        <div class="creator-name">胡楚靓 工作台 <span class="creator-badge">原创灵感</span></div>
+        <div class="creator-desc">自媒体创作者 · 全网粉丝 800w+</div>
+      </div>
+    </div>
+    <div class="creator-text">
+      这个项目起源于胡楚靓分享的工作台方法。粉丝们根据她的教学视频，制作了各种风格的个性化工作台版本。
+      这里收录了其中最受欢迎的 3 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
+    </div>
+  </div>
+
+  <div class="section-title" style="font-size:15px;margin-top:20px;">📌 选择版本开始使用</div>
+
+  <div class="showcase-grid">
+    <a href="v0/" class="showcase-card sc-v0" style="text-decoration:none;color:inherit;">
+      <span class="sc-icon">📋</span>
+      <div class="sc-info">
+        <div class="sc-name">胡楚靓工作台 <span class="sc-tag" style="background:var(--green-pale);color:var(--green);">v0 · 原版风格</span></div>
+        <div class="sc-desc">绿白清爽风格 · 每日计划 · 选题灵感 · 爆款分析 · 内容复盘 · 备忘录 · 小提琴练习 · 英语学习 · 番茄钟专注</div>
+        <div class="sc-features">
+          <span>📅 每日计划</span><span>💡 选题灵感</span><span>🔥 爆款分析</span>
+          <span>📝 内容复盘</span><span>🎻 小提琴</span><span>📚 英语</span><span>⏱️ 番茄钟</span>
+        </div>
+      </div>
+      <span class="sc-arrow">→</span>
+    </a>
+
+    <a href="v1/" class="showcase-card sc-v1" style="text-decoration:none;color:inherit;">
+      <span class="sc-icon">🌸</span>
+      <div class="sc-info">
+        <div class="sc-name">生活工作台 <span class="sc-tag" style="background:#FFF0F5;color:#FF6B8A;">v1 · 粉色可爱</span></div>
+        <div class="sc-desc">粉色可爱风格 · 11 项全覆盖：英语 · 阅读 · 锻炼 · 饮食 · 理财 · 自媒体 · 爆款 · 新闻 · 追剧 · 知识库 · 每日复盘</div>
+        <div class="sc-features">
+          <span>📚 英语</span><span>💪 锻炼</span><span>🍽️ 饮食</span>
+          <span>💰 理财</span><span>📱 自媒体</span><span>📰 新闻</span><span>📝 复盘</span>
+        </div>
+      </div>
+      <span class="sc-arrow">→</span>
+    </a>
+
+    <a href="v2/" class="showcase-card sc-v2" style="text-decoration:none;color:inherit;">
+      <span class="sc-icon">🥔</span>
+      <div class="sc-info">
+        <div class="sc-name">考研工作台 <span class="sc-tag" style="background:#FFF8E7;color:#F4A259;">v2 · 手账风格</span></div>
+        <div class="sc-desc">温馨奶油黄电子手账 · 每日作息打卡 · 英语/专业课/政治分科记录 · 阶段任务自动切换 · 番茄钟 · OCR 文字识别 · iPad 主屏幕</div>
+        <div class="sc-features">
+          <span>📅 作息打卡</span><span>📖 专业课</span><span>🏛️ 政治</span>
+          <span>✅ 阶段任务</span><span>⏱️ 番茄钟</span><span>📝 OCR</span><span>🥔 土豆</span>
+        </div>
+      </div>
+      <span class="sc-arrow">→</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    所有数据存储在浏览器本地 · <a href="javascript:void(0)" onclick="alert('所有数据均存储在您浏览器的 localStorage 中，不会被上传到任何服务器。每个工作台底部有「导出数据」按钮，支持随时备份。')">隐私说明</a>
+  </div>
+</div>
+
+<!-- ===== v0 详情 ===== -->
+<div class="page" id="page-v0">
+  <div class="version-hero">
+    <div class="vh-icon">📋</div>
+    <div class="vh-name">胡楚靓工作台 <span class="sc-tag" style="background:white;color:var(--green);margin-left:8px;">v0</span></div>
+    <div class="vh-tagline">绿白清爽 · 内容创作者专用</div>
+    <div style="margin-top:14px;">
+      <a href="v0/" class="btn btn-pri">🚀 进入胡楚靓工作台</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 功能一览</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="fi-icon">📅</span>每日计划</div>
+      <div class="feature-item"><span class="fi-icon">💡</span>选题灵感</div>
+      <div class="feature-item"><span class="fi-icon">🔥</span>爆款分析</div>
+      <div class="feature-item"><span class="fi-icon">📝</span>内容复盘</div>
+      <div class="feature-item"><span class="fi-icon">📋</span>备忘录</div>
+      <div class="feature-item"><span class="fi-icon">🎻</span>小提琴</div>
+      <div class="feature-item"><span class="fi-icon">📚</span>英语学习</div>
+      <div class="feature-item"><span class="fi-icon">⏱️</span>番茄钟</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 说明</div>
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      基于胡楚靓分享的工作台方法创作的版本。左侧 7 项导航，涵盖内容创作者日常所需的选题规划、热点追踪、复盘反思等功能。
+      所有数据存储在浏览器本地，支持导出备份。
+    </div>
+  </div>
+</div>
+
+<!-- ===== v1 详情 ===== -->
+<div class="page" id="page-v1">
+  <div class="version-hero" style="background:linear-gradient(135deg,#FFF0F5,#FFE4EC);">
+    <div class="vh-icon">🌸</div>
+    <div class="vh-name">生活工作台 <span class="sc-tag" style="background:white;color:#FF6B8A;margin-left:8px;">v1</span></div>
+    <div class="vh-tagline">粉色可爱 · 记录生活每一刻</div>
+    <div style="margin-top:14px;">
+      <a href="v1/" class="btn btn-pink">🚀 进入生活工作台</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 功能一览</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="fi-icon">📚</span>英语学习</div>
+      <div class="feature-item"><span class="fi-icon">📖</span>每日阅读</div>
+      <div class="feature-item"><span class="fi-icon">💪</span>锻炼身体</div>
+      <div class="feature-item"><span class="fi-icon">🍽️</span>好好吃饭</div>
+      <div class="feature-item"><span class="fi-icon">💰</span>理财学习</div>
+      <div class="feature-item"><span class="fi-icon">📱</span>自媒体计划</div>
+      <div class="feature-item"><span class="fi-icon">🔥</span>爆款视频</div>
+      <div class="feature-item"><span class="fi-icon">📰</span>新闻热点</div>
+      <div class="feature-item"><span class="fi-icon">📺</span>新剧分享</div>
+      <div class="feature-item"><span class="fi-icon">🧠</span>理财知识</div>
+      <div class="feature-item"><span class="fi-icon">📝</span>每日复盘</div>
+      <div class="feature-item"><span class="fi-icon">💕</span>粉色主题</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== v2 详情 ===== -->
+<div class="page" id="page-v2">
+  <div class="version-hero" style="background:linear-gradient(135deg,#FFF8E7,#FDEBD0);">
+    <div class="vh-icon">🥔</div>
+    <div class="vh-name">考研工作台 <span class="sc-tag" style="background:white;color:#F4A259;margin-left:8px;">v2</span></div>
+    <div class="vh-tagline">温馨手账 · 考研无纸化学习</div>
+    <div style="margin-top:14px;">
+      <a href="v2/" class="btn btn-orange">🚀 进入考研工作台</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 功能一览</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="fi-icon">📅</span>作息打卡</div>
+      <div class="feature-item"><span class="fi-icon">📚</span>英语学习</div>
+      <div class="feature-item"><span class="fi-icon">📖</span>专业课</div>
+      <div class="feature-item"><span class="fi-icon">🏛️</span>政治</div>
+      <div class="feature-item"><span class="fi-icon">✅</span>阶段任务</div>
+      <div class="feature-item"><span class="fi-icon">⏱️</span>番茄钟</div>
+      <div class="feature-item"><span class="fi-icon">📝</span>笔记/OCR</div>
+      <div class="feature-item"><span class="fi-icon">🥔</span>土豆图标</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 说明</div>
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      考研无纸化学习专用工作台。根据考研时间线自动切换阶段任务模板（一轮基础→强化→二轮→冲刺），Tesseract.js OCR 识别，支持 iPad 添加到主屏幕作为独立应用使用。
+    </div>
+  </div>
+</div>
+
+<!-- ===== 投稿 ===== -->
+<div class="page" id="page-submit">
+  <div class="section-title">📤 投稿你的工作台</div>
+
+  <div class="card" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border-left:4px solid #FFB74D;">
+    <div class="card-title">💡 欢迎投稿</div>
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      你也制作了自己的工作台吗？欢迎投稿展示！我们会审核后将其加入案例集。
+      <br><br>
+      <strong>当前阶段：</strong>手动收录（v1）— 提交后我们会人工审核，通过后部署上线。
+      <br>
+      <strong>后续规划：</strong>自动上传 + 安全审核流水线（详见规划文档）
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 投稿表单</div>
+    <div class="field-group">
+      <label>👤 你的名字 / 昵称</label>
+      <input type="text" id="submitName" placeholder="例如：小可爱" maxlength="50">
+    </div>
+    <div class="field-group">
+      <label>📱 社交平台账号</label>
+      <input type="text" id="submitSocial" placeholder="例如：@你的昵称 @小红书 / @抖音 / @B站">
+    </div>
+    <div class="field-group">
+      <label>🏷️ 工作台名称</label>
+      <input type="text" id="submitTitle" placeholder="例如：我的日常管理工作台" maxlength="100">
+    </div>
+    <div class="field-group">
+      <label>📝 简介 / 特色说明</label>
+      <textarea id="submitDesc" placeholder="简单介绍你的工作台有什么特色功能、适合什么人使用…" style="min-height:80px;"></textarea>
+    </div>
+    <div class="field-group">
+      <label>📄 HTML 文件</label>
+      <div style="border:2px dashed var(--gray-light);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div style="font-size:32px;margin-bottom:6px;">📂</div>
+        <div style="font-size:13px;color:var(--text-light);">点击选择 HTML 文件</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px;" id="fileStatus">未选择文件</div>
+      </div>
+      <input type="file" id="fileInput" accept=".html,.htm" style="display:none">
+    </div>
+    <button class="btn btn-pri" id="submitBtn" style="width:100%;justify-content:center;">📤 提交投稿</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔒 安全审核说明</div>
+    <div style="font-size:13px;color:var(--text-light);line-height:1.8;">
+      <strong>当前阶段（v1）：</strong>
+      <br>• 提交后我们会人工审核 HTML 文件内容
+      <br>• 审核通过后手动部署至案例集
+      <br>• 请确保文件不包含恶意代码、跟踪脚本或外部资源
+      <br><br>
+      <strong>未来规划（v2+）：</strong>
+      <br>• 自动化安全扫描流水线
+      <br>• Cloudflare R2 存储 + D1 元数据管理
+      <br>• 沙箱环境渲染预览
+      <br>• 详见 <a href="000-demo-storage-security.md" style="color:var(--green);">000-demo-storage-security.md</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📜 已有投稿</div>
+    <div id="submissionList" style="font-size:13px;color:var(--text-light);line-height:1.8;">
+      <div class="text-sm" style="color:var(--gray);padding:8px 0;">目前收录的工作台：</div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--gray-bg);">
+        <strong>📋 胡楚靓工作台</strong> — 参考 @胡楚靓 @小红书（v0）
+      </div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--gray-bg);">
+        <strong>🌸 生活工作台</strong> — 参考 @Annoymouos @小红书（v1）
+      </div>
+      <div style="padding:8px 0;">
+        <strong>🥔 考研工作台</strong> — 参考 @想来你你也是书香门第 @小红书（v2）
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ===== 日期 =====
+function updateDate(){
+  const n=new Date();
+  document.getElementById('dateDisplay').innerHTML=n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日 <span class="hl">周'+['日','一','二','三','四','五','六'][n.getDay()]+'</span>';
+}
+updateDate();
+
+// ===== 导航 =====
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.addEventListener('click',function(){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+this.dataset.page).classList.add('active');
+    document.getElementById('mainContent').scrollTop=0;
+    // 移动端关闭
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  });
+});
+
+document.getElementById('menuBtn').addEventListener('click',function(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+});
+document.getElementById('overlay').addEventListener('click',function(){
+  document.getElementById('sidebar').classList.remove('open');
+  this.classList.remove('show');
+});
+
+// ===== 投稿页面逻辑 =====
+const fileInput = document.getElementById('fileInput');
+const dropZone = document.getElementById('dropZone');
+const fileStatus = document.getElementById('fileStatus');
+let selectedFile = null;
+
+fileInput.addEventListener('change', function() {
+  selectedFile = this.files[0];
+  if (selectedFile) {
+    fileStatus.textContent = '✅ 已选择: ' + selectedFile.name + ' (' + (selectedFile.size/1024).toFixed(1) + 'KB)';
+    dropZone.style.borderColor = 'var(--green)';
+  } else {
+    fileStatus.textContent = '未选择文件';
+    dropZone.style.borderColor = '';
+  }
+});
+
+dropZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  this.style.borderColor = 'var(--green)';
+  this.style.background = 'var(--green-pale)';
+});
+dropZone.addEventListener('dragleave', function() {
+  this.style.borderColor = '';
+  this.style.background = '';
+});
+dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  this.style.borderColor = '';
+  this.style.background = '';
+  if (e.dataTransfer.files.length) {
+    fileInput.files = e.dataTransfer.files;
+    selectedFile = e.dataTransfer.files[0];
+    if (selectedFile) {
+      fileStatus.textContent = '✅ 已选择: ' + selectedFile.name + ' (' + (selectedFile.size/1024).toFixed(1) + 'KB)';
+      dropZone.style.borderColor = 'var(--green)';
+    }
+  }
+});
+
+document.getElementById('submitBtn').addEventListener('click', function() {
+  const name = document.getElementById('submitName').value.trim();
+  const social = document.getElementById('submitSocial').value.trim();
+  const title = document.getElementById('submitTitle').value.trim();
+  const desc = document.getElementById('submitDesc').value.trim();
+
+  if (!name || !social || !title) {
+    showToast('⚠️ 请至少填写昵称、平台账号和工作台名称');
+    return;
+  }
+  if (!selectedFile) {
+    showToast('⚠️ 请选择要投稿的 HTML 文件');
+    return;
+  }
+
+  // Phase 1: Save locally and show submission info
+  const submission = {
+    name, social, title, desc,
+    fileName: selectedFile.name,
+    fileSize: selectedFile.size,
+    submittedAt: new Date().toISOString(),
+  };
+
+  // Store in localStorage for now (Phase 1)
+  const subs = JSON.parse(localStorage.getItem('submissions') || '[]');
+  subs.push(submission);
+  localStorage.setItem('submissions', JSON.stringify(subs));
+
+  showToast('📤 投稿已提交！我们审核后会联系您。感谢贡献！');
+
+  // Reset form
+  document.getElementById('submitName').value = '';
+  document.getElementById('submitSocial').value = '';
+  document.getElementById('submitTitle').value = '';
+  document.getElementById('submitDesc').value = '';
+  fileInput.value = '';
+  selectedFile = null;
+  fileStatus.textContent = '未选择文件';
+  dropZone.style.borderColor = '';
+});
+
+// ===== Toast (for submit page) =====
+function showToast(msg) {
+  let t = document.getElementById('subToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'subToast';
+    t.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(33,33,33,0.92);color:white;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:500;z-index:9999;pointer-events:none;opacity:0;transition:all 0.3s;backdrop-filter:blur(8px);white-space:nowrap;max-width:90vw;text-align:center;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 2500);
+}
+</script>
+</body>
+</html>

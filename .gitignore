@@ -1,0 +1,14 @@
+# 项目依赖（如果有 node_modules）
+node_modules/
+.env
+
+# 临时图片副本
+demo_preview.jpg
+demo_small.jpg
+demo_image.png
+
+# 规划/安全文档不上传公开仓库
+*.md
+
+# macOS 系统文件
+.DS_Store

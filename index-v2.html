@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="考研日记">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFF8E7">
+<link rel="icon" type="image/svg+xml" id="favicon" href="">
+<link rel="apple-touch-icon" id="appleTouchIcon" href="">
+<title>🥔 考研日记 · 无纸化学习工作台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+:root{
+  --bg:#FFF8E7;
+  --card:#FFFFFF;
+  --green:#A8D5BA;
+  --green-dark:#7BBF9A;
+  --green-light:#D4EDDA;
+  --orange:#F4A259;
+  --orange-light:#FDEBD0;
+  --text:#3D3D3D;
+  --text-light:#8A8A8A;
+  --text-muted:#B0B0B0;
+  --cream:#FFF8E7;
+  --warm:#F4D03F;
+  --pink:#FFB3A3;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 30px rgba(0,0,0,0.08);
+  --radius:16px;
+  --radius-sm:10px;
+  --header-h:72px;
+  --tab-h:60px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+
+body{
+  font-family:-apple-system,'PingFang SC','Helvetica Neue','Noto Sans SC',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow:hidden;
+}
+
+/* ==================== HEADER ==================== */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:var(--header-h);
+  background:linear-gradient(135deg,#FFFEF5,#FFF8E7);
+  border-bottom:1px solid rgba(168,213,186,0.3);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;
+  box-shadow:0 1px 8px rgba(0,0,0,0.03);
+}
+
+.header-left{display:flex;align-items:center;gap:8px;}
+.header-icon{font-size:30px;line-height:1;}
+.header-info{display:flex;flex-direction:column;gap:1px;}
+.header-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:1px;}
+.header-sub{font-size:11px;color:var(--text-light);}
+
+.header-center{text-align:center;}
+.header-countdown{font-size:14px;font-weight:700;color:var(--orange);}
+.header-countdown span{font-size:20px;}
+.header-phase{font-size:11px;color:var(--green-dark);font-weight:600;background:var(--green-light);padding:1px 10px;border-radius:20px;display:inline-block;}
+
+.header-right{text-align:right;max-width:140px;}
+.header-date{font-size:12px;color:var(--text-light);font-weight:500;}
+.header-weekday{font-size:11px;color:var(--text-muted);}
+
+/* ==================== QUOTE STRIP ==================== */
+.quote-strip{
+  position:fixed;top:var(--header-h);left:0;right:0;z-index:99;
+  background:linear-gradient(135deg,rgba(244,160,89,0.08),rgba(168,213,186,0.08));
+  padding:8px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(168,213,186,0.15);
+  min-height:36px;
+}
+.quote-strip .qp{font-size:13px;color:var(--text-light);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.quote-strip .qp-icon{flex-shrink:0;font-size:14px;}
+
+/* ==================== TAB BAR ==================== */
+.tab-bar{
+  position:fixed;top:calc(var(--header-h) + 36px);left:0;right:0;z-index:98;
+  height:var(--tab-h);
+  background:rgba(255,248,231,0.92);backdrop-filter:blur(12px);
+  display:flex;align-items:stretch;
+  overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  border-bottom:1px solid rgba(168,213,186,0.2);
+}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-item{
+  flex:1 0 auto;min-width:56px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1px;padding:6px 12px;
+  font-size:10px;color:var(--text-light);font-weight:500;
+  cursor:pointer;transition:all 0.2s;user-select:none;
+  border-bottom:2px solid transparent;
+  position:relative;
+}
+.tab-item .tab-icon{font-size:20px;line-height:1;}
+.tab-item.active{color:var(--green-dark);border-bottom-color:var(--green);background:rgba(168,213,186,0.08);}
+.tab-item.active .tab-icon{transform:scale(1.05);}
+.tab-item:active{opacity:0.6;}
+
+/* ==================== MAIN CONTENT ==================== */
+.main{
+  position:fixed;
+  top:calc(var(--header-h) + 36px + var(--tab-h));
+  left:0;right:0;
+  bottom:0;bottom:calc(var(--safe-bottom));
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:16px 16px 24px;
+}
+.main::-webkit-scrollbar{width:4px;}
+.main::-webkit-scrollbar-thumb{background:var(--green);border-radius:4px;}
+
+.page{display:none;animation:pageIn 0.35s ease;}
+.page.active{display:block;}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ==================== COMMON CARDS ==================== */
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:18px 16px;
+  margin-bottom:14px;
+  border:1px solid rgba(168,213,186,0.12);
+}
+.card-title{
+  font-size:14px;font-weight:700;color:var(--text);
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.card-title .tag{
+  font-size:10px;font-weight:600;padding:2px 10px;border-radius:20px;
+  margin-left:auto;
+}
+.tag-green{background:var(--green-light);color:var(--green-dark);}
+.tag-orange{background:var(--orange-light);color:var(--orange);}
+
+textarea,input[type="text"],input[type="number"]{
+  width:100%;
+  border:1.5px solid rgba(168,213,186,0.3);
+  border-radius:var(--radius-sm);
+  padding:10px 14px;
+  font-size:14px;font-family:inherit;color:var(--text);
+  background:rgba(255,248,231,0.5);
+  outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+textarea:focus,input:focus{border-color:var(--green);background:white;}
+textarea{min-height:80px;resize:vertical;line-height:1.6;}
+textarea::placeholder,input::placeholder{color:var(--text-muted);}
+
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 22px;border:none;border-radius:50px;
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:all 0.2s;font-family:inherit;-webkit-appearance:none;
+}
+.btn-primary{background:linear-gradient(135deg,var(--green),var(--green-dark));color:white;box-shadow:0 4px 12px rgba(168,213,186,0.4);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(168,213,186,0.5);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-orange{background:linear-gradient(135deg,var(--orange),#E8873A);color:white;box-shadow:0 4px 12px rgba(244,160,89,0.4);}
+.btn-outline{background:transparent;border:1.5px solid var(--green);color:var(--green-dark);}
+.btn-sm{padding:6px 16px;font-size:12px;}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mt-8{margin-top:8px;}
+.mt-12{margin-top:12px;}
+.mb-12{margin-bottom:12px;}
+.flex{display:flex;align-items:center;gap:8px;}
+.flex-wrap{flex-wrap:wrap;}
+.gap-4{gap:4px;}
+.text-sm{font-size:13px;color:var(--text-light);}
+.text-center{text-align:center;}
+
+/* ==================== SECTION 1: 今日计划 ==================== */
+.stats-mini{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;
+}
+.stat-mini-card{
+  background:linear-gradient(135deg,var(--cream),white);
+  border-radius:var(--radius-sm);padding:12px 10px;text-align:center;
+  border:1px solid rgba(168,213,186,0.15);
+}
+.stat-mini-card .num{font-size:22px;font-weight:900;color:var(--orange);font-variant-numeric:tabular-nums;}
+.stat-mini-card .lbl{font-size:11px;color:var(--text-light);margin-top:2px;}
+
+.schedule-list{list-style:none;}
+.schedule-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  margin-bottom:6px;transition:all 0.2s;
+  background:white;border:1px solid rgba(168,213,186,0.08);
+}
+.schedule-item.current{
+  background:linear-gradient(135deg,rgba(168,213,186,0.12),rgba(244,160,89,0.06));
+  border-color:var(--green);
+  box-shadow:0 0 0 1px var(--green);
+}
+.schedule-item .s-time{
+  font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;
+  min-width:48px;
+}
+.schedule-item .s-icon{font-size:18px;flex-shrink:0;}
+.schedule-item .s-label{flex:1;font-size:13px;font-weight:500;}
+.schedule-item .s-check{
+  width:22px;height:22px;border-radius:50%;border:2px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.2s;flex-shrink:0;
+  background:white;
+}
+.schedule-item .s-check.checked{background:var(--green);border-color:var(--green);}
+.schedule-item .s-check.checked::after{content:'✓';color:white;font-size:13px;font-weight:700;}
+.schedule-item .s-check.unchecked:hover{background:rgba(168,213,186,0.15);}
+
+.progress-ring{
+  width:60px;height:60px;border-radius:50%;
+  position:relative;flex-shrink:0;
+}
+.progress-ring svg{transform:rotate(-90deg);}
+.progress-ring .bg{fill:none;stroke:rgba(168,213,186,0.2);stroke-width:6;}
+.progress-ring .fg{fill:none;stroke:var(--green);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 0.6s;}
+.progress-ring .center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:16px;font-weight:900;color:var(--orange);
+}
+
+/* ==================== SECTION 2/3/4: 学习记录 ==================== */
+.subj-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;
+}
+.subj-header .sh-icon{font-size:28px;}
+.subj-header .sh-info{flex:1;}
+.subj-header .sh-name{font-size:16px;font-weight:700;}
+.subj-header .sh-progress{font-size:12px;color:var(--text-light);}
+
+.field-group{margin-bottom:10px;}
+.field-group label{display:block;font-size:12px;font-weight:600;color:var(--text-light);margin-bottom:4px;}
+
+/* ==================== SECTION 5: 任务 ==================== */
+.task-card{
+  background:white;border-radius:var(--radius-sm);padding:14px 16px;
+  margin-bottom:8px;border:1px solid rgba(168,213,186,0.1);
+  transition:all 0.2s;
+}
+.task-card.done{opacity:0.55;background:rgba(168,213,186,0.04);}
+.task-card .task-row{
+  display:flex;align-items:flex-start;gap:10px;
+}
+.task-card .task-cb{
+  width:20px;height:20px;border-radius:4px;border:2px solid var(--green);
+  flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  margin-top:1px;transition:all 0.2s;background:white;
+}
+.task-card .task-cb.checked{background:var(--green);border-color:var(--green);}
+.task-card .task-cb.checked::after{content:'✓';color:white;font-size:12px;font-weight:700;}
+.task-card .task-text{flex:1;font-size:13px;line-height:1.5;}
+.task-card.done .task-text{text-decoration:line-through;color:var(--text-muted);}
+.phase-badge{
+  display:inline-block;font-size:11px;font-weight:600;
+  padding:3px 12px;border-radius:20px;margin-bottom:12px;
+}
+
+/* ==================== SECTION 6: 专注计时 ==================== */
+.timer-display{
+  text-align:center;padding:20px 0 10px;
+}
+.timer-display .time{
+  font-size:56px;font-weight:900;font-variant-numeric:tabular-nums;
+  color:var(--text);letter-spacing:4px;line-height:1;
+  font-family:SF Mono,SFMono-Regular,monospace;
+}
+.timer-display .timer-label{font-size:13px;color:var(--text-light);margin-top:8px;}
+.timer-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.timer-presets{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+.timer-presets .tp{
+  padding:6px 16px;border-radius:50px;border:1.5px solid rgba(168,213,186,0.3);
+  font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;
+  background:transparent;color:var(--text-light);font-family:inherit;
+}
+.timer-presets .tp.active{border-color:var(--green);background:var(--green-light);color:var(--green-dark);font-weight:700;}
+.timer-presets .tp:active{transform:scale(0.95);}
+
+.timer-stats{
+  display:flex;gap:16px;justify-content:center;margin-top:14px;
+}
+.timer-stats .ts-item{text-align:center;}
+.timer-stats .ts-num{font-size:18px;font-weight:900;color:var(--orange);}
+.timer-stats .ts-lbl{font-size:11px;color:var(--text-light);}
+
+/* ==================== SECTION 7: 笔记 ==================== */
+.ocr-zone{
+  border:2px dashed rgba(168,213,186,0.3);
+  border-radius:var(--radius-sm);padding:20px;
+  text-align:center;cursor:pointer;transition:all 0.2s;
+  background:rgba(255,248,231,0.3);margin-bottom:10px;
+}
+.ocr-zone:hover,.ocr-zone.drag-over{border-color:var(--green);background:rgba(168,213,186,0.06);}
+.ocr-zone .ocr-icon{font-size:32px;margin-bottom:6px;}
+.ocr-zone .ocr-text{font-size:13px;color:var(--text-light);}
+.ocr-result{
+  background:rgba(168,213,186,0.06);border-radius:var(--radius-sm);
+  padding:12px;margin-top:8px;font-size:13px;line-height:1.7;
+  white-space:pre-wrap;display:none;max-height:200px;overflow-y:auto;
+}
+.ocr-spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--green-light);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ==================== RESPONSIVE ==================== */
+@media(min-width:768px){
+  :root{--header-h:76px;--tab-h:64px;}
+  .main{padding:20px 32px 24px;max-width:900px;margin:0 auto;}
+  .header{padding:0 28px;}
+  .stats-mini{grid-template-columns:repeat(4,1fr);}
+  .grid-2{grid-template-columns:1fr 1fr;gap:14px;}
+  .timer-display .time{font-size:64px;}
+  .schedule-item{padding:12px 16px;}
+  .schedule-item .s-time{min-width:54px;font-size:13px;}
+}
+@media(min-width:1024px){
+  .main{padding:24px 40px 32px;max-width:1000px;}
+  .grid-2{grid-template-columns:1fr 1fr;gap:16px;}
+}
+
+/* 一些手账装饰元素 */
+.washi{
+  height:4px;border-radius:2px;margin-bottom:12px;
+  background:linear-gradient(90deg,var(--green-light),var(--orange-light),var(--green-light));
+  opacity:0.5;
+}
+.sticker{display:inline-block;font-size:24px;margin-right:4px;}
+
+.empty-state{
+  text-align:center;padding:30px 20px;color:var(--text-muted);
+}
+.empty-state .empty-icon{font-size:40px;margin-bottom:10px;}
+.empty-state .empty-text{font-size:14px;}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header" id="appHeader">
+  <div class="header-left">
+    <span class="header-icon">🥔</span>
+    <div class="header-info">
+      <div class="header-title">考研日记</div>
+      <div class="header-sub">📖 无纸化学习工作台</div>
+    </div>
+  </div>
+  <div class="header-center">
+    <div class="header-countdown">距考研 <span id="countdownNum">0</span> 天</div>
+    <div class="header-phase" id="phaseBadge">一轮基础期</div>
+  </div>
+  <div class="header-right">
+    <div class="header-date" id="headerDate"></div>
+    <div class="header-weekday" id="headerWeekday"></div>
+  </div>
+</header>
+
+<!-- ===== QUOTE ===== -->
+<div class="quote-strip">
+  <span class="qp-icon">💬</span>
+  <span class="qp" id="quoteText">加载中…</span>
+</div>
+
+<!-- ===== TAB BAR ===== -->
+<nav class="tab-bar" id="tabBar">
+  <div class="tab-item active" data-tab="today">
+    <span class="tab-icon">📅</span><span>今日</span>
+  </div>
+  <div class="tab-item" data-tab="english">
+    <span class="tab-icon">📚</span><span>英语</span>
+  </div>
+  <div class="tab-item" data-tab="major">
+    <span class="tab-icon">📖</span><span>专业课</span>
+  </div>
+  <div class="tab-item" data-tab="politics">
+    <span class="tab-icon">🏛️</span><span>政治</span>
+  </div>
+  <div class="tab-item" data-tab="tasks">
+    <span class="tab-icon">✅</span><span>任务</span>
+  </div>
+  <div class="tab-item" data-tab="timer">
+    <span class="tab-icon">⏱️</span><span>计时</span>
+  </div>
+  <div class="tab-item" data-tab="notes">
+    <span class="tab-icon">📝</span><span>笔记</span>
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main class="main" id="mainContent">
+
+<!-- 今日计划 -->
+<div class="page active" id="page-today">
+  <div class="stats-mini">
+    <div class="stat-mini-card"><div class="num" id="todaySchedulePct">0%</div><div class="lbl">进度</div></div>
+    <div class="stat-mini-card"><div class="num" id="todayFocusMin">0</div><div class="lbl">专注(分)</div></div>
+    <div class="stat-mini-card"><div class="num" id="todayStreak">0</div><div class="lbl">连续天数</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      ⏰ 每日作息
+      <span class="tag tag-green" id="todayPhaseTag">一轮基础期</span>
+    </div>
+    <div class="flex" style="gap:16px;align-items:center;margin-bottom:6px;">
+      <div class="progress-ring" id="scheduleRing">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <circle class="bg" cx="30" cy="30" r="25"/>
+          <circle class="fg" cx="30" cy="30" r="25" stroke-dasharray="157.08" stroke-dashoffset="157.08" id="scheduleArc"/>
+        </svg>
+        <div class="center" id="schedulePctText">0%</div>
+      </div>
+      <div class="text-sm" style="flex:1;">完成当日所有时段打卡，养成学习习惯 🌟</div>
+    </div>
+    <ul class="schedule-list" id="scheduleList"></ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 今日专注目标 <span class="tag tag-orange">加油</span></div>
+    <div class="grid-2">
+      <div class="field-group">
+        <label>🎯 今日目标 (小时)</label>
+        <input type="number" id="todayGoal" min="1" max="16" value="9" step="0.5">
+      </div>
+      <div class="field-group">
+        <label>📊 已完成 (小时)</label>
+        <input type="number" id="todayDone" min="0" max="16" value="0" step="0.5">
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm mt-8" id="saveTodayGoalBtn">💾 保存目标</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🌙 今日复盘小结</div>
+    <textarea id="todayJournal" placeholder="今天的学习感受、收获、不足…&#10;例如：今天高代第四章完成，但英语阅读错太多，明天重点分析错误原因。"></textarea>
+    <button class="btn btn-primary btn-sm mt-8" id="saveJournalBtn">💾 保存复盘</button>
+  </div>
+</div>
+
+<!-- 英语 -->
+<div class="page" id="page-english">
+  <div class="card">
+    <div class="card-title">📚 英语学习</div>
+    <div class="washi"></div>
+    <div class="field-group">
+      <label>📖 阅读理解</label>
+      <textarea id="engReading" placeholder="今日阅读篇目、错题分析、生词总结…"></textarea>
+    </div>
+    <div class="field-group">
+      <label>📝 单词背诵</label>
+      <textarea id="engWords" placeholder="新学单词 / 复习单词 / 易混词…&#10;例如：abandon→放弃, absorb→吸收, abstract→抽象的"></textarea>
+    </div>
+    <div class="field-group">
+      <label>🔗 长难句分析</label>
+      <textarea id="engSentences" placeholder="今日长难句摘抄与解析…"></textarea>
+    </div>
+    <button class="btn btn-primary btn-sm" id="saveEnglishBtn">💾 保存英语记录</button>
+  </div>
+</div>
+
+<!-- 专业课 -->
+<div class="page" id="page-major">
+  <div class="card">
+    <div class="card-title">📖 专业课学习</div>
+    <div class="washi"></div>
+    <div class="field-group">
+      <label>📌 今日学习内容</label>
+      <input type="text" id="majorTopic" placeholder="例如：高代第四章 特征值、数分第九章 级数">
+    </div>
+    <div class="field-group">
+      <label>📝 学习笔记 / 重难点</label>
+      <textarea id="majorNotes" placeholder="记录今日专业课上遇到的重点、难点、易错点…"></textarea>
+    </div>
+    <div class="field-group">
+      <label>❓ 遗留问题</label>
+      <textarea id="majorQuestions" placeholder="还有哪些没搞懂的地方？需要问老师/同学的？"></textarea>
+    </div>
+    <button class="btn btn-primary btn-sm" id="saveMajorBtn">💾 保存专业课记录</button>
+  </div>
+</div>
+
+<!-- 政治 -->
+<div class="page" id="page-politics">
+  <div class="card">
+    <div class="card-title">🏛️ 政治学习</div>
+    <div class="washi"></div>
+    <div class="field-group">
+      <label>📌 学习章节 / 内容</label>
+      <input type="text" id="polTopic" placeholder="例如：马原第二章、毛中特第三章">
+    </div>
+    <div class="field-group">
+      <label>📝 知识点笔记</label>
+      <textarea id="polNotes" placeholder="整理今日学到的政治知识点…"></textarea>
+    </div>
+    <div class="field-group">
+      <label>📊 刷题记录</label>
+      <textarea id="polPractice" placeholder="今日刷题情况：&#10;· 单选题：错X题&#10;· 多选题：错X题&#10;· 错题知识点："></textarea>
+    </div>
+    <button class="btn btn-primary btn-sm" id="savePoliticsBtn">💾 保存政治记录</button>
+  </div>
+</div>
+
+<!-- 任务 -->
+<div class="page" id="page-tasks">
+  <div class="card">
+    <div class="card-title">
+      ✅ 阶段任务清单
+      <span class="tag tag-green" id="taskPhaseTag">一轮基础期</span>
+    </div>
+    <div id="phaseDesc" class="text-sm mb-12" style="padding:8px 12px;background:rgba(168,213,186,0.06);border-radius:8px;"></div>
+    <div id="taskList"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">➕ 自定义任务</div>
+    <div class="flex" style="gap:8px;">
+      <input type="text" id="customTaskInput" placeholder="输入自定义任务…" style="flex:1;">
+      <button class="btn btn-primary btn-sm" id="addCustomTaskBtn">添加</button>
+    </div>
+    <div id="customTaskList" class="mt-8"></div>
+  </div>
+</div>
+
+<!-- 计时 -->
+<div class="page" id="page-timer">
+  <div class="card">
+    <div class="card-title text-center">⏱️ 专注计时</div>
+    <div class="timer-presets" id="timerPresets">
+      <button class="tp active" data-min="25">25分</button>
+      <button class="tp" data-min="30">30分</button>
+      <button class="tp" data-min="45">45分</button>
+      <button class="tp" data-min="60">60分</button>
+      <button class="tp" data-min="90">90分</button>
+    </div>
+    <div class="timer-display">
+      <div class="time" id="timerDisplay">25:00</div>
+      <div class="timer-label" id="timerLabel">🍅 专注时间</div>
+    </div>
+    <div class="timer-controls">
+      <button class="btn btn-primary" id="timerStartBtn">▶ 开始</button>
+      <button class="btn btn-outline" id="timerResetBtn">↺ 重置</button>
+    </div>
+    <div class="timer-stats">
+      <div class="ts-item"><div class="ts-num" id="todayPomodoros">0</div><div class="ts-lbl">今日🍅</div></div>
+      <div class="ts-item"><div class="ts-num" id="totalFocusMin">0</div><div class="ts-lbl">总专注(分)</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 今日专注记录</div>
+    <div id="focusLogList"><div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">今天还没有专注记录，开始计时吧！</div></div></div>
+  </div>
+</div>
+
+<!-- 笔记 -->
+<div class="page" id="page-notes">
+  <div class="card">
+    <div class="card-title">📝 学习笔记</div>
+    <div class="washi"></div>
+    <textarea id="notesContent" placeholder="在这里记录你的学习笔记、知识总结、思维导图…" style="min-height:140px;"></textarea>
+    <button class="btn btn-primary btn-sm mt-8" id="saveNotesBtn">💾 保存笔记</button>
+  </div>
+  <div class="card">
+    <div class="card-title">🔍 OCR 文字识别</div>
+    <div class="text-sm mb-12" style="color:var(--text-muted);">上传课本/资料截图，自动提取文字 🥔</div>
+    <div class="ocr-zone" id="ocrZone">
+      <div class="ocr-icon">📸</div>
+      <div class="ocr-text">点击上传图片 或 拖拽到此处</div>
+    </div>
+    <input type="file" id="ocrInput" accept="image/*" style="display:none;">
+    <div class="ocr-result" id="ocrResult"></div>
+    <button class="btn btn-orange btn-sm mt-8" id="ocrToNotesBtn" style="display:none;">📝 插入到笔记</button>
+  </div>
+  <div class="card">
+    <div class="card-title">📜 历史笔记</div>
+    <div id="notesHistory"><div class="empty-state"><div class="empty-icon">📄</div><div class="empty-text">还没有保存过笔记～</div></div></div>
+  </div>
+</div>
+
+</main>
+
+<!-- ===== Tesseract CDN ===== -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js">
+</script>
+
+<script>
+// ===================================================================
+// 🥔 考研日记 · 完整应用逻辑
+// ===================================================================
+
+// ---------- CONSTANTS ----------
+const DATA_KEY = 'ky_exam_workbench';
+const EXAM_DATE = new Date(2026, 11, 26); // Dec 26, 2026
+
+const SCHEDULE = [
+  { time: '07:30', icon: '📖', label: '英语阅读讲解复盘' },
+  { time: '08:00', icon: '📚', label: '专业课' },
+  { time: '12:00', icon: '🍚', label: '午饭午休' },
+  { time: '14:00', icon: '📖', label: '专业课' },
+  { time: '18:30', icon: '🧘', label: '休整' },
+  { time: '19:00', icon: '🏛️', label: '政治' },
+  { time: '20:00', icon: '📖', label: '英语(阅读+单词+长难句)' },
+];
+
+const QUOTES = [
+  '考研就像在黑屋子里洗衣服，你不知道洗干净了没有，只能一遍又一遍地洗。',
+  '既然选择了远方，便只顾风雨兼程。',
+  '星光不负赶路人，时光不负有心人。',
+  '将来的你，一定会感谢现在拼命的自己。',
+  '乾坤未定，你我皆是黑马。',
+  '半山腰太挤了，要去山顶看看。',
+  '每个优秀的人，都有一段沉默的时光。',
+  '但凡辛苦，都是礼物。',
+  '熬过无人问津的日子，才能拥抱诗和远方。',
+  '那些你起早贪黑的日子，终会变成你未来的光。',
+  '自律＋努力＝更好的自己。',
+  '不要假装很努力，结果不会陪你演戏。',
+  '考研路上最大的敌人不是别人，是自己。',
+  '再坚持一下，一切都会值得。',
+  '你背单词时，阿拉斯加的鳕鱼正跃出水面。',
+];
+
+// ---------- PHASE SYSTEM ----------
+function getPhase(date) {
+  const t = date.getTime();
+  const mk = (m,d) => new Date(2026,m-1,d).getTime();
+  if (t < mk(7,30)) return { name:'一轮基础期', type:'base', desc:'📖 一轮基础复习 · 过教材、做课后题、打地基' };
+  if (t < mk(8,1))  return { name:'一轮收尾期', type:'base', desc:'📖 一轮收尾 · 马原结束，准备进入政治刷题阶段' };
+  if (t < mk(8,10)) return { name:'政治启动期', type:'transition', desc:'🏛️ 政治启动刷题 + 一轮收尾 · 高代即将强化' };
+  if (t < mk(8,31)) return { name:'强化阶段', type:'intense', desc:'⚡ 高代强化启动（李扬讲义）· 专题突破' };
+  if (t < mk(9,15)) return { name:'二轮阶段', type:'round2', desc:'🔄 二轮复习 · 真题模拟、查漏补缺' };
+  return { name:'冲刺阶段', type:'sprint', desc:'🚀 冲刺期 · 全真模拟、政治背诵、作文模板' };
+}
+
+const TASK_TEMPLATES = {
+  base: [
+    '📖 英语：每日阅读精析 1 篇',
+    '📚 专业课：过教材章节 + 课后习题',
+    '🏛️ 政治：马原课程学习',
+    '📝 英语：背单词 50 个',
+    '📖 专业课：整理笔记/思维导图',
+    '🔗 英语：长难句分析 2-3 句',
+  ],
+  transition: [
+    '📖 英语：阅读精析 + 长难句',
+    '📚 专业课：一轮收尾复习',
+    '🏛️ 政治：马原结束 + 开始刷题',
+    '⚡ 高代：启动强化准备',
+    '📝 英语：单词复习 50 个',
+    '📖 专业课：整理一轮错题',
+  ],
+  intense: [
+    '⚡ 高代：李扬强化讲义',
+    '📚 专业课：专题突破',
+    '🏛️ 政治：刷题 + 知识点整理',
+    '📖 英语：阅读 + 单词 + 长难句',
+    '📝 整理强化阶段笔记',
+    '📊 专业课真题练习',
+  ],
+  round2: [
+    '🔄 专业课二轮复习',
+    '🏛️ 政治刷题 + 错题本',
+    '📖 英语真题 + 作文模板',
+    '⚡ 高代二轮强化',
+    '📝 查漏补缺',
+    '📊 真题模拟',
+  ],
+  sprint: [
+    '🚀 全真模拟考试',
+    '🏛️ 政治大题背诵',
+    '📖 英语作文模板 + 押题',
+    '📚 专业课冲刺背诵',
+    '📝 错题回顾',
+    '⚡ 高代押题训练',
+  ],
+};
+
+// ---------- DATA ----------
+function getToday() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(DATA_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveData(data) {
+  localStorage.setItem(DATA_KEY, JSON.stringify(data));
+}
+
+function getDayData() {
+  const all = loadData();
+  const t = getToday();
+  if (!all[t]) {
+    all[t] = {
+      schedule: {},
+      goal: 9, doneHours: 0,
+      journal: '',
+      english: { reading:'', words:'', sentences:'' },
+      major: { topic:'', notes:'', questions:'' },
+      politics: { topic:'', notes:'', practice:'' },
+      tasks: {}, customTasks: [],
+      pomodoros: 0, focusMinutes: 0, focusLog: [],
+      notes: '',
+    };
+    saveData(all);
+  }
+  return all[t];
+}
+
+function setDayData(key, val) {
+  const all = loadData();
+  const t = getToday();
+  if (!all[t]) all[t] = getDayData();
+  all[t][key] = val;
+  saveData(all);
+}
+
+function setDayNested(section, key, val) {
+  const all = loadData();
+  const t = getToday();
+  if (!all[t]) all[t] = getDayData();
+  all[t][section] = all[t][section] || {};
+  all[t][section][key] = val;
+  saveData(all);
+}
+
+// ---------- UTILITY ----------
+function getDayOfYear() {
+  const n = new Date();
+  const s = new Date(n.getFullYear(),0,0);
+  return Math.floor((n - s) / 86400000);
+}
+
+function countdown() {
+  const diff = EXAM_DATE - new Date();
+  return Math.max(0, Math.ceil(diff / 86400000));
+}
+
+function getWeekday() {
+  return ['日','一','二','三','四','五','六'][new Date().getDay()];
+}
+
+function getStreak() {
+  const all = loadData();
+  let streak = 0;
+  const d = new Date();
+  for (let i = 0; i < 365; i++) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const key = `${y}-${m}-${dd}`;
+    const day = all[key];
+    if (day && Object.keys(day.schedule||{}).length > 0) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else break;
+  }
+  return streak;
+}
+
+function getTodayFocus() {
+  return getDayData().focusMinutes || 0;
+}
+
+// ---------- HEADER ----------
+function updateHeader() {
+  document.getElementById('countdownNum').textContent = countdown();
+  const now = new Date();
+  document.getElementById('headerDate').textContent =
+    `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+  document.getElementById('headerWeekday').textContent = `周${getWeekday()}`;
+
+  const phase = getPhase(now);
+  document.getElementById('phaseBadge').textContent = phase.name;
+  document.getElementById('todayPhaseTag').textContent = phase.name;
+  document.getElementById('taskPhaseTag').textContent = phase.name;
+  document.getElementById('phaseDesc').textContent = phase.desc;
+
+  // Quote
+  const qi = getDayOfYear() % QUOTES.length;
+  document.getElementById('quoteText').textContent = QUOTES[qi];
+}
+updateHeader();
+
+// ---------- TAB SWITCH ----------
+document.querySelectorAll('.tab-item').forEach(el => {
+  el.addEventListener('click', function() {
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + this.dataset.tab).classList.add('active');
+    document.getElementById('mainContent').scrollTop = 0;
+  });
+});
+
+// ===================================================================
+// 🕐 今日计划
+// ===================================================================
+function renderSchedule() {
+  const dayData = getDayData();
+  const list = document.getElementById('scheduleList');
+  const total = SCHEDULE.length;
+  let checked = 0;
+
+  // Highlight current time slot
+  const now = new Date();
+  const curMin = now.getHours() * 60 + now.getMinutes();
+
+  list.innerHTML = '';
+  SCHEDULE.forEach((s, idx) => {
+    const [h, m] = s.time.split(':').map(Number);
+    const slotMin = h * 60 + m;
+    const nextSlot = SCHEDULE[idx + 1];
+    const nextMin = nextSlot
+      ? nextSlot.time.split(':').map(Number)
+      : [h+1,m];
+    const endMin = nextSlot
+      ? nextSlot.time.split(':').reduce((a,b) => a*60+Number(b))
+      : slotMin + 120;
+    const isCurrent = curMin >= slotMin && curMin < endMin;
+    const isDone = dayData.schedule[s.time] === true;
+    if (isDone) checked++;
+
+    const li = document.createElement('li');
+    li.className = 'schedule-item' + (isCurrent ? ' current' : '');
+    li.innerHTML = `
+      <span class="s-time">${s.time}</span>
+      <span class="s-icon">${s.icon}</span>
+      <span class="s-label">${s.label}</span>
+      <div class="s-check ${isDone ? 'checked' : 'unchecked'}" data-time="${s.time}"></div>
+    `;
+    list.appendChild(li);
+
+    if (isCurrent) {
+      li.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  });
+
+  // Update progress
+  const pct = total ? Math.round(checked / total * 100) : 0;
+  document.getElementById('todaySchedulePct').textContent = pct + '%';
+  document.getElementById('schedulePctText').textContent = pct + '%';
+  const circumference = 157.08;
+  document.getElementById('scheduleArc').style.strokeDashoffset =
+    circumference - (pct / 100) * circumference;
+
+  // Stats
+  document.getElementById('todayFocusMin').textContent = getTodayFocus();
+  document.getElementById('todayStreak').textContent = getStreak();
+}
+renderSchedule();
+
+// Schedule checkbox toggle
+document.getElementById('scheduleList').addEventListener('click', function(e) {
+  const check = e.target.closest('.s-check');
+  if (!check) return;
+  const time = check.dataset.time;
+  const dayData = getDayData();
+  dayData.schedule[time] = !dayData.schedule[time];
+  setDayData('schedule', dayData.schedule);
+  renderSchedule();
+});
+
+// Goal
+document.getElementById('saveTodayGoalBtn').addEventListener('click', function() {
+  const goal = parseFloat(document.getElementById('todayGoal').value) || 9;
+  const done = parseFloat(document.getElementById('todayDone').value) || 0;
+  setDayData('goal', goal);
+  setDayData('doneHours', done);
+  showToast('✅ 目标已保存');
+});
+
+// Journal
+document.getElementById('saveJournalBtn').addEventListener('click', function() {
+  setDayData('journal', document.getElementById('todayJournal').value);
+  showToast('📝 复盘已保存');
+});
+
+// Load data into inputs
+function loadTodayInputs() {
+  const d = getDayData();
+  document.getElementById('todayGoal').value = d.goal || 9;
+  document.getElementById('todayDone').value = d.doneHours || 0;
+  document.getElementById('todayJournal').value = d.journal || '';
+}
+loadTodayInputs();
+
+// ===================================================================
+// 📚 英语
+// ===================================================================
+function loadEnglish() {
+  const d = getDayData().english || {};
+  document.getElementById('engReading').value = d.reading || '';
+  document.getElementById('engWords').value = d.words || '';
+  document.getElementById('engSentences').value = d.sentences || '';
+}
+loadEnglish();
+
+document.getElementById('saveEnglishBtn').addEventListener('click', function() {
+  setDayData('english', {
+    reading: document.getElementById('engReading').value,
+    words: document.getElementById('engWords').value,
+    sentences: document.getElementById('engSentences').value,
+  });
+  showToast('📚 英语记录已保存');
+});
+
+// ===================================================================
+// 📖 专业课
+// ===================================================================
+function loadMajor() {
+  const d = getDayData().major || {};
+  document.getElementById('majorTopic').value = d.topic || '';
+  document.getElementById('majorNotes').value = d.notes || '';
+  document.getElementById('majorQuestions').value = d.questions || '';
+}
+loadMajor();
+
+document.getElementById('saveMajorBtn').addEventListener('click', function() {
+  setDayData('major', {
+    topic: document.getElementById('majorTopic').value,
+    notes: document.getElementById('majorNotes').value,
+    questions: document.getElementById('majorQuestions').value,
+  });
+  showToast('📖 专业课记录已保存');
+});
+
+// ===================================================================
+// 🏛️ 政治
+// ===================================================================
+function loadPolitics() {
+  const d = getDayData().politics || {};
+  document.getElementById('polTopic').value = d.topic || '';
+  document.getElementById('polNotes').value = d.notes || '';
+  document.getElementById('polPractice').value = d.practice || '';
+}
+loadPolitics();
+
+document.getElementById('savePoliticsBtn').addEventListener('click', function() {
+  setDayData('politics', {
+    topic: document.getElementById('polTopic').value,
+    notes: document.getElementById('polNotes').value,
+    practice: document.getElementById('polPractice').value,
+  });
+  showToast('🏛️ 政治记录已保存');
+});
+
+// ===================================================================
+// ✅ 阶段任务
+// ===================================================================
+function renderTasks() {
+  const phase = getPhase(new Date());
+  const templates = TASK_TEMPLATES[phase.type] || TASK_TEMPLATES.base;
+  const dayData = getDayData();
+  const taskStatus = dayData.tasks || {};
+
+  const container = document.getElementById('taskList');
+  container.innerHTML = templates.map((t, i) => {
+    const key = 'tmpl_' + i;
+    const done = taskStatus[key] === true;
+    return `<div class="task-card ${done?'done':''}">
+      <div class="task-row">
+        <div class="task-cb ${done?'checked':''}" data-task="${key}"></div>
+        <div class="task-text">${t}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // custom tasks
+  const custom = dayData.customTasks || [];
+  const cContainer = document.getElementById('customTaskList');
+  if (custom.length === 0) {
+    cContainer.innerHTML = '<div class="text-sm" style="color:var(--text-muted);padding:8px 0;">还没有自定义任务～</div>';
+  } else {
+    cContainer.innerHTML = custom.map((ct, i) => {
+      const done = taskStatus['custom_' + i] === true;
+      return `<div class="task-card ${done?'done':''}">
+        <div class="task-row">
+          <div class="task-cb ${done?'checked':''}" data-task="custom_${i}"></div>
+          <div class="task-text">${ct}</div>
+          <span style="cursor:pointer;color:var(--text-muted);font-size:16px;" data-del="custom_${i}">✕</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+renderTasks();
+
+// Task checkbox toggle (event delegation)
+document.getElementById('page-tasks').addEventListener('click', function(e) {
+  const cb = e.target.closest('.task-cb');
+  if (cb) {
+    const key = cb.dataset.task;
+    const dayData = getDayData();
+    if (!dayData.tasks) dayData.tasks = {};
+    dayData.tasks[key] = !dayData.tasks[key];
+    setDayData('tasks', dayData.tasks);
+    renderTasks();
+    return;
+  }
+  const del = e.target.closest('[data-del]');
+  if (del) {
+    const key = del.dataset.del;
+    const idx = parseInt(key.replace('custom_',''));
+    const dayData = getDayData();
+    if (dayData.customTasks) {
+      dayData.customTasks.splice(idx, 1);
+      // also clean up task status
+      const newTasks = {};
+      Object.keys(dayData.tasks || {}).forEach(k => {
+        if (k.startsWith('custom_')) {
+          const ci = parseInt(k.replace('custom_',''));
+          if (ci !== idx) newTasks['custom_' + (ci > idx ? ci - 1 : ci)] = dayData.tasks[k];
+        } else newTasks[k] = dayData.tasks[k];
+      });
+      dayData.tasks = newTasks;
+      setDayData('tasks', dayData.tasks);
+      setDayData('customTasks', dayData.customTasks);
+      renderTasks();
+    }
+  }
+});
+
+document.getElementById('addCustomTaskBtn').addEventListener('click', function() {
+  const input = document.getElementById('customTaskInput');
+  const val = input.value.trim();
+  if (!val) return;
+  const dayData = getDayData();
+  if (!dayData.customTasks) dayData.customTasks = [];
+  dayData.customTasks.push(val);
+  setDayData('customTasks', dayData.customTasks);
+  input.value = '';
+  renderTasks();
+  showToast('✅ 已添加自定义任务');
+});
+
+// ===================================================================
+// ⏱️ 专注计时
+// ===================================================================
+let timerState = 'idle'; // idle | running | paused
+let timerSeconds = 25 * 60;
+let timerPreset = 25;
+let timerInterval = null;
+let timerStartTime = null;
+let timerElapsedBefore = 0;
+
+function formatTime(sec) {
+  const m = String(Math.floor(sec / 60)).padStart(2, '0');
+  const s = String(sec % 60).padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function updateTimerDisplay() {
+  document.getElementById('timerDisplay').textContent = formatTime(timerSeconds);
+}
+
+function loadTimerStats() {
+  const d = getDayData();
+  document.getElementById('todayPomodoros').textContent = d.pomodoros || 0;
+  document.getElementById('totalFocusMin').textContent = d.focusMinutes || 0;
+}
+loadTimerStats();
+
+document.querySelectorAll('.timer-presets .tp').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (timerState === 'running') return;
+    document.querySelectorAll('.timer-presets .tp').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    timerPreset = parseInt(this.dataset.min);
+    timerSeconds = timerPreset * 60;
+    timerElapsedBefore = 0;
+    updateTimerDisplay();
+    document.getElementById('timerLabel').textContent = `🍅 ${timerPreset}分钟 专注时间`;
+    document.getElementById('timerStartBtn').textContent = '▶ 开始';
+    timerState = 'idle';
+  });
+});
+
+document.getElementById('timerStartBtn').addEventListener('click', function() {
+  if (timerState === 'idle' || timerState === 'paused') {
+    // Start / Resume
+    timerState = 'running';
+    if (timerState === 'idle') timerStartTime = Date.now();
+    this.textContent = '⏸ 暂停';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      updateTimerDisplay();
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerState = 'idle';
+        this.textContent = '▶ 开始';
+        // Record this session
+        const minutes = timerPreset;
+        const d = getDayData();
+        d.pomodoros = (d.pomodoros || 0) + 1;
+        d.focusMinutes = (d.focusMinutes || 0) + minutes;
+        if (!d.focusLog) d.focusLog = [];
+        d.focusLog.push({
+          time: new Date().toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' }),
+          duration: minutes,
+          type: '专注'
+        });
+        setDayData('pomodoros', d.pomodoros);
+        setDayData('focusMinutes', d.focusMinutes);
+        setDayData('focusLog', d.focusLog);
+        loadTimerStats();
+        renderFocusLog();
+        timerElapsedBefore = 0;
+        timerSeconds = timerPreset * 60;
+        updateTimerDisplay();
+        showToast(`🎉 完成 ${minutes} 分钟专注！`);
+      }
+    }, 1000);
+  } else if (timerState === 'running') {
+    clearInterval(timerInterval);
+    timerState = 'paused';
+    this.textContent = '▶ 继续';
+  }
+});
+
+document.getElementById('timerResetBtn').addEventListener('click', function() {
+  clearInterval(timerInterval);
+  timerState = 'idle';
+  timerSeconds = timerPreset * 60;
+  timerElapsedBefore = 0;
+  updateTimerDisplay();
+  document.getElementById('timerStartBtn').textContent = '▶ 开始';
+  document.getElementById('timerLabel').textContent = `🍅 ${timerPreset}分钟 专注时间`;
+});
+
+function renderFocusLog() {
+  const d = getDayData();
+  const log = d.focusLog || [];
+  const container = document.getElementById('focusLogList');
+  if (log.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">今天还没有专注记录，开始计时吧！</div></div>';
+    return;
+  }
+  container.innerHTML = log.map(l =>
+    `<div class="flex" style="padding:6px 0;border-bottom:1px solid rgba(168,213,186,0.1);gap:8px;">
+      <span style="font-size:16px;">🍅</span>
+      <span style="font-size:13px;flex:1;">${l.type}</span>
+      <span style="font-size:12px;color:var(--text-light);">${l.time}</span>
+      <span style="font-size:13px;font-weight:600;color:var(--orange);">${l.duration}分</span>
+    </div>`
+  ).join('');
+}
+renderFocusLog();
+
+// ===================================================================
+// 📝 笔记 + OCR
+// ===================================================================
+function loadNotes() {
+  const d = getDayData();
+  document.getElementById('notesContent').value = d.notes || '';
+}
+loadNotes();
+
+document.getElementById('saveNotesBtn').addEventListener('click', function() {
+  setDayData('notes', document.getElementById('notesContent').value);
+  renderNotesHistory();
+  showToast('📝 笔记已保存');
+});
+
+function renderNotesHistory() {
+  const all = loadData();
+  const dates = Object.keys(all).sort().reverse();
+  const container = document.getElementById('notesHistory');
+  let has = false;
+  let html = '';
+  for (const d of dates) {
+    const note = all[d]?.notes;
+    if (note && note.trim()) {
+      has = true;
+      const preview = note.length > 80 ? note.slice(0,80) + '…' : note;
+      html += `<div class="flex" style="padding:8px 0;border-bottom:1px solid rgba(168,213,186,0.1);">
+        <span style="font-size:14px;flex-shrink:0;margin-right:8px;">📄</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:11px;color:var(--text-light);">${d}</div>
+          <div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${preview}</div>
+        </div>
+      </div>`;
+    }
+  }
+  container.innerHTML = has ? html : '<div class="empty-state"><div class="empty-icon">📄</div><div class="empty-text">还没有保存过笔记～</div></div>';
+}
+renderNotesHistory();
+
+// OCR
+const ocrZone = document.getElementById('ocrZone');
+const ocrInput = document.getElementById('ocrInput');
+const ocrResult = document.getElementById('ocrResult');
+const ocrToNotes = document.getElementById('ocrToNotesBtn');
+
+ocrZone.addEventListener('click', () => ocrInput.click());
+ocrZone.addEventListener('dragover', (e) => { e.preventDefault(); ocrZone.classList.add('drag-over'); });
+ocrZone.addEventListener('dragleave', () => ocrZone.classList.remove('drag-over'));
+ocrZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  ocrZone.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) handleOCRFile(e.dataTransfer.files[0]);
+});
+
+ocrInput.addEventListener('change', function() {
+  if (this.files.length) handleOCRFile(this.files[0]);
+});
+
+async function handleOCRFile(file) {
+  if (!file.type.startsWith('image/')) { showToast('⚠️ 请上传图片文件'); return; }
+  ocrResult.style.display = 'block';
+  ocrResult.innerHTML = '<span class="ocr-spinner"></span> 正在识别中，请稍候…';
+  ocrToNotes.style.display = 'none';
+  try {
+    const { data: { text } } = await Tesseract.recognize(file, 'chi_sim+eng', {
+      logger: (m) => {
+        if (m.status === 'recognizing text') {
+          const pct = Math.round(m.progress * 100);
+          ocrResult.innerHTML = `<span class="ocr-spinner"></span> 识别中 ${pct}%…`;
+        }
+      }
+    });
+    if (text.trim()) {
+      ocrResult.innerHTML = text;
+      ocrToNotes.style.display = 'inline-flex';
+      ocrToNotes.dataset.text = text;
+    } else {
+      ocrResult.innerHTML = '😅 没有识别到文字，请换一张清晰的图片试试～';
+    }
+  } catch (e) {
+    ocrResult.innerHTML = '❌ 识别失败：' + e.message;
+  }
+}
+
+document.getElementById('ocrToNotesBtn').addEventListener('click', function() {
+  const text = this.dataset.text;
+  if (!text) return;
+  const ta = document.getElementById('notesContent');
+  ta.value += (ta.value ? '\n\n' : '') + '--- OCR 识别 ---\n' + text;
+  ta.scrollTop = ta.scrollHeight;
+  showToast('📝 已插入到笔记');
+  this.style.display = 'none';
+});
+
+// ===================================================================
+// 🛠️ Autosave on blur
+// ===================================================================
+function setupAutosave(inputId, dataKey, isNested, nestedKey) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  el.addEventListener('blur', function() {
+    if (isNested) setDayNested(dataKey, nestedKey, this.value);
+    else setDayData(dataKey, this.value);
+  });
+}
+
+// English
+setupAutosave('engReading', 'english', true, 'reading');
+setupAutosave('engWords', 'english', true, 'words');
+setupAutosave('engSentences', 'english', true, 'sentences');
+
+// Major
+setupAutosave('majorTopic', 'major', true, 'topic');
+setupAutosave('majorNotes', 'major', true, 'notes');
+setupAutosave('majorQuestions', 'major', true, 'questions');
+
+// Politics
+setupAutosave('polTopic', 'politics', true, 'topic');
+setupAutosave('polNotes', 'politics', true, 'notes');
+setupAutosave('polPractice', 'politics', true, 'practice');
+
+// General
+setupAutosave('todayGoal', 'goal', false);
+setupAutosave('todayDone', 'doneHours', false);
+setupAutosave('todayJournal', 'journal', false);
+setupAutosave('notesContent', 'notes', false);
+
+// ===================================================================
+// 🥔 Potato Icons Setup
+// ===================================================================
+function setupIcons() {
+  const potatoSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <defs><radialGradient id="g" cx="40%" cy="35%" r="60%"><stop offset="0" stop-color="#F7DC6F"/><stop offset="1" stop-color="#E8C83A"/></radialGradient></defs>
+    <ellipse cx="100" cy="106" rx="55" ry="63" fill="url(#g)"/>
+    <ellipse cx="80" cy="82" rx="16" ry="12" fill="#fff" opacity=".12"/>
+    <path d="M95 40Q100 26 106 35Q100 30 95 40" fill="#A8D5BA"/>
+    <path d="M100 38Q106 24 112 32Q106 30 100 38" fill="#A8D5BA"/>
+    <circle cx="84" cy="94" r="4" fill="#3D3D3D"/>
+    <circle cx="116" cy="94" r="4" fill="#3D3D3D"/>
+    <ellipse cx="74" cy="107" rx="7" ry="4.5" fill="#FFB3A3" opacity=".5"/>
+    <ellipse cx="126" cy="107" rx="7" ry="4.5" fill="#FFB3A3" opacity=".5"/>
+    <path d="M92 114Q100 125 108 114" fill="none" stroke="#3D3D3D" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="136" y="91" width="26" height="20" rx="3" fill="#A8D5BA"/>
+    <rect x="138" y="93" width="22" height="16" rx="2" fill="#FFF8E7"/>
+    <line x1="144" y1="99" x2="156" y2="99" stroke="#A8D5BA" stroke-width="1.5"/>
+    <line x1="144" y1="103" x2="156" y2="103" stroke="#A8D5BA" stroke-width="1.5"/>
+    <ellipse cx="136" cy="108" rx="5" ry="3.5" fill="#E8C83A" transform="rotate(-10,136,108)"/>
+    <ellipse cx="162" cy="108" rx="5" ry="3.5" fill="#E8C83A" transform="rotate(10,162,108)"/>
+  </svg>`;
+
+  const encoded = encodeURIComponent(potatoSVG);
+  const dataUri = `data:image/svg+xml,${encoded}`;
+  document.getElementById('favicon').href = dataUri;
+  document.getElementById('appleTouchIcon').href = dataUri;
+
+  // Generate manifest with canvas-generated PNG icons
+  const canvas = document.createElement('canvas');
+  canvas.width = 192; canvas.height = 192;
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0, 192, 192);
+    const pngData = canvas.toDataURL('image/png');
+
+    const manifest = {
+      name: '考研日记',
+      short_name: '考研日记',
+      description: '考研无纸化学习工作台',
+      display: 'standalone',
+      start_url: '.',
+      background_color: '#FFF8E7',
+      theme_color: '#A8D5BA',
+      icons: [
+        { src: pngData, sizes: '192x192', type: 'image/png' },
+        { src: pngData, sizes: '512x512', type: 'image/png' }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = URL.createObjectURL(blob);
+    document.head.appendChild(link);
+  };
+  img.src = dataUri;
+}
+setupIcons();
+
+// ===================================================================
+// 🍞 Toast
+// ===================================================================
+function showToast(msg) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = `
+      position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:rgba(61,61,61,0.92);color:white;padding:12px 24px;border-radius:50px;
+      font-size:14px;font-weight:500;z-index:9999;
+      opacity:0;transition:all 0.3s ease;pointer-events:none;
+      backdrop-filter:blur(8px);max-width:80vw;text-align:center;
+      box-shadow:0 8px 30px rgba(0,0,0,0.15);
+    `;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toast._hide);
+  toast._hide = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2000);
+}
+
+// ===================================================================
+// 🕰️ Update clock every minute
+// ===================================================================
+setInterval(() => {
+  updateHeader();
+  renderSchedule(); // re-render to update current time highlight
+}, 60000);
+
+// Re-render schedule every 30 seconds for current time highlight
+setInterval(() => {
+  // Just update the current highlight without full re-render
+  const now = new Date();
+  const curMin = now.getHours() * 60 + now.getMinutes();
+  document.querySelectorAll('.schedule-item').forEach((item, idx) => {
+    const s = SCHEDULE[idx];
+    if (!s) return;
+    const [h, m] = s.time.split(':').map(Number);
+    const slotMin = h * 60 + m;
+    const nextSlot = SCHEDULE[idx + 1];
+    const endMin = nextSlot
+      ? nextSlot.time.split(':').reduce((a,b) => a*60+Number(b))
+      : slotMin + 120;
+    item.classList.toggle('current', curMin >= slotMin && curMin < endMin);
+  });
+}, 30000);
+
+console.log('🥔 考研日记 · 无纸化学习工作台 已加载！');
+console.log('📚 今天也要加油鸭～');
+</script>
+</body>
+</html>
