@@ -151,6 +151,8 @@ body{
 .sc-v1:hover{background:linear-gradient(135deg,#FFF0F5,white);}
 .sc-v2{background:linear-gradient(135deg,white,#FFF8E7);}
 .sc-v2:hover{background:linear-gradient(135deg,#FFF8E7,white);}
+.sc-v3{background:linear-gradient(135deg,white,#E8F2E6);}
+.sc-v3:hover{background:linear-gradient(135deg,#E8F2E6,white);}
 
 .sc-icon{font-size:40px;flex-shrink:0;margin-top:2px;}
 .sc-info{flex:1;min-width:0;}
@@ -298,7 +300,7 @@ body{
     <div class="sidebar-avatar">🏠</div>
     <div>
       <div class="sidebar-name">案例合集</div>
-      <div class="sidebar-status">3 个工作台</div>
+      <div class="sidebar-status">4 个工作台</div>
     </div>
   </div>
   <ul class="nav-list">
@@ -313,6 +315,9 @@ body{
     </li>
     <li class="nav-item" data-page="v2">
       <span class="nav-icon">🥔</span>考研工作台
+    </li>
+    <li class="nav-item" data-page="v3">
+      <span class="nav-icon">🌿</span>枝恩工作台
     </li>
     <li class="nav-item" data-page="prompts" style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
       <span class="nav-icon">💡</span>用提示词定制
@@ -362,7 +367,7 @@ body{
     </div>
     <div class="creator-text">
       这个项目起源于胡楚靓分享的工作台方法。粉丝们根据她的教学视频，制作了各种风格的个性化工作台版本。
-      这里收录了其中最受欢迎的 3 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
+      这里收录了其中最受欢迎的 4 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
     </div>
   </div>
 
@@ -401,6 +406,18 @@ body{
         <div class="sc-features">
           <span>📅 作息打卡</span><span>📖 专业课</span><span>🏛️ 政治</span>
           <span>✅ 阶段任务</span><span>⏱️ 番茄钟</span><span>📝 OCR</span><span>🥔 土豆</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="v3/" class="showcase-card sc-v3" style="text-decoration:none;color:inherit;">
+      <span class="sc-icon">🌿</span>
+      <div class="sc-info">
+        <div class="sc-name">枝恩工作台 <span class="sc-tag" style="background:#E8F2E6;color:#5B8C5A;">v3 · 自媒体创作</span></div>
+        <div class="sc-desc">清新绿白风格 · 选题库 · 数据复盘 · 合作跟踪 · 账号定位 · 数据备份 · 自媒体博主一站式创作工作台</div>
+        <div class="sc-features">
+          <span>📋 选题库</span><span>📊 数据复盘</span><span>🤝 合作跟踪</span>
+          <span>🎯 账号定位</span><span>💾 数据备份</span><span>🌿 绿白</span>
         </div>
       </div>
     </a>
@@ -503,6 +520,37 @@ body{
   </div>
 </div>
 
+<!-- ===== v3 详情 ===== -->
+<div class="page" id="page-v3">
+  <div class="version-hero" style="background:linear-gradient(135deg,#E8F2E6,#D4E8D2);">
+    <div class="vh-icon">🌿</div>
+    <div class="vh-name">枝恩工作台 <span class="sc-tag" style="background:white;color:#5B8C5A;margin-left:8px;">v3</span></div>
+    <div class="vh-tagline">清新绿白 · 自媒体创作者专属</div>
+    <div style="margin-top:14px;">
+      <a href="v3/" class="btn btn-pri" style="background:#5B8C5A;box-shadow:0 4px 14px rgba(91,140,90,0.35);">🚀 进入枝恩工作台</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 功能一览</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="fi-icon">📋</span>选题库</div>
+      <div class="feature-item"><span class="fi-icon">📊</span>数据复盘</div>
+      <div class="feature-item"><span class="fi-icon">🤝</span>合作跟踪</div>
+      <div class="feature-item"><span class="fi-icon">🎯</span>账号定位</div>
+      <div class="feature-item"><span class="fi-icon">💾</span>数据备份</div>
+      <div class="feature-item"><span class="fi-icon">📝</span>内容管理</div>
+      <div class="feature-item"><span class="fi-icon">📈</span>效果分析</div>
+      <div class="feature-item"><span class="fi-icon">🌿</span>绿白清新</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 说明</div>
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      专为自媒体博主打造的一站式创作工作台。选题库支持多来源分类与状态管理，数据复盘提供多维度效果追踪，合作跟踪覆盖从洽谈到结项的全流程，账号定位帮助梳理人设与内容方向。
+    </div>
+  </div>
+</div>
+
 <!-- ===== 用提示词定制 ===== -->
 <div class="page" id="page-prompts">
   <div class="section-title">💡 用提示词定制你的工作台</div>
@@ -543,6 +591,9 @@ body{
         </a>
         <a href="v2/index.html" download="考研工作台.html" class="btn btn-pri btn-sm" style="text-decoration:none;background:linear-gradient(135deg,#F4A259,#E8873A);">
           🥔 下载考研工作台
+        </a>
+        <a href="v3/index.html" download="枝恩工作台.html" class="btn btn-pri btn-sm" style="text-decoration:none;background:#5B8C5A;">
+          🌿 下载枝恩工作台
         </a>
       </div>
     </div>
@@ -607,6 +658,19 @@ body{
 
 【其他要求】顶部显示日期+考研倒计时+当前阶段+每日励志语录轮换，所有代码整合为单文件，Tesseract.js通过CDN引入，适配三端设备无纸化学习</div>
         <button class="copy-btn" onclick="copyPrompt('promptCode2',this)">📋 复制</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="pc-header">
+        <span class="pc-icon">🌿</span>
+        <span class="pc-name">枝恩工作台</span>
+        <span class="pc-badge" style="background:#E8F2E6;color:#5B8C5A;">自媒体创作</span>
+      </div>
+      <div class="pc-desc">为自媒体博主设计：选题库 · 数据复盘 · 合作跟踪 · 账号定位 · 数据备份。</div>
+      <div class="prompt-code" id="promptCode3">我是一个自媒体工作者，现在需要搭建自己的工作台；需要包括以下几个部分：选题库、数据复盘、合作跟踪、账号定位、数据备份。
+风格要求清新绿白风格，不要蓝紫配色、不要渐变配色、不要大括号样式的左侧竖条装饰。
+选题库需要支持按来源（抖音/小红书/B站/微博/视频号）和状态（待使用/制作中/已发布/已废弃）筛选，支持搜索；数据复盘需要记录发布时间、各平台播放量/点赞/评论/转发/收藏/涨粉等数据，支持按日期和平台筛选；合作跟踪需要记录品牌名称、合作类型、金额、联系人、状态（洽谈中/已确认/执行中/已完成/已终止），以卡片形式展示；账号定位需要包含人设关键词、内容方向、目标受众、调性描述、视觉风格、竞品账号等字段；数据备份包含导出、导入、重置功能。所有数据本地存储，双击可编辑侧栏图标和标题。</div>
+        <button class="copy-btn" onclick="copyPrompt('promptCode3',this)">📋 复制</button>
     </div>
   </div>
 </div>
@@ -684,6 +748,9 @@ body{
       </div>
       <div style="padding:8px 0;">
         <strong>🥔 考研工作台</strong> — 参考 @想来你你也是书香门第 @小红书（v2）
+      </div>
+      <div style="padding:8px 0;">
+        <strong>🌿 枝恩工作台</strong> — 自媒体博主创作工作台（v3）
       </div>
     </div>
   </div>
