@@ -155,6 +155,8 @@ body{
 .sc-v3:hover{background:linear-gradient(135deg,#E8F2E6,white);}
 .sc-v4{background:linear-gradient(135deg,white,#F0F0F0);}
 .sc-v4:hover{background:linear-gradient(135deg,#F0F0F0,white);}
+.sc-spongebob{background:linear-gradient(135deg,white,#FFF7E6);}
+.sc-spongebob:hover{background:linear-gradient(135deg,#FFF7E6,white);}
 
 .sc-icon{font-size:40px;flex-shrink:0;margin-top:2px;}
 .sc-info{flex:1;min-width:0;}
@@ -302,7 +304,7 @@ body{
     <div class="sidebar-avatar">🏠</div>
     <div>
       <div class="sidebar-name">案例合集</div>
-      <div class="sidebar-status">5 个工作台</div>
+      <div class="sidebar-status">6 个工作台</div>
     </div>
   </div>
   <ul class="nav-list">
@@ -324,6 +326,9 @@ body{
     <li class="nav-item" data-page="v4">
       <span class="nav-icon">🔗</span>YUE 工作台
     </li>
+    <li class="nav-item" data-page="spongebob">
+      <span class="nav-icon">🧽</span>JioJioJoy工作台
+    </li>
     <li class="nav-item" data-page="prompts" style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
       <span class="nav-icon">💡</span>用提示词定制
     </li>
@@ -336,7 +341,8 @@ body{
   <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.08);">
     <div style="font-size:10px;color:rgba(255,255,255,0.3);line-height:1.6;">
       📖 枝恩 · 自媒体工作台<br>
-      🔗 YUE 的工作台 — 投稿 @<a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">小红书 屹弗IF</a>
+      🔗 YUE 的工作台 — 投稿 @<a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">小红书 屹弗IF</a><br>
+      🧽 海绵宝宝工作台 — 投稿 @<a href="https://xhslink.cn/m/323Nde51nuB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">小红书 JioJioJoy</a>
     </div>
   </div>
 </aside>
@@ -379,7 +385,7 @@ body{
     </div>
     <div class="creator-text">
       这个项目起源于胡楚靓分享的工作台方法。粉丝们根据她的教学视频，制作了各种风格的个性化工作台版本。
-      这里收录了其中最受欢迎的 5 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
+      这里收录了其中最受欢迎的 6 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
     </div>
   </div>
 
@@ -442,6 +448,18 @@ body{
         <div class="sc-features">
           <span>📋 每日待办</span><span>📚 学习重点</span><span>📖 参考资料</span>
           <span>💡 灵感资料</span><span>✍️ 内容创作</span><span>📊 数据备份</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="https://joijoiJoy.gongzuotai.work" target="_blank" rel="noopener noreferrer" class="showcase-card sc-spongebob" style="text-decoration:none;color:inherit;">
+      <span class="sc-icon">🧽</span>
+      <div class="sc-info">
+        <div class="sc-name">海绵宝宝工作台 <span class="sc-tag" style="background:#FFF7E6;color:#D4A017;">独立部署</span></div>
+        <div class="sc-desc">海底世界 AI Agent 桌面 · 比奇堡地图导航 · 任务管理 · 技能系统 · 资源中心 · 独立二级域名部署</div>
+        <div class="sc-features">
+          <span>🧽 海底世界</span><span>🤖 AI Agent</span><span>🗺️ 比奇堡地图</span>
+          <span>📋 任务管理</span><span>📚 技能系统</span><span>🌐 独立域名</span>
         </div>
       </div>
     </a>
@@ -602,6 +620,40 @@ body{
     <div class="card-title">📝 说明</div>
     <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
       投稿作品，来自小红书创作者 <a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:var(--green);font-weight:600;">@屹弗IF</a>。极简风格双栏布局，6 大功能区覆盖日常待办、学习、自媒体创作全流程。所有数据 IndexedDB + localStorage 双写存储。
+    </div>
+  </div>
+</div>
+
+<!-- ===== SpongeBob 工作台详情 ===== -->
+<div class="page" id="page-spongebob">
+  <div class="version-hero" style="background:linear-gradient(135deg,#FFF7E6,#FFE4B5);">
+    <div class="vh-icon">🧽</div>
+    <div class="vh-name">海绵宝宝工作台 <span class="sc-tag" style="background:white;color:#D4A017;margin-left:8px;">独立部署</span></div>
+    <div class="vh-tagline">海底世界风格 · AI Agent 桌面工作台</div>
+    <div style="margin-top:14px;">
+      <a href="https://joijoiJoy.gongzuotai.work" target="_blank" rel="noopener noreferrer" class="btn btn-pri" style="background:#D4A017;box-shadow:0 4px 14px rgba(212,160,23,0.35);">🚀 前往海绵宝宝工作台 ↗</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 功能一览</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="fi-icon">🧽</span>海底世界 UI</div>
+      <div class="feature-item"><span class="fi-icon">🤖</span>AI Agent</div>
+      <div class="feature-item"><span class="fi-icon">🗺️</span>比奇堡地图</div>
+      <div class="feature-item"><span class="fi-icon">📋</span>任务管理</div>
+      <div class="feature-item"><span class="fi-icon">📚</span>技能系统</div>
+      <div class="feature-item"><span class="fi-icon">⚡</span>资源中心</div>
+      <div class="feature-item"><span class="fi-icon">🔧</span>系统搭建</div>
+      <div class="feature-item"><span class="fi-icon">🌐</span>独立域名</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 说明</div>
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      投稿作品，<strong>独立部署</strong>在专属二级域名 <code style="background:#F5F4F0;padding:2px 6px;border-radius:4px;">joijoiJoy.gongzuotai.work</code>。
+      基于海底世界主题打造的 AI Agent 桌面工作台，包含比奇堡地图导航、任务管理、技能系统、资源中心等功能模块。
+      <br><br>
+      创作者：📕 <a href="https://xhslink.cn/m/323Nde51nuB" target="_blank" style="color:#D4A017;font-weight:600;">@JioJioJoy</a>（24.5K 赞与收藏）
     </div>
   </div>
 </div>
@@ -823,6 +875,9 @@ body{
       </div>
       <div style="padding:8px 0;border-bottom:1px solid var(--gray-bg);">
         <strong>🔗 YUE 的工作台</strong> — 投稿 @<a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:var(--green);text-decoration:none;">小红书 屹弗IF</a>（v4）
+      </div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--gray-bg);">
+        <strong>🧽 海绵宝宝工作台</strong> — 投稿 @<a href="https://xhslink.cn/m/323Nde51nuB" target="_blank" style="color:var(--green);text-decoration:none;">小红书 JioJioJoy</a>（独立部署）
       </div>
     </div>
   </div>
