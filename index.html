@@ -29,26 +29,24 @@ body{
   min-height:100vh;display:flex;
 }
 
-/* ===== 侧边栏 ===== */
+/* ===== 侧边栏精简头部 ===== */
 .sidebar{
   width:var(--sidebar-w);height:100vh;position:fixed;left:0;top:0;
   background:linear-gradient(180deg,#1B5E20 0%,#2E7D32 60%,#388E3C 100%);
   display:flex;flex-direction:column;z-index:100;
   box-shadow:2px 0 16px rgba(0,0,0,0.12);
 }
-.sidebar-header{
-  padding:28px 20px 18px;text-align:center;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-}
-.sidebar-logo{font-size:36px;display:block;margin-bottom:4px;}
-.sidebar-title{font-size:16px;font-weight:700;color:white;letter-spacing:2px;}
-.sidebar-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;}
-
-.sidebar-profile{
-  display:flex;align-items:center;gap:10px;padding:14px 18px;
+.sidebar-head{
+  display:flex;align-items:center;gap:6px;
+  padding:12px 14px;
   border-bottom:1px solid rgba(255,255,255,0.08);
 }
-.sidebar-avatar{
+.sidebar-head .sh-icon{font-size:20px;}
+.sidebar-head .sh-title{font-size:13px;font-weight:700;color:white;}
+.sidebar-head .sh-count{
+  margin-left:auto;font-size:10px;color:rgba(255,255,255,0.5);
+  background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:20px;
+}
   width:38px;height:38px;border-radius:50%;
   background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;
   font-size:17px;color:white;flex-shrink:0;
@@ -277,7 +275,7 @@ body{
 /* ===== 响应式 ===== */
 @media(max-width:768px){
   .sidebar{width:50px;}
-  .sidebar-header,.sidebar-profile{display:none;}
+  .sidebar-head{display:none;}
   .nav-list{padding:6px 4px;}
   .nav-item{justify-content:center;padding:10px 4px;font-size:0;}
   .nav-icon{font-size:22px;width:auto;}
@@ -313,19 +311,12 @@ body{
 <div class="overlay" id="overlay"></div>
 <button class="menu-btn" id="menuBtn">☰</button>
 
-<!-- ===== 侧边栏 ===== -->
+<!-- ===== 侧边栏（精简头部）===== -->
 <aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <span class="sidebar-logo">📋</span>
-    <div class="sidebar-title">工作台</div>
-    <div class="sidebar-sub">创 作 者 · 案 例 集</div>
-  </div>
-  <div class="sidebar-profile">
-    <div class="sidebar-avatar">🏠</div>
-    <div>
-      <div class="sidebar-name">案例合集</div>
-      <div class="sidebar-status">6 个工作台</div>
-    </div>
+  <div class="sidebar-head">
+    <span class="sh-icon">📋</span>
+    <span class="sh-title">工作台</span>
+    <span class="sh-count">6 个</span>
   </div>
   <ul class="nav-list">
     <li class="nav-item active" data-page="home">
