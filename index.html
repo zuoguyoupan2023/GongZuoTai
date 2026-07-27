@@ -59,9 +59,14 @@ body{
 
 .nav-list{
   flex:1;overflow-y:auto;padding:10px 8px;list-style:none;
+  /* 底部渐变提示，引导滚动查看更多 */
+  mask-image:linear-gradient(to bottom, black 85%, transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom, black 85%, transparent 100%);
 }
 .nav-list::-webkit-scrollbar{width:3px;}
 .nav-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:3px;}
+/* 滚动条可见时取消渐变遮罩，避免干扰 */
+.nav-list:hover{-webkit-mask-image:none;mask-image:none;}
 
 .nav-item{
   display:flex;align-items:center;gap:10px;
@@ -338,9 +343,11 @@ body{
     </li>
     -->
   </ul>
-  <div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.08);">
+  <div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.08);position:relative;">
     <div style="font-size:10px;color:rgba(255,255,255,0.3);line-height:1.8;">
       📖 胡楚靓 · 参考 <a href="https://xhslink.cn/m/4oByS7VQIeL" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@胡楚靓</a><br>
+      🌸 生活 · 参考 <a href="https://xhslink.cn/m/7J6sAPrOXaM" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@Anonymous</a><br>
+      🥔 考研 · 参考 <a href="https://xhslink.cn/m/2lEPbOYEn7A" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@想来你你也是书香门第</a><br>
       📖 枝恩 · 参考 <a href="https://xhslink.cn/m/5UBaI0OtnNI" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@枝恩呀</a><br>
       🔗 YUE · <a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@屹弗IF</a><br>
       🧽 海绵宝宝 · <a href="https://xhslink.cn/m/323Nde51nuB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@JioJioJoy</a>
@@ -379,8 +386,6 @@ body{
         <div class="creator-desc" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
           <a href="https://www.douyin.com/user/MS4wLjABAAAArEKjHBZqF5s-Gia8ctxea85CYV45L3EtISsbo_r0tSQ" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">🎵 胡楚靓抖音主页（手机打开）</a>
           <a href="https://xhslink.cn/m/4oByS7VQIeL" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">📕 胡楚靓小红书主页（手机打开）</a>
-          <a href="https://xhslink.cn/m/7J6sAPrOXaM" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">📕 @Anonymous 小红书（31.3K 赞藏）</a>
-          <a href="https://xhslink.cn/m/2lEPbOYEn7A" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">📕 @想来你你也是书香门第 小红书（175 赞藏）</a>
         </div>
       </div>
     </div>
