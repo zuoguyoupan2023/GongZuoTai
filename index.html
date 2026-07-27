@@ -153,6 +153,8 @@ body{
 .sc-v2:hover{background:linear-gradient(135deg,#FFF8E7,white);}
 .sc-v3{background:linear-gradient(135deg,white,#E8F2E6);}
 .sc-v3:hover{background:linear-gradient(135deg,#E8F2E6,white);}
+.sc-v4{background:linear-gradient(135deg,white,#F0F0F0);}
+.sc-v4:hover{background:linear-gradient(135deg,#F0F0F0,white);}
 
 .sc-icon{font-size:40px;flex-shrink:0;margin-top:2px;}
 .sc-info{flex:1;min-width:0;}
@@ -300,7 +302,7 @@ body{
     <div class="sidebar-avatar">🏠</div>
     <div>
       <div class="sidebar-name">案例合集</div>
-      <div class="sidebar-status">4 个工作台</div>
+      <div class="sidebar-status">5 个工作台</div>
     </div>
   </div>
   <ul class="nav-list">
@@ -319,6 +321,9 @@ body{
     <li class="nav-item" data-page="v3">
       <span class="nav-icon">🌿</span>枝恩工作台
     </li>
+    <li class="nav-item" data-page="v4">
+      <span class="nav-icon">🔗</span>YUE 工作台
+    </li>
     <li class="nav-item" data-page="prompts" style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
       <span class="nav-icon">💡</span>用提示词定制
     </li>
@@ -328,6 +333,12 @@ body{
     </li>
     -->
   </ul>
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.08);">
+    <div style="font-size:10px;color:rgba(255,255,255,0.3);line-height:1.6;">
+      📖 枝恩 · 自媒体工作台<br>
+      🔗 YUE 的工作台 — 投稿 @<a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">小红书 屹弗IF</a>
+    </div>
+  </div>
 </aside>
 
 <!-- ===== 主内容 ===== -->
@@ -361,13 +372,14 @@ body{
         <div class="creator-desc" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
           <a href="https://www.douyin.com/user/MS4wLjABAAAArEKjHBZqF5s-Gia8ctxea85CYV45L3EtISsbo_r0tSQ" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">🎵 胡楚靓抖音主页（手机打开）</a>
           <a href="https://xhslink.cn/m/4oByS7VQIeL" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">📕 胡楚靓小红书主页（手机打开）</a>
-          
+          <a href="https://xhslink.cn/m/7J6sAPrOXaM" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">📕 @Anonymous 小红书（31.3K 赞藏）</a>
+          <a href="https://xhslink.cn/m/2lEPbOYEn7A" target="_blank" style="color:var(--text-light);text-decoration:none;font-size:12px;padding:2px 10px;background:#F5F4F0;border-radius:20px;">📕 @想来你你也是书香门第 小红书（175 赞藏）</a>
         </div>
       </div>
     </div>
     <div class="creator-text">
       这个项目起源于胡楚靓分享的工作台方法。粉丝们根据她的教学视频，制作了各种风格的个性化工作台版本。
-      这里收录了其中最受欢迎的 4 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
+      这里收录了其中最受欢迎的 5 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
     </div>
   </div>
 
@@ -418,6 +430,18 @@ body{
         <div class="sc-features">
           <span>📋 选题库</span><span>📊 数据复盘</span><span>🤝 合作跟踪</span>
           <span>🎯 账号定位</span><span>💾 数据备份</span><span>🌿 绿白</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="v4/" class="showcase-card sc-v4" style="text-decoration:none;color:inherit;">
+      <span class="sc-icon">🔗</span>
+      <div class="sc-info">
+        <div class="sc-name">YUE 的工作台 <span class="sc-tag" style="background:#F0F0F0;color:#555;">v4 · 极简工具</span></div>
+        <div class="sc-desc">投稿作品 · 首页总览 · 每日待办 · 学习重点 · 参考资料库 · 灵感资料库 · 内容创作 · 极简双栏布局 · IndexedDB 存储</div>
+        <div class="sc-features">
+          <span>📋 每日待办</span><span>📚 学习重点</span><span>📖 参考资料</span>
+          <span>💡 灵感资料</span><span>✍️ 内容创作</span><span>📊 数据备份</span>
         </div>
       </div>
     </a>
@@ -551,6 +575,37 @@ body{
   </div>
 </div>
 
+<!-- ===== v4 详情 ===== -->
+<div class="page" id="page-v4">
+  <div class="version-hero" style="background:linear-gradient(135deg,#F0F0F0,#E8E8E8);">
+    <div class="vh-icon">🔗</div>
+    <div class="vh-name">YUE 的工作台 <span class="sc-tag" style="background:white;color:#555;margin-left:8px;">v4</span></div>
+    <div class="vh-tagline">极简工具 · 投稿作品</div>
+    <div style="margin-top:14px;">
+      <a href="v4/" class="btn btn-pri" style="background:#555;box-shadow:0 4px 14px rgba(85,85,85,0.35);">🚀 进入 YUE 的工作台</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 功能一览</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="fi-icon">🏠</span>首页总览</div>
+      <div class="feature-item"><span class="fi-icon">📋</span>每日待办</div>
+      <div class="feature-item"><span class="fi-icon">📚</span>学习重点</div>
+      <div class="feature-item"><span class="fi-icon">📖</span>参考资料</div>
+      <div class="feature-item"><span class="fi-icon">💡</span>灵感资料</div>
+      <div class="feature-item"><span class="fi-icon">✍️</span>内容创作</div>
+      <div class="feature-item"><span class="fi-icon">📊</span>数据备份</div>
+      <div class="feature-item"><span class="fi-icon">🎨</span>极简双栏</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 说明</div>
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      投稿作品，来自小红书创作者 <a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:var(--green);font-weight:600;">@屹弗IF</a>。极简风格双栏布局，6 大功能区覆盖日常待办、学习、自媒体创作全流程。所有数据 IndexedDB + localStorage 双写存储。
+    </div>
+  </div>
+</div>
+
 <!-- ===== 用提示词定制 ===== -->
 <div class="page" id="page-prompts">
   <div class="section-title">💡 用提示词定制你的工作台</div>
@@ -594,6 +649,9 @@ body{
         </a>
         <a href="v3/index.html" download="枝恩工作台.html" class="btn btn-pri btn-sm" style="text-decoration:none;background:#5B8C5A;">
           🌿 下载枝恩工作台
+        </a>
+        <a href="v4/index.html" download="YUE工作台.html" class="btn btn-pri btn-sm" style="text-decoration:none;background:#555;">
+          🔗 下载 YUE 工作台
         </a>
       </div>
     </div>
@@ -671,6 +729,17 @@ body{
 风格要求清新绿白风格，不要蓝紫配色、不要渐变配色、不要大括号样式的左侧竖条装饰。
 选题库需要支持按来源（抖音/小红书/B站/微博/视频号）和状态（待使用/制作中/已发布/已废弃）筛选，支持搜索；数据复盘需要记录发布时间、各平台播放量/点赞/评论/转发/收藏/涨粉等数据，支持按日期和平台筛选；合作跟踪需要记录品牌名称、合作类型、金额、联系人、状态（洽谈中/已确认/执行中/已完成/已终止），以卡片形式展示；账号定位需要包含人设关键词、内容方向、目标受众、调性描述、视觉风格、竞品账号等字段；数据备份包含导出、导入、重置功能。所有数据本地存储，双击可编辑侧栏图标和标题。</div>
         <button class="copy-btn" onclick="copyPrompt('promptCode3',this)">📋 复制</button>
+    </div>
+
+    <div class="prompt-card">
+      <div class="pc-header">
+        <span class="pc-icon">🔗</span>
+        <span class="pc-name">YUE 的工作台</span>
+        <span class="pc-badge" style="background:#F0F0F0;color:#555;">极简工具</span>
+      </div>
+      <div class="pc-desc">投稿作品：首页总览 · 每日待办 · 学习重点 · 参考资料 · 灵感资料 · 内容创作。</div>
+      <div class="prompt-code" id="promptCode4">请为一个自媒体的创作者搭建一个工作台，需求是：首页总览展示 DONELIST / TODO LIST / 本周分布；每日待办用卡片形式支持逐条标记完成、延后或取消，并能查看历史待办；学习重点支持自定义学习板块，每个板块下可添加待办事项和完成小成果；参考资料库用于存放专业文章、书摘、链接和可长期参考的内容；灵感资料库存放突然想到的选题、标题、观察和画面；内容创作管理选题、脚本、发布和复盘，包含内容发布进度追踪模块。整体采用极简双栏布局，左侧导航、右侧内容区；配色柔和中性，以浅灰和深灰为主色调；所有数据存储在浏览器本地，支持导出和导入备份。</div>
+        <button class="copy-btn" onclick="copyPrompt('promptCode4',this)">📋 复制</button>
     </div>
   </div>
 </div>
@@ -751,6 +820,9 @@ body{
       </div>
       <div style="padding:8px 0;">
         <strong>🌿 枝恩工作台</strong> — 自媒体博主创作工作台（v3）
+      </div>
+      <div style="padding:8px 0;border-bottom:1px solid var(--gray-bg);">
+        <strong>🔗 YUE 的工作台</strong> — 投稿 @<a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:var(--green);text-decoration:none;">小红书 屹弗IF</a>（v4）
       </div>
     </div>
   </div>
