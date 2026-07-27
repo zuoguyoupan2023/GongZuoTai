@@ -293,6 +293,18 @@ body{
 }
 .overlay{display:none;}
 @media(min-width:1024px){.showcase-grid{grid-template-columns:1fr;}.main{padding:32px 40px 40px;}}
+/* 窄屏卡片优化 */
+@media(max-width:550px){
+  .showcase-card{flex-direction:column;gap:10px;padding:18px;}
+  .sc-icon{font-size:28px;}
+  .sc-name{flex-wrap:wrap;}
+  .sc-ref-link{width:100%;text-align:right;margin-left:0!important;padding-top:2px;}
+}
+@media(max-width:400px){
+  .sc-name{gap:4px;}
+  .sc-tag{font-size:9px;padding:2px 8px;}
+  .sc-ref-link{font-size:9px;}
+}
 </style>
 </head>
 <body>
@@ -345,16 +357,6 @@ body{
     </li>
     -->
   </ul>
-  <div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.08);position:relative;">
-    <div style="font-size:10px;color:rgba(255,255,255,0.3);line-height:1.8;">
-      📖 胡楚靓 · 参考 <a href="https://xhslink.cn/m/4oByS7VQIeL" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@胡楚靓</a><br>
-      🌸 生活 · 参考 <a href="https://xhslink.cn/m/7J6sAPrOXaM" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@Anonymous</a><br>
-      🥔 考研 · 参考 <a href="https://xhslink.cn/m/2lEPbOYEn7A" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@想来你你也是书香门第</a><br>
-      📖 枝恩 · 参考 <a href="https://xhslink.cn/m/5UBaI0OtnNI" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@枝恩呀</a><br>
-      🔗 YUE · <a href="https://xhslink.cn/m/7sPHJk7Z0WB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@屹弗IF</a><br>
-      🧽 海绵宝宝 · <a href="https://xhslink.cn/m/323Nde51nuB" target="_blank" style="color:rgba(255,255,255,0.4);text-decoration:none;">📕@JioJioJoy</a>
-    </div>
-  </div>
 </aside>
 
 <!-- ===== 主内容 ===== -->
