@@ -152,6 +152,8 @@ body{
 .sc-v4:hover{background:linear-gradient(135deg,#F0F0F0,white);}
 .sc-spongebob{background:linear-gradient(135deg,white,#FFF7E6);}
 .sc-spongebob:hover{background:linear-gradient(135deg,#FFF7E6,white);}
+.sc-v5{background:linear-gradient(135deg,white,#EEF2FF);}
+.sc-v5:hover{background:linear-gradient(135deg,#EEF2FF,white);}
 
 .sc-icon{font-size:22px;vertical-align:middle;margin-right:4px;}
 .sc-ref-link{margin-left:auto;font-size:10px;color:var(--gray);font-weight:400;white-space:nowrap;text-decoration:none;cursor:pointer;}
@@ -309,7 +311,7 @@ body{
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-head">
     <span class="sh-title">GongZuoTai.work</span>
-    <span class="sh-count">6 个</span>
+    <span class="sh-count">7 个</span>
   </div>
   <ul class="nav-list">
     <li class="nav-item active" data-page="home">
@@ -329,6 +331,9 @@ body{
     </li>
     <li class="nav-item" data-page="v4">
       <span class="nav-icon">📋</span>YUE 工作台
+    </li>
+    <li class="nav-item" data-page="v5">
+      <span class="nav-icon">🗂️</span>个人工作台
     </li>
     <li class="nav-item" data-page="spongebob">
       <span class="nav-icon">🧽</span>JioJioJoy工作台
@@ -380,7 +385,7 @@ body{
     </div>
     <div class="creator-text">
       这个项目起源于胡楚靓分享的工作台方法。粉丝们根据她的教学视频，制作了各种风格的个性化工作台版本。
-      这里收录了其中最受欢迎的 6 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
+      这里收录了其中最受欢迎的 7 个版本，你可以直接使用，也可以在此基础上定制属于自己的工作台 🌟
     </div>
   </div>
 
@@ -452,6 +457,18 @@ body{
         </div>
       </div>
     </div>
+
+    <div class="showcase-card sc-v5" data-href="v5/">
+      <div class="sc-info">
+        <div class="sc-name"><span class="sc-icon">🗂️</span> 个人工作台 <span class="sc-tag" style="background:#EEF2FF;color:#6366F1;">v5 · 全能型</span><a href="https://github.com/Qiang-Z/personal-workbench" target="_blank" rel="noopener noreferrer" class="sc-ref-link">🐙@Qiang-Z @GitHub</a></div>
+        <div class="sc-desc">开源个人效率工作台 · 项目管理 · 科研进展 · 生活助手 · 健康运动 · 习惯养成 · 财务记账 · 信息简报 · 多模块可按需启用</div>
+        <div class="sc-features">
+          <span>💼 项目管理</span><span>🔬 科研论文</span><span>🌿 生活行动</span>
+          <span>🏃 健康运动</span><span>🔥 习惯打卡</span><span>💰 财务记账</span><span>📰 信息简报</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div class="footer">
@@ -647,6 +664,39 @@ body{
   </div>
 </div>
 
+<!-- ===== v5 详情 ===== -->
+<div class="page" id="page-v5">
+  <div class="version-hero" style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF);">
+    <div class="vh-icon">🗂️</div>
+    <div class="vh-name">个人工作台 <span class="sc-tag" style="background:white;color:#6366F1;margin-left:8px;">v5</span></div>
+    <div class="vh-tagline">开源全能型 · 项目管理 · 科研 · 生活 · 健康 · 习惯 · 财务 · 信息简报</div>
+    <div style="margin-top:14px;">
+      <a href="v5/" class="btn btn-pri" style="background:#6366F1;box-shadow:0 4px 14px rgba(99,102,241,0.35);">🚀 进入个人工作台</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 功能一览</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="fi-icon">💼</span>工作项目</div>
+      <div class="feature-item"><span class="fi-icon">🔬</span>科研论文</div>
+      <div class="feature-item"><span class="fi-icon">📜</span>专利管理</div>
+      <div class="feature-item"><span class="fi-icon">📋</span>生活任务</div>
+      <div class="feature-item"><span class="fi-icon">🏃</span>健康运动</div>
+      <div class="feature-item"><span class="fi-icon">🔥</span>习惯打卡</div>
+      <div class="feature-item"><span class="fi-icon">💰</span>财务记账</div>
+      <div class="feature-item"><span class="fi-icon">📰</span>信息简报</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📝 说明</div>
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      开源个人效率工作台，覆盖七大模块：项目管理（支持里程碑、工时跟踪）、科研进展（论文/专利/科研项目全周期管理）、生活行动助手（读书/旅行/纪念日）、健康运动（体重记录/运动计划）、习惯养成（弹性计划/最小行动原则）、财务助手（收支记账/基金追踪/预算管理）、信息简报（跨来源精选/去重/稍后阅读）。多模块可按需启用，深色/浅色主题切换，数据本地存储 + IndexedDB 双写，支持本地快照回滚和 GitHub Gist 同步。
+      <br><br>
+      开源项目 · 参考 <a href="https://github.com/Qiang-Z/personal-workbench" target="_blank" style="color:#6366F1;font-weight:600;">@Qiang-Z @GitHub</a>
+    </div>
+  </div>
+</div>
+
 <!-- ===== 用提示词定制 ===== -->
 <div class="page" id="page-prompts">
   <div class="section-title">💡 怎样定制我的工作台</div>
@@ -693,6 +743,9 @@ body{
         </a>
         <a href="v4/index.html" download="YUE工作台.html" class="btn btn-pri btn-sm" style="text-decoration:none;background:#555;">
           📋 下载 YUE 工作台
+        </a>
+        <a href="v5/index.html" download="个人工作台.html" class="btn btn-pri btn-sm" style="text-decoration:none;background:#6366F1;box-shadow:0 4px 14px rgba(99,102,241,0.35);">
+          🗂️ 下载个人工作台
         </a>
       </div>
     </div>
@@ -867,6 +920,9 @@ body{
       </div>
       <div style="padding:8px 0;border-bottom:1px solid var(--gray-bg);">
         <strong>🧽 海绵宝宝工作台</strong> — 投稿 @<a href="https://xhslink.cn/m/323Nde51nuB" target="_blank" style="color:var(--green);text-decoration:none;">小红书 JioJioJoy</a>（独立部署）
+      </div>
+      <div style="padding:8px 0;">
+        <strong>🗂️ 个人工作台</strong> — 开源项目 @<a href="https://github.com/Qiang-Z/personal-workbench" target="_blank" style="color:var(--green);text-decoration:none;">GitHub Qiang-Z</a>（v5）
       </div>
     </div>
   </div>
