@@ -117,6 +117,20 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:var(--text);}
 .editable::after{content:'✏️';font-size:9px;position:absolute;right:-14px;top:-2px;opacity:0;transition:opacity 0.2s;}
 .editable:hover::after{opacity:0.7;}
 .editable:hover{opacity:0.85;}
+/* 备份弹窗 */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.show{display:flex;}
+.modal-box{background:white;border-radius:var(--radius);padding:24px;max-width:480px;width:90vw;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.2);position:relative;}
+.modal-close{position:absolute;top:12px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:#999;}
+.mb-title{font-size:17px;font-weight:700;margin-bottom:6px;}
+.mb-desc{font-size:13px;color:var(--text-light);line-height:1.7;margin-bottom:16px;}
+.mb-info{padding:12px;background:var(--cream);border-radius:8px;font-size:12px;color:var(--text-light);margin-bottom:16px;}
+.mb-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.mb-btn{padding:10px 20px;border:none;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.mb-btn-pri{background:var(--orange-dark,var(--green));color:white;box-shadow:0 4px 12px rgba(244,160,89,0.3);}
+.mb-btn-out{background:transparent;border:1.5px solid var(--border);color:var(--text-light);}
+.mb-btn-dan{background:var(--cream);color:var(--text-light);}
+.mb-btn-dan:hover{background:#E57373;color:white;}
 .sidebar-footer{
   padding:12px 16px;
   border-top:1px solid var(--border);
@@ -555,7 +569,10 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:var(--text);}
   .sidebar{
     width:60px;min-width:60px;
   }
-  .sidebar-header,.nav-item span:not(.nav-icon),.sidebar-footer{display:none;}
+  .sidebar-header,.nav-item span:not(.nav-icon){display:none;}
+  .sidebar-footer{padding:8px 4px;border-top:none;display:flex;flex-direction:column;align-items:center;}
+  .sidebar-footer .backup-btn{font-size:16px;padding:2px 6px;background:transparent;min-width:auto;}
+  .sidebar-footer>div:not(:first-child):not(:nth-child(3)){display:none;}
   .nav-item{justify-content:center;padding:12px 8px;}
   .nav-item.active{border-left:none;border-right:3px solid var(--green-dark);}
   .status-bar{padding:8px 12px;}
@@ -592,7 +609,8 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:var(--text);}
     <div class="sidebar-footer">
       <div id="footerDate"></div>
       <div style="margin-top:4px;">上岸</div>
-      <div style="font-size:10px;color:var(--text-light);margin-top:4px;">📕 <a href="https://xhslink.cn/m/2lEPbOYEn7A" target="_blank" rel="noopener" style="color:var(--text-light);text-decoration:none;">@想来你你也是书香门第</a></div>
+      <div style="margin:6px 0 4px;"><button class="backup-btn" id="openBackupBtn" style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--cream);color:var(--text-light);">💾 备份</button></div>
+      <div style="font-size:10px;color:var(--text-light);">📕 <a href="https://xhslink.cn/m/2lEPbOYEn7A" target="_blank" rel="noopener" style="color:var(--text-light);text-decoration:none;">@想来你你也是书香门第</a></div>
     </div>
   </aside>
 
@@ -794,6 +812,62 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:var(--text);}
 <script>
 // ===== 数据层 =====
 const STORAGE_KEY = 'kaoyan_workbench_v1';
+
+// ===== IndexedDB 存储引擎 =====
+(function(){
+  var _cache = {}; var _ready = false;
+  var _keys = [STORAGE_KEY];
+  window.__idbKeys = _keys; window.__idbCache = _cache;
+  async function _open(){
+    return new Promise(function(res, rej){
+      var r = indexedDB.open('workbenchDB', 1);
+      r.onupgradeneeded = function(e){
+        if(!e.target.result.objectStoreNames.contains('kv'))
+          e.target.result.createObjectStore('kv');
+      };
+      r.onsuccess = function(){ res(r.result); };
+      r.onerror = function(){ rej(r.error); };
+    });
+  }
+  window.__idbInit = async function(){
+    try {
+      var db = await _open();
+      var tx = db.transaction('kv', 'readonly');
+      var store = tx.objectStore('kv');
+      var keys = await new Promise(function(res, rej){
+        var r = store.getAllKeys();
+        r.onsuccess = function(){ res(r.result); };
+        r.onerror = function(){ rej(r.error); };
+      });
+      var vals = await new Promise(function(res, rej){
+        var r = store.getAll();
+        r.onsuccess = function(){ res(r.result); };
+        r.onerror = function(){ rej(r.error); };
+      });
+      keys.forEach(function(k, i){ _cache[k] = vals[i]; });
+      _keys.forEach(function(k){
+        if(!(k in _cache)){
+          try{ var v = localStorage.getItem(k); if(v !== null) _cache[k] = JSON.parse(v); }catch(e){}
+        }
+      });
+      _ready = true;
+    }catch(e){ _ready = false; }
+  };
+  window.__idbSave = async function(key, value){
+    _cache[key] = value;
+    try {
+      var db = await _open();
+      var tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').put(value, key);
+      await new Promise(function(res, rej){
+        tx.oncomplete = function(){ res(); };
+        tx.onerror = function(){ rej(tx.error); };
+      });
+    }catch(e){}
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+  };
+})();
+
 let state = {
   diaries:{},       // {dateStr: text}
   tasks:{},         // {dateStr: [task...]}
@@ -813,6 +887,8 @@ let state = {
 };
 
 function loadState(){
+  var c = window.__idbCache;
+  if(c && c[STORAGE_KEY]){ state = {...state, ...c[STORAGE_KEY]}; return; }
   try{
     const saved = localStorage.getItem(STORAGE_KEY);
     if(saved){
@@ -822,9 +898,113 @@ function loadState(){
   }catch(e){console.warn('加载状态失败',e);}
 }
 function saveState(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }catch(e){console.warn('保存状态失败',e);}
+  if(window.__idbSave) window.__idbSave(STORAGE_KEY, state);
+  else try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+// ===== 备份弹窗功能 =====
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function todayStr2(){ return new Date().toISOString().slice(0,10); }
+function getAllData(){
+  var out = {};
+  Object.keys(state).forEach(function(k){ out[k] = JSON.parse(JSON.stringify(state[k])); });
+  return out;
+}
+function exportFullData(){
+  var pkg = { version: 'v2-1', exportedAt: todayStr2(), data: getAllData() };
+  var blob = new Blob([JSON.stringify(pkg, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '考研工作台_备份_' + todayStr2() + '.json';
+  a.click();
+  showToast('📦 数据已导出');
+}
+function importFullData(){
+  document.getElementById('fileInput').click();
+}
+function resetAllData(){
+  var defaults = {
+    diaries:{}, tasks:{}, restDays:{}, customTasks:{},
+    errors:[], reviews:{}, wordUnits:{},
+    politicsProgress:{maYuan:0, shiGang:0, maoZhongTe:0},
+    politicsRecords:[], notes:{}, engSentences:[], engReadings:[],
+    engEssays:[], currentTaskDate: null, lastReviewCheck: null
+  };
+  Object.keys(defaults).forEach(function(k){ state[k] = defaults[k]; });
+  saveState();
+}
+function showToast(msg){
+  var t = document.getElementById('v2toast');
+  if(!t){
+    t = document.createElement('div'); t.id = 'v2toast';
+    t.style.cssText = 'position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:rgba(61,61,61,0.92);color:#fff;border-radius:10px;padding:10px 20px;font-size:14px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;transition:opacity 0.2s;pointer-events:none;font-family:-apple-system,PingFang SC,sans-serif;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._tm);
+  t._tm = setTimeout(function(){ t.style.opacity = '0'; }, 1800);
+}
+function updateBackupInfo(){
+  var info = document.getElementById('backupInfo');
+  if(!info) return;
+  try {
+    var totalTasks = 0;
+    Object.keys(state.tasks||{}).forEach(function(d){ totalTasks += (state.tasks[d]||[]).length; });
+    var diaryKeys = Object.keys(state.diaries||{}).length;
+    var errorCount = (state.errors||[]).length;
+    info.innerHTML = '<strong>数据概况：</strong><br>📝 日记 ' + diaryKeys + ' 天 · 📋 任务 ' + totalTasks + ' 条 · ❌ 错题 ' + errorCount + ' 项';
+  } catch(e){ info.textContent = '数据加载中…'; }
+}
+var _fileInputBinded = false;
+function bindBackupEvents(){
+  var btn = document.getElementById('openBackupBtn');
+  if(!btn) return;
+  if(!_fileInputBinded){
+    _fileInputBinded = true;
+    document.getElementById('fileInput').addEventListener('change', function(e){
+      var file = e.target.files[0]; if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        try {
+          var pkg = JSON.parse(ev.target.result);
+          if(pkg.version && pkg.data){
+            Object.keys(pkg.data).forEach(function(k){
+              if(k in state) state[k] = pkg.data[k];
+            });
+            saveState();
+            showToast('📦 数据已恢复，请刷新页面');
+            setTimeout(function(){ location.reload(); }, 1000);
+          }
+        } catch(e) { showToast('❌ 文件格式错误'); }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+  }
+  btn.addEventListener('click', function(){
+    updateBackupInfo();
+    document.getElementById('backupModal').classList.add('show');
+  });
+  document.getElementById('closeBackupBtn').addEventListener('click', function(){
+    document.getElementById('backupModal').classList.remove('show');
+  });
+  document.getElementById('backupModal').addEventListener('click', function(e){
+    if(e.target === this) this.classList.remove('show');
+  });
+  document.getElementById('modalExportBtn').addEventListener('click', function(){
+    document.getElementById('backupModal').classList.remove('show');
+    setTimeout(exportFullData, 200);
+  });
+  document.getElementById('modalImportBtn').addEventListener('click', function(){
+    document.getElementById('backupModal').classList.remove('show');
+    setTimeout(importFullData, 200);
+  });
+  document.getElementById('modalResetBtn').addEventListener('click', function(){
+    if(!confirm('确定恢复默认数据？当前数据会丢失！')) return;
+    resetAllData();
+    showToast('🔄 已恢复默认，请刷新页面');
+    setTimeout(function(){ location.reload(); }, 1000);
+  });
 }
 
 function dateToStr(d){
@@ -2151,11 +2331,14 @@ function applyEdits(){
 }
 
 // ===== 初始化 =====
-loadState();
-applyEdits();
-initEditable();
-renderStatusBar();
-renderPage('calendar');
+window.__idbInit().catch(function(){}).then(function(){
+  loadState();
+  applyEdits();
+  initEditable();
+  bindBackupEvents();
+  renderStatusBar();
+  renderPage('calendar');
+});
 setInterval(renderStatusBar,60000);
 setInterval(checkDailyReviewReminder,60000);
 
@@ -2167,5 +2350,23 @@ document.getElementById('reviewModal').addEventListener('click',e=>{
   if(e.target.id==='reviewModal') closeReviewModal();
 });
 </script>
+
+<!-- 备份弹窗 -->
+<div class="modal-overlay" id="backupModal">
+  <div class="modal-box" style="position:relative;">
+    <button class="modal-close" id="closeBackupBtn">✕</button>
+    <div class="mb-title">💾 数据备份</div>
+    <div class="mb-desc">所有数据存储在浏览器本地（localStorage + IndexedDB 双重保障）。建议定期备份，以防数据丢失。</div>
+    <div class="mb-info" id="backupInfo">加载中…</div>
+    <div class="mb-actions">
+      <button class="mb-btn mb-btn-pri" id="modalExportBtn">📤 导出备份</button>
+      <button class="mb-btn mb-btn-out" id="modalImportBtn">📥 导入恢复</button>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+      <button class="mb-btn mb-btn-dan" id="modalResetBtn">🔄 重置为默认</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="fileInput" accept=".json" style="display:none">
 </body>
 </html>
