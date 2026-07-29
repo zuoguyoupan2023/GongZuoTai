@@ -3055,6 +3055,8 @@ function handleFileParse(file){
   fpParser.parse(file).then(function(result){
     fpViewer.render(result);
 
+    // 添加 AI 注入按钮
+    addAiInjectToolbarButton();
 
     // 解析成功自动折叠上传区，让阅读区有更多空间
     var ub = document.getElementById('fpUploadBody');
