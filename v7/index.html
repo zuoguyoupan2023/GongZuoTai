@@ -1199,16 +1199,31 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
       <button class="mb-btn mb-btn-dan" id="modalResetBtn">🔄 重置为默认</button>
     </div>
     <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--pink-highlight);">
-      <div style="font-size:12px;font-weight:600;color:var(--text-main);margin-bottom:6px;">⏱️ 定时自动导出测试</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:600;color:var(--text-main);">⏰ 定时自动备份</span>
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-sub);cursor:pointer;">
+          <input type="checkbox" id="scheduleEnable" onchange="toggleSchedule()"> 启用
+        </label>
+      </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <select id="timerSelect" style="padding:6px 8px;border:1px solid #ddd;border-radius:8px;font-size:12px;">
-          <option value="1">1 分钟后</option>
-          <option value="2">2 分钟后</option>
-          <option value="5">5 分钟后</option>
-          <option value="10">10 分钟后</option>
+        <span style="font-size:12px;color:var(--text-sub);">每天</span>
+        <select id="scheduleHour" style="padding:4px 6px;border:1px solid #ddd;border-radius:6px;font-size:12px;width:64px;">
+          <option value="22">22</option>
+          <option value="23" selected>23</option>
+          <option value="0">00</option>
+          <option value="1">01</option>
+          <option value="8">08</option>
+          <option value="9">09</option>
+          <option value="21">21</option>
         </select>
-        <button class="mb-btn mb-btn-out" id="startTimerBtn" style="font-size:12px;padding:6px 14px;">▶ 开始倒计时</button>
-        <span id="timerDisplay" style="font-size:13px;font-weight:700;color:#E8919B;min-width:80px;"></span>
+        <span style="font-size:12px;color:var(--text-sub);">:</span>
+        <select id="scheduleMinute" style="padding:4px 6px;border:1px solid #ddd;border-radius:6px;font-size:12px;width:64px;">
+          <option value="0">00</option>
+          <option value="15">15</option>
+          <option value="30">30</option>
+          <option value="45">45</option>
+        </select>
+        <span id="scheduleStatus" style="font-size:12px;color:var(--text-sub);">已关闭</span>
       </div>
     </div>
   </div>
@@ -2554,8 +2569,15 @@ function updateBackupInfo(){
   var totalExams = store.exams.length;
   var totalErrors = store.errors.length;
   document.getElementById('backupInfo').innerHTML =
-    '📅 计划天数 ' + totalKeys + ' 天 | 📊 做题记录 ' + totalRecs + ' 条' +
-    '<br>📆 打卡天数 ' + totalCheckins + ' 天 | 📄 试卷 ' + totalExams + ' 份 | ❌ 错题 ' + totalErrors + ' 条';
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:12px;">' +
+    '<span>📅 计划天数：<b>' + totalKeys + '</b> 天</span>' +
+    '<span>📊 做题记录：<b>' + totalRecs + '</b> 条</span>' +
+    '<span>📆 打卡天数：<b>' + totalCheckins + '</b> 天</span>' +
+    '<span>📄 试卷记录：<b>' + totalExams + '</b> 份</span>' +
+    '<span>❌ 错题记录：<b>' + totalErrors + '</b> 条</span>' +
+    '<span>📈 各科累计：<b>' + (store.stats.common+store.stats.politics+store.stats.verbal+store.stats.reasoning+store.stats.quantity+store.stats.data) + '</b> 题</span>' +
+    '</div>' +
+    '<div style="margin-top:8px;font-size:10px;color:#999;">备份范围：计划 / 做题记录 / 打卡 / 试卷 / 错题 / 各科累计统计</div>';
 }
 
 // 弹窗事件绑定（在 DOM 就绪后绑定）
@@ -2565,6 +2587,7 @@ function bindBackupEvents(){
   var modal = document.getElementById('backupModal');
   if(openBtn) openBtn.addEventListener('click', function(){
     updateBackupInfo();
+    initScheduleUI();
     modal.classList.add('show');
   });
   if(closeBtn) closeBtn.addEventListener('click', function(){
@@ -2590,53 +2613,31 @@ function bindBackupEvents(){
     showToast('🔄 已恢复默认');
   });
 
-  // 定时导出测试
-  var timerBtn = document.getElementById('startTimerBtn');
-  var timerDisplay = document.getElementById('timerDisplay');
-  var timerSelect = document.getElementById('timerSelect');
-  var timerId = null;
-  if(timerBtn && timerDisplay && timerSelect){
-    timerBtn.addEventListener('click', function(){
-      // 如果有正在运行的计时器，先取消
-      if(timerId){
-        clearTimeout(timerId);
-        clearInterval(timerId);
-        timerId = null;
-        timerBtn.textContent = '▶ 开始倒计时';
-        timerDisplay.textContent = '';
-        timerSelect.disabled = false;
-        return;
-      }
-      var minutes = parseInt(timerSelect.value);
-      var seconds = minutes * 60;
-      timerSelect.disabled = true;
-      timerBtn.textContent = '■ 取消';
-      updateTimerDisplay(seconds);
-      // 每秒更新
-      var interval = setInterval(function(){
-        seconds--;
-        if(seconds <= 0){
-          clearInterval(interval);
-          clearTimeout(timerId);
-          timerId = null;
-          timerDisplay.textContent = '⏰ 导出中…';
-          timerBtn.textContent = '▶ 开始倒计时';
-          timerSelect.disabled = false;
-          // 自动导出
-          document.getElementById('backupModal').classList.remove('show');
-          setTimeout(exportFullData, 500);
-        } else {
-          updateTimerDisplay(seconds);
-        }
-      }, 1000);
-      timerId = interval;
-    });
-    function updateTimerDisplay(sec){
-      var m = Math.floor(sec / 60);
-      var s = sec % 60;
-      timerDisplay.textContent = '⏳ ' + m + '分' + String(s).padStart(2,'0') + '秒';
+  // 定时备份时间选择器变更 → 保存设置
+  var schedHour = document.getElementById('scheduleHour');
+  var schedMin = document.getElementById('scheduleMinute');
+  if(schedHour) schedHour.addEventListener('change', function(){
+    var sched = getSchedule();
+    if(sched && sched.enabled){
+      sched.hour = parseInt(this.value);
+      sched.lastBackupDate = null; // 时间变了，重新计时
+      saveSchedule(sched);
+      updateScheduleStatus();
+      checkScheduledBackup();
     }
-  }
+  });
+  if(schedMin) schedMin.addEventListener('change', function(){
+    var sched = getSchedule();
+    if(sched && sched.enabled){
+      sched.minute = parseInt(this.value);
+      sched.lastBackupDate = null;
+      saveSchedule(sched);
+      updateScheduleStatus();
+      checkScheduledBackup();
+    }
+  });
+
+  // 定时备份功能由 checkScheduledBackup() / toggleSchedule() 处理
 }
 
 function exportFullData(){
@@ -2649,6 +2650,129 @@ function exportFullData(){
   a.click();
   showToast('📦 数据已导出');
 }
+
+// ====================================================
+//  定时自动备份（方案011 Phase A 附属功能）
+//  ⚠️ 待验证：Chrome/Edge 自动下载可用；Safari 需手动点击
+// ====================================================
+var SCHEDULE_KEY = 'xiaowang_backup_schedule';
+
+function getSchedule(){
+  try{ var s = localStorage.getItem(SCHEDULE_KEY); return s ? JSON.parse(s) : null; }
+  catch(e){ return null; }
+}
+
+function saveSchedule(s){
+  localStorage.setItem(SCHEDULE_KEY, JSON.stringify(s));
+}
+
+function initScheduleUI(){
+  var sched = getSchedule();
+  var enable = document.getElementById('scheduleEnable');
+  var hour = document.getElementById('scheduleHour');
+  var min = document.getElementById('scheduleMinute');
+  if(sched){
+    if(enable) enable.checked = sched.enabled || false;
+    if(hour) hour.value = String(sched.hour || 23);
+    if(min) min.value = String(sched.minute || 0);
+    // 更新弹窗按钮时刷新状态
+    if(sched.lastBackupDate){
+      var info = document.getElementById('backupInfo');
+      if(info && sched.lastBackupDate){
+        info.innerHTML += '<div style="margin-top:6px;font-size:11px;color:#7BC99E;">✅ 上次自动备份：' + sched.lastBackupDate + '</div>';
+      }
+    }
+  }
+  updateScheduleStatus();
+  // 如果启用，检查今天是否需要备份
+  if(sched && sched.enabled) checkScheduledBackup();
+}
+
+function toggleSchedule(){
+  var enable = document.getElementById('scheduleEnable');
+  var hour = document.getElementById('scheduleHour');
+  var min = document.getElementById('scheduleMinute');
+  var old = getSchedule();
+  var sched = {
+    enabled: enable.checked,
+    hour: parseInt(hour.value),
+    minute: parseInt(min.value),
+    lastBackupDate: (old && old.lastBackupDate) ? old.lastBackupDate : null
+  };
+  saveSchedule(sched);
+  updateScheduleStatus();
+  if(sched.enabled){
+    // 立即检查今天是否需要备份
+    checkScheduledBackup();
+  }
+  toast(sched.enabled ? '⏰ 定时备份已启用' : '定时备份已关闭');
+}
+
+function updateScheduleStatus(){
+  var sched = getSchedule();
+  var status = document.getElementById('scheduleStatus');
+  if(!status) return;
+  if(!sched || !sched.enabled){
+    status.textContent = '⏸️ 已关闭';
+    return;
+  }
+  var today = todayKey();
+  if(sched.lastBackupDate === today){
+    status.textContent = '✅ 今日已备份';
+    return;
+  }
+  var now = new Date();
+  var target = new Date();
+  target.setHours(sched.hour, sched.minute, 0, 0);
+  if(target <= now) target.setDate(target.getDate() + 1);
+  var diff = target - now;
+  var h = Math.floor(diff / 3600000);
+  var m = Math.floor((diff % 3600000) / 60000);
+  status.textContent = '⏳ 距下次备份 ' + h + 'h' + m + 'm';
+}
+
+function checkScheduledBackup(){
+  var sched = getSchedule();
+  if(!sched || !sched.enabled) return;
+  var today = todayKey();
+  if(sched.lastBackupDate === today) return;
+  var now = new Date();
+  var target = new Date();
+  target.setHours(sched.hour, sched.minute, 0, 0);
+  if(now >= target){
+    doScheduledBackup();
+    return;
+  }
+  var delay = target - now;
+  window._backupTimer = setTimeout(function(){ doScheduledBackup(); }, delay);
+}
+
+function doScheduledBackup(){
+  var sched = getSchedule();
+  if(!sched || !sched.enabled) return;
+  sched.lastBackupDate = todayKey();
+  saveSchedule(sched);
+  try {
+    exportFullData();
+    updateScheduleStatus();
+  } catch(e) {
+    showToast('⏰ 该备份了！请在备份弹窗中手动导出');
+  }
+  // 排入下一次
+  window._backupTimer = setTimeout(function(){ doScheduledBackup(); }, 24 * 60 * 60 * 1000);
+}
+
+// 休眠/恢复检测
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden){
+    var sched = getSchedule();
+    if(sched && sched.enabled) checkScheduledBackup();
+  }
+});
+window.addEventListener('pageshow', function(){
+  var sched = getSchedule();
+  if(sched && sched.enabled) checkScheduledBackup();
+});
 
 function importFullData(){
   var input = document.createElement('input');
