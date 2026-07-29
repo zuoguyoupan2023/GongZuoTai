@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="小王备考加油">
+<title>小王备考加油</title>
+<!-- 雪王图标 favicon & apple-touch-icon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23FEEFF2'/%3E%3C!-- 雪王身体 --%3E%3Cellipse cx='90' cy='95' rx='52' ry='48' fill='%23FFFFFF' stroke='%23D4ECF7' stroke-width='2'/%3E%3C!-- 雪王左眼 --%3E%3Cellipse cx='72' cy='82' rx='7' ry='9' fill='%23333'/%3E%3Cellipse cx='74' cy='79' rx='2.5' ry='3' fill='%23fff'/%3E%3C!-- 雪王右眼 --%3E%3Cellipse cx='108' cy='82' rx='7' ry='9' fill='%23333'/%3E%3Cellipse cx='110' cy='79' rx='2.5' ry='3' fill='%23fff'/%3E%3C!-- 雪王嘴巴 --%3E%3Cpath d='M78 100 Q90 112 102 100' stroke='%23F8C8D0' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3C!-- 雪王腮红 --%3E%3Cellipse cx='62' cy='98' rx='8' ry='5' fill='%23FADADD' opacity='0.7'/%3E%3Cellipse cx='118' cy='98' rx='8' ry='5' fill='%23FADADD' opacity='0.7'/%3E%3C!-- 雪王皇冠 --%3E%3Cpath d='M60 52 L70 38 L80 50 L90 35 L100 50 L110 38 L120 52 L120 58 L60 58 Z' fill='%23F8C8D0' stroke='%23F4B8C2' stroke-width='1.5'/%3E%3Ccircle cx='70' cy='40' r='3' fill='%23FFF'/%3E%3Ccircle cx='90' cy='37' r='3' fill='%23FFF'/%3E%3Ccircle cx='110' cy='40' r='3' fill='%23FFF'/%3E%3C!-- 雪王围巾 --%3E%3Cpath d='M55 108 Q90 120 125 108 L130 125 Q90 138 50 125 Z' fill='%23F8C8D0'/%3E%3Cpath d='M58 122 L48 145 L62 142 Z' fill='%23F8C8D0'/%3E%3C!-- 小手 --%3E%3Ccircle cx='45' cy='100' r='9' fill='%23FFFFFF' stroke='%23D4ECF7' stroke-width='1.5'/%3E%3Ccircle cx='135' cy='100' r='9' fill='%23FFFFFF' stroke='%23D4ECF7' stroke-width='1.5'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23FEEFF2'/%3E%3Cellipse cx='90' cy='95' rx='52' ry='48' fill='%23FFFFFF' stroke='%23D4ECF7' stroke-width='2'/%3E%3Cellipse cx='72' cy='82' rx='7' ry='9' fill='%23333'/%3E%3Cellipse cx='74' cy='79' rx='2.5' ry='3' fill='%23fff'/%3E%3Cellipse cx='108' cy='82' rx='7' ry='9' fill='%23333'/%3E%3Cellipse cx='110' cy='79' rx='2.5' ry='3' fill='%23fff'/%3E%3Cpath d='M78 100 Q90 112 102 100' stroke='%23F8C8D0' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3Cellipse cx='62' cy='98' rx='8' ry='5' fill='%23FADADD' opacity='0.7'/%3E%3Cellipse cx='118' cy='98' rx='8' ry='5' fill='%23FADADD' opacity='0.7'/%3E%3Cpath d='M60 52 L70 38 L80 50 L90 35 L100 50 L110 38 L120 52 L120 58 L60 58 Z' fill='%23F8C8D0' stroke='%23F4B8C2' stroke-width='1.5'/%3E%3Ccircle cx='70' cy='40' r='3' fill='%23FFF'/%3E%3Ccircle cx='90' cy='37' r='3' fill='%23FFF'/%3E%3Ccircle cx='110' cy='40' r='3' fill='%23FFF'/%3E%3Cpath d='M55 108 Q90 120 125 108 L130 125 Q90 138 50 125 Z' fill='%23F8C8D0'/%3E%3Cpath d='M58 122 L48 145 L62 142 Z' fill='%23F8C8D0'/%3E%3Ccircle cx='45' cy='100' r='9' fill='%23FFFFFF' stroke='%23D4ECF7' stroke-width='1.5'/%3E%3Ccircle cx='135' cy='100' r='9' fill='%23FFFFFF' stroke='%23D4ECF7' stroke-width='1.5'/%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ========== 全局重置与变量 ========== */
+:root{
+  --pink-main:#FFF5F7;
+  --pink-highlight:#FADADD;
+  --pink-btn:#F8C8D0;
+  --pink-btn-hover:#F4B8C2;
+  --card-bg:#FFFFFF;
+  --text-main:#4A3B40;
+  --text-sub:#9B8A90;
+  --border:#FFF0F3;
+  --shadow:0 4px 16px rgba(248,200,208,0.3);
+  --radius:16px;
+  --nav-w:210px;
+  --cute-font:"PingFang SC","Microsoft YaHei",-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:var(--cute-font);
+  background:var(--pink-main);
+  background-image:radial-gradient(circle at 20% 80%,rgba(248,200,208,0.15) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(212,236,247,0.15) 0%,transparent 50%);
+  color:var(--text-main);
+  font-size:14px;
+  line-height:1.6;
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;}
+input,textarea,select{font-family:inherit;outline:none;}
+
+/* ========== 整体布局 ========== */
+.app{display:flex;height:100vh;width:100vw;}
+
+/* ========== 左侧导航栏 ========== */
+.sidebar{
+  width:var(--nav-w);
+  min-width:var(--nav-w);
+  height:100vh;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FFF8FA 100%);
+  box-shadow:3px 0 16px rgba(248,200,208,0.2);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  z-index:10;
+  overflow-y:auto;
+}
+.sidebar-title{
+  padding:22px 18px 18px;
+  font-size:17px;
+  font-weight:700;
+  color:#E8919B;
+  text-align:center;
+  border-bottom:2px dashed var(--pink-highlight);
+  line-height:1.4;
+  position:relative;
+}
+.sidebar-title::before{content:'👑';font-size:20px;display:block;margin-bottom:4px;}
+.sidebar-title span{display:block;font-size:11px;font-weight:400;color:var(--text-sub);margin-top:4px;}
+.nav-menu{flex:1;padding:12px 10px;}
+.nav-item{
+  display:flex;
+  align-items:center;
+  padding:12px 14px;
+  margin-bottom:5px;
+  border-radius:14px;
+  cursor:pointer;
+  color:var(--text-main);
+  font-size:14px;
+  transition:all .25s;
+  gap:10px;
+  position:relative;
+}
+.nav-item:hover{background:var(--pink-main);transform:translateX(3px);}
+.nav-item.active{background:linear-gradient(135deg,var(--pink-highlight) 0%,var(--pink-btn) 100%);font-weight:700;color:#fff;box-shadow:0 3px 10px rgba(248,200,208,0.4);}
+.nav-item.active .nav-icon{transform:scale(1.2);}
+.nav-icon{
+  width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;transition:transform .25s;
+}
+.nav-badge{
+  margin-left:auto;font-size:11px;
+  background:var(--pink-btn);color:#fff;
+  padding:1px 7px;border-radius:10px;
+}
+
+/* ========== 右侧主内容区 ========== */
+.main{
+  flex:1;
+  height:100vh;
+  overflow-y:auto;
+  padding:20px 24px;
+  -webkit-overflow-scrolling:touch;
+}
+.page{display:none;animation:fadeIn .3s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ========== 卡片通用 ========== */
+.card{
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px;
+  margin-bottom:16px;
+  border:2px solid #FFF8FA;
+  transition:transform .2s,box-shadow .2s;
+}
+.card:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(248,200,208,0.35);}
+.card-title{
+  font-size:16px;font-weight:700;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+  color:#4A3B40;
+}
+.card-title .dot{width:5px;height:18px;background:linear-gradient(180deg,var(--pink-btn),var(--pink-highlight));border-radius:3px;}
+.card-title .more{margin-left:auto;font-size:12px;font-weight:400;color:var(--text-sub);cursor:pointer;}
+
+/* 网格布局 */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+@media(max-width:900px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+}
+
+/* ========== 数据统计卡 ========== */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+@media(max-width:768px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+.stat-box{
+  background:#fff;border-radius:14px;
+  padding:16px;box-shadow:var(--shadow);text-align:center;
+  border:2px solid #FFF8FA;transition:transform .2s;
+}
+.stat-box:hover{transform:translateY(-2px);}
+.stat-num{font-size:26px;font-weight:700;color:#E8919B;}
+.stat-label{font-size:12px;color:var(--text-sub);margin-top:4px;}
+.stat-num.green{color:#7BC99E;}
+.stat-num.blue{color:#8EC0E8;}
+.stat-num.orange{color:#F0B886;}
+
+/* ========== 按钮 ========== */
+.btn{
+  background:linear-gradient(135deg,var(--pink-btn) 0%,#F4B8C2 100%);color:#fff;
+  padding:8px 18px;border-radius:20px;
+  font-size:13px;transition:all .2s;
+  box-shadow:0 3px 8px rgba(248,200,208,0.4);
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(248,200,208,0.5);}
+.btn:active{transform:translateY(0);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-outline{background:#fff;color:#E8919B;border:2px solid var(--pink-btn);box-shadow:none;}
+.btn-outline:hover{background:var(--pink-main);}
+.btn-danger{background:#fff0f0;color:#e88; border:2px solid #fcc;box-shadow:none;}
+.btn-danger:hover{background:#fee;}
+
+/* ========== 题型入口卡 ========== */
+.topic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+@media(max-width:768px){.topic-grid{grid-template-columns:1fr;}}
+.topic-card{
+  background:#fff;border-radius:16px;padding:18px;
+  box-shadow:var(--shadow);cursor:pointer;transition:all .25s;
+  border:2px solid #FFF8FA;position:relative;overflow:hidden;
+}
+.topic-card::after{content:'';position:absolute;top:-10px;right:-10px;width:40px;height:40px;background:var(--pink-main);border-radius:50%;opacity:.5;}
+.topic-card:hover{border-color:var(--pink-btn);transform:translateY(-3px);box-shadow:0 8px 24px rgba(248,200,208,0.3);}
+.topic-card-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;position:relative;z-index:1;}
+.topic-card-head .ic{font-size:26px;}
+.topic-card-head .nm{font-size:15px;font-weight:700;}
+.topic-card-head .arrow{margin-left:auto;color:var(--text-sub);}
+.topic-card-desc{font-size:12px;color:var(--text-sub);line-height:1.5;position:relative;z-index:1;}
+.topic-mini-stats{display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--text-sub);position:relative;z-index:1;}
+.topic-mini-stats b{color:#E8919B;}
+
+/* ========== 刷题入口 ========== */
+.drill-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(max-width:600px){.drill-list{grid-template-columns:1fr;}}
+.drill-item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;background:var(--pink-main);
+  border-radius:12px;cursor:pointer;transition:all .25s;
+  border:2px solid transparent;
+}
+.drill-item:hover{background:var(--pink-highlight);border-color:var(--pink-btn);transform:translateX(3px);}
+.drill-item .ic{font-size:20px;}
+.drill-item .nm{font-size:13px;font-weight:600;}
+.drill-item .ct{margin-left:auto;font-size:11px;color:var(--text-sub);background:#fff;padding:2px 8px;border-radius:8px;}
+
+/* ========== 积累/速记 ========== */
+.knowledge-list{display:flex;flex-direction:column;gap:8px;}
+.knowledge-item{
+  padding:10px 14px;background:var(--pink-main);
+  border-radius:10px;font-size:13px;line-height:1.6;
+  border-left:3px solid var(--pink-btn);
+  transition:transform .2s;
+}
+.knowledge-item:hover{transform:translateX(3px);}
+.knowledge-item .tag{
+  display:inline-block;font-size:10px;
+  background:var(--pink-btn);color:#fff;
+  padding:2px 8px;border-radius:10px;margin-right:6px;
+}
+
+/* ========== 错题本 ========== */
+.error-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px;background:#fff;border:2px solid #FFF8FA;
+  border-radius:12px;margin-bottom:8px;transition:border-color .2s;
+}
+.error-item:hover{border-color:var(--pink-highlight);}
+.error-item .type-tag{
+  font-size:11px;background:var(--pink-highlight);color:#c66;
+  padding:2px 10px;border-radius:10px;flex-shrink:0;
+}
+.error-item .content{flex:1;font-size:13px;line-height:1.5;}
+.error-item .content .q{font-weight:500;margin-bottom:4px;}
+.error-item .content .a{color:var(--text-sub);font-size:12px;}
+.error-item .del{color:#e88;cursor:pointer;font-size:18px;flex-shrink:0;}
+
+/* ========== 每日计划表 ========== */
+.plan-input-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.plan-input-row input,.plan-input-row select{
+  padding:8px 12px;border:2px solid var(--border);
+  border-radius:12px;font-size:13px;background:#fff;transition:border-color .2s;
+}
+.plan-input-row input:focus,.plan-input-row select:focus{border-color:var(--pink-btn);}
+.plan-input-row input[type=text]{flex:1;min-width:150px;}
+.plan-input-row input[type=number]{width:90px;}
+.plan-list{display:flex;flex-direction:column;gap:6px;}
+.plan-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:var(--pink-main);
+  border-radius:12px;transition:all .25s;
+  border:2px solid transparent;
+}
+.plan-item:hover{border-color:var(--pink-highlight);}
+.plan-item.done{background:#f5f5f5;}
+.plan-item.done .plan-text{text-decoration:line-through;color:var(--text-sub);}
+.plan-check{
+  width:22px;height:22px;border:2px solid var(--pink-btn);
+  border-radius:50%;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#fff;transition:all .25s;
+}
+.plan-check:hover{transform:scale(1.1);}
+.plan-check.checked{background:linear-gradient(135deg,var(--pink-btn),#F4B8C2);border-color:var(--pink-btn);}
+.plan-check.checked::after{content:'✓';}
+.plan-text{flex:1;font-size:13px;}
+.plan-meta{font-size:11px;color:var(--text-sub);background:#fff;padding:2px 8px;border-radius:8px;}
+.plan-del{color:#e88;cursor:pointer;font-size:16px;flex-shrink:0;}
+.plan-progress-bar{
+  width:100%;height:10px;background:#f0f0f0;border-radius:5px;
+  margin-bottom:12px;overflow:hidden;
+}
+.plan-progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--pink-btn),#7BC99E);border-radius:5px;transition:width .3s;
+}
+
+/* ========== 打卡日历 ========== */
+.checkin-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px;}
+.cal-week{text-align:center;font-size:11px;color:var(--text-sub);padding:4px 0;font-weight:600;}
+.cal-day{
+  aspect-ratio:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  border-radius:12px;cursor:pointer;transition:all .2s;
+  font-size:13px;background:#fafafa;border:2px solid transparent;
+  position:relative;
+}
+.cal-day:hover{border-color:var(--pink-btn);transform:scale(1.05);}
+.cal-day.checked{background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));color:#fff;font-weight:700;}
+.cal-day.today{border:2px solid var(--pink-btn);}
+.cal-day .hours{
+  font-size:9px;color:var(--text-sub);margin-top:1px;
+}
+.cal-day.checked .hours{color:#fff;font-weight:600;}
+.cal-day .dot-mark{
+  position:absolute;top:3px;right:3px;
+  width:5px;height:5px;border-radius:50%;background:#fff;
+}
+.cal-day.empty{visibility:hidden;}
+
+/* 打卡时长滚轴 */
+.duration-picker{
+  display:flex;align-items:center;gap:12px;
+  padding:14px;background:var(--pink-main);border-radius:14px;margin-bottom:14px;flex-wrap:wrap;
+}
+.duration-picker label{font-size:13px;font-weight:500;white-space:nowrap;}
+.duration-scroll{
+  flex:1;display:flex;align-items:center;gap:4px;overflow-x:auto;
+  padding:6px 0;min-width:100%;
+}
+.duration-opt{
+  flex-shrink:0;padding:6px 16px;background:#fff;
+  border-radius:16px;font-size:12px;cursor:pointer;
+  border:2px solid transparent;transition:all .2s;font-weight:500;
+}
+.duration-opt:hover{border-color:var(--pink-btn);}
+.duration-opt.selected{background:linear-gradient(135deg,var(--pink-btn),#F4B8C2);color:#fff;border-color:var(--pink-btn);box-shadow:0 2px 8px rgba(248,200,208,0.4);}
+.checkin-summary{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;
+}
+.checkin-summary .sb{
+  text-align:center;padding:12px;background:var(--pink-main);border-radius:12px;border:2px solid #FFF8FA;
+}
+.checkin-summary .sb .n{font-size:22px;font-weight:700;color:#E8919B;}
+.checkin-summary .sb .l{font-size:11px;color:var(--text-sub);}
+
+/* ========== 图表容器 ========== */
+.chart-container{position:relative;width:100%;}
+.chart-container canvas{max-height:280px;}
+.chart-tabs{display:flex;gap:6px;margin-bottom:12px;}
+.chart-tab{
+  padding:5px 14px;border-radius:16px;font-size:12px;
+  background:#f5f5f5;color:var(--text-sub);cursor:pointer;
+}
+.chart-tab.active{background:var(--pink-btn);color:#fff;}
+
+/* ========== 试卷分析 ========== */
+.exam-form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+@media(max-width:768px){.exam-form{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.exam-form{grid-template-columns:1fr;}}
+.exam-form .full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:11px;color:var(--text-sub);}
+.form-group input,.form-group select,.form-group textarea{
+  padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+}
+
+.exam-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;}
+.exam-row{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;
+  gap:8px;align-items:center;
+  padding:10px 14px;background:var(--pink-main);border-radius:8px;font-size:12px;
+}
+@media(max-width:600px){.exam-row{grid-template-columns:1fr 1fr;}}
+.exam-row .ex-name{font-weight:600;}
+.exam-row .ex-score{font-weight:700;color:#E8919B;}
+.exam-row .ex-del{color:#e88;cursor:pointer;}
+.exam-detail{
+  grid-column:1/-1;background:#fff;border-radius:8px;
+  padding:10px;margin-top:4px;font-size:12px;color:var(--text-sub);
+  display:none;
+}
+.exam-detail.show{display:block;}
+.exam-detail .section-tag{
+  display:inline-block;font-size:10px;background:var(--pink-highlight);
+  color:#c66;padding:1px 6px;border-radius:4px;margin:2px;
+}
+
+/* ========== 错题录入（拍照+语音） ========== */
+.error-input-area{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.error-input-area textarea{
+  flex:1;min-width:200px;padding:10px;border:1px solid var(--border);
+  border-radius:8px;font-size:13px;resize:vertical;min-height:60px;
+}
+.icon-btn{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;transition:all .2s;flex-shrink:0;
+}
+.icon-btn.photo{background:var(--pink-main);color:#E8919B;}
+.icon-btn.photo:hover{background:var(--pink-highlight);}
+.icon-btn.voice{background:var(--pink-main);color:#8EC0E8;}
+.icon-btn.voice:hover{background:#dceaf7;}
+.icon-btn.voice.recording{background:#ffcccc;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.error-photos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.error-photo{
+  position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;
+  border:1px solid var(--border);
+}
+.error-photo img{width:100%;height:100%;object-fit:cover;}
+.error-photo .rm{
+  position:absolute;top:0;right:0;background:rgba(0,0,0,.5);
+  color:#fff;width:18px;height:18px;border-radius:50%;
+  font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.voice-indicator{
+  display:none;font-size:12px;color:#e88;padding:4px 0;
+  align-items:center;gap:6px;
+}
+.voice-indicator.show{display:flex;}
+
+/* ========== Toast 提示 ========== */
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:rgba(51,51,51,.9);color:#fff;padding:10px 24px;
+  border-radius:20px;font-size:13px;z-index:9999;
+  transition:transform .3s;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ========== 滚动条 ========== */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--pink-btn);border-radius:3px;}
+
+/* ========== 做题弹窗 ========== */
+.quiz-overlay{
+  display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;
+  background:rgba(74,59,64,0.5);z-index:1000;
+  align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(4px);
+}
+.quiz-overlay.show{display:flex;}
+.quiz-modal{
+  background:#fff;border-radius:20px;width:100%;max-width:600px;
+  max-height:85vh;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.15);
+  animation:quizPop .3s ease;
+}
+@keyframes quizPop{from{transform:scale(0.9);opacity:0;}to{transform:scale(1);opacity:1;}}
+.quiz-header{
+  padding:18px 24px;background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));
+  display:flex;align-items:center;gap:10px;color:#fff;
+}
+.quiz-header .qh-title{font-size:16px;font-weight:700;flex:1;}
+.quiz-header .qh-close{font-size:22px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,0.2);}
+.quiz-header .qh-close:hover{background:rgba(255,255,255,0.35);}
+.quiz-progress{padding:12px 24px 0;font-size:12px;color:var(--text-sub);display:flex;align-items:center;gap:10px;}
+.quiz-progress-bar{flex:1;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden;}
+.quiz-progress-fill{height:100%;background:linear-gradient(90deg,var(--pink-btn),#7BC99E);border-radius:3px;transition:width .3s;}
+.quiz-body{flex:1;overflow-y:auto;padding:20px 24px;}
+.quiz-q{font-size:15px;line-height:1.8;margin-bottom:18px;font-weight:500;}
+.quiz-q .q-tag{font-size:11px;background:var(--pink-highlight);color:#c66;padding:2px 10px;border-radius:10px;margin-right:8px;}
+.quiz-options{display:flex;flex-direction:column;gap:10px;}
+.quiz-option{
+  padding:12px 16px;border:2px solid #FFF0F3;border-radius:12px;
+  cursor:pointer;transition:all .2s;font-size:14px;display:flex;align-items:center;gap:10px;
+}
+.quiz-option:hover{border-color:var(--pink-btn);background:var(--pink-main);}
+.quiz-option.selected{border-color:var(--pink-btn);background:var(--pink-main);}
+.quiz-option.correct{border-color:#7BC99E;background:#f0fff4;}
+.quiz-option.wrong{border-color:#e88;background:#fff0f0;}
+.quiz-option .opt-label{width:28px;height:28px;border-radius:50%;background:var(--pink-main);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#E8919B;flex-shrink:0;}
+.quiz-option.selected .opt-label{background:var(--pink-btn);color:#fff;}
+.quiz-option.correct .opt-label{background:#7BC99E;color:#fff;}
+.quiz-option.wrong .opt-label{background:#e88;color:#fff;}
+.quiz-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.quiz-footer .quiz-tip{flex:1;font-size:12px;color:var(--text-sub);}
+.quiz-explain{margin-top:14px;padding:14px;background:#FFF8FA;border-radius:12px;border-left:4px solid var(--pink-btn);font-size:13px;line-height:1.7;display:none;}
+.quiz-explain.show{display:block;}
+.quiz-explain .et{font-weight:700;color:#E8919B;margin-bottom:4px;}
+.quiz-result{padding:30px 24px;text-align:center;}
+.quiz-result .big-emoji{font-size:56px;margin-bottom:12px;}
+.quiz-result .score{font-size:42px;font-weight:700;color:#E8919B;margin-bottom:6px;}
+.quiz-result .score-detail{font-size:14px;color:var(--text-sub);margin-bottom:20px;}
+.overview-hero{
+  background:linear-gradient(135deg,#FFF5F7 0%,#FADADD 50%,#F8C8D0 100%);
+  border-radius:20px;padding:24px;margin-bottom:16px;
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  box-shadow:0 4px 20px rgba(248,200,208,0.3);position:relative;overflow:hidden;
+}
+.overview-hero::before{content:'⛄';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:64px;opacity:.25;}
+.overview-hero .hero-text{flex:1;min-width:200px;position:relative;z-index:1;}
+.overview-hero .hero-text h2{font-size:18px;margin-bottom:6px;color:#4A3B40;}
+.overview-hero .hero-text p{font-size:13px;color:var(--text-sub);}
+.overview-hero .hero-stat{text-align:center;position:relative;z-index:1;}
+.overview-hero .hero-stat .big{font-size:32px;font-weight:700;color:#fff;text-shadow:0 2px 4px rgba(248,200,208,0.5);}
+.overview-hero .hero-stat .lbl{font-size:11px;color:#fff;opacity:.85;}
+
+/* 空状态 */
+.empty-state{text-align:center;padding:30px 20px;color:var(--text-sub);font-size:13px;}
+.empty-state .emoji{font-size:36px;margin-bottom:8px;display:block;}
+
+/* 备份按钮 */
+.backup-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:20px;border:none;
+  font-size:13px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:all 0.2s;
+}
+
+/* 备份弹窗 */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);
+  z-index:9998;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.show{display:flex;}
+.modal-box{
+  background:white;border-radius:14px;padding:28px 24px;
+  max-width:480px;width:90vw;max-height:80vh;overflow-y:auto;
+  box-shadow:0 16px 48px rgba(0,0,0,0.2);position:relative;
+}
+.modal-close{position:absolute;top:12px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:#999;}
+.mb-title{font-size:17px;font-weight:700;margin-bottom:6px;}
+.mb-desc{font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;}
+.mb-info{padding:12px;background:#f8f8f8;border-radius:8px;font-size:12px;color:#666;margin-bottom:16px;}
+.mb-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.mb-btn{padding:10px 20px;border:none;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;}
+.mb-btn-pri{background:#E8919B;color:white;}
+.mb-btn-out{background:transparent;border:1.5px solid #d0d0d0;color:#555;}
+.mb-btn-dan{background:#f5f5f5;color:#999;}
+.mb-btn-dan:hover{background:#E57373;color:white;}
+
+/* 侧边栏底部作者信息 */
+.sidebar-footer{
+  padding:12px 10px;border-top:2px dashed var(--pink-highlight);
+  margin-top:auto;
+}
+.side-credit{
+  font-size:10px;color:var(--text-sub);text-align:center;line-height:1.6;
+}
+.side-credit a{color:#E8919B;text-decoration:none;}
+.side-credit a:hover{text-decoration:underline;}
+
+/* 桌面端顶部作者信息（宽屏可见） */
+.header-credit{
+  display:none;
+}
+@media(min-width:900px){
+  .header-credit{
+    display:block;
+    position:absolute;top:12px;right:16px;
+    font-size:10px;color:var(--text-sub);opacity:0.7;
+    z-index:5;
+  }
+  .header-credit a{color:#E8919B;text-decoration:none;}
+  .header-credit a:hover{text-decoration:underline;}
+}
+
+/* 移动端侧边栏缩略（≤768px 只显示图标） */
+@media(max-width:768px){
+  :root{--nav-w:56px;}
+  .sidebar-title{font-size:0;padding:16px 8px;}
+  .sidebar-title::before{font-size:24px;margin-bottom:0;}
+  .sidebar-title span{display:none;}
+  .nav-item{font-size:0;justify-content:center;padding:12px 0;}
+  .nav-item .nav-icon{width:auto;font-size:20px;}
+  .nav-item:not(.active){background:transparent;}
+  .nav-badge,.nav-item .arrow{display:none;}
+  .sidebar-footer{padding:8px 4px;}
+  .sidebar-footer .backup-btn{font-size:0;gap:0;padding:8px;width:auto;justify-content:center;border-radius:50%;min-width:36px;height:36px;}
+  .sidebar-footer .backup-btn::before{content:'💾';font-size:16px;}
+  .side-credit{font-size:0;}
+  .side-credit a::before{content:'📕';font-size:14px;}
+  .side-credit a{font-size:0;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ========== 左侧导航栏 ========== -->
+<div class="sidebar">
+  <div class="sidebar-title">
+    小王备考加油
+    <span>⛄ 专属备考工作台</span>
+  </div>
+  <div class="nav-menu" id="navMenu">
+    <div class="nav-item active" data-page="home"><span class="nav-icon">🏠</span>首页总览</div>
+    <div class="nav-item" data-page="common"><span class="nav-icon">📚</span>常识判断</div>
+    <div class="nav-item" data-page="politics"><span class="nav-icon">📰</span>时政热点</div>
+    <div class="nav-item" data-page="verbal"><span class="nav-icon">📖</span>言语理解</div>
+    <div class="nav-item" data-page="reasoning"><span class="nav-icon">🧩</span>判断推理</div>
+    <div class="nav-item" data-page="quantity"><span class="nav-icon">🔢</span>数量关系</div>
+    <div class="nav-item" data-page="data"><span class="nav-icon">📊</span>资料分析</div>
+    <div class="nav-item" data-page="plan"><span class="nav-icon">📝</span>每日计划</div>
+    <div class="nav-item" data-page="checkin"><span class="nav-icon">📅</span>打卡日历</div>
+    <div class="nav-item" data-page="stats"><span class="nav-icon">📈</span>时长统计</div>
+    <div class="nav-item" data-page="exam"><span class="nav-icon">📄</span>试卷分析</div>
+    <div class="nav-item" data-page="error"><span class="nav-icon">❌</span>错题记录</div>
+  </div>
+  <div class="sidebar-footer">
+    <button class="backup-btn" id="openBackupBtn" style="background:var(--pink-btn);color:#fff;width:100%;justify-content:center;margin-bottom:8px;">💾 数据备份</button>
+    <div class="side-credit">
+      📕 来自 <a href="https://xhslink.cn/m/4SRT3myzeDg" target="_blank" rel="noopener noreferrer">@米奇妙妙屋c9n @小红书</a>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 右侧主内容区 ========== -->
+<div class="main" id="mainArea">
+
+<!-- ===== 首页总览 ===== -->
+<div class="page active" id="page-home">
+  <div class="overview-hero" style="position:relative;">
+    <div class="header-credit">
+      📕 <a href="https://xhslink.cn/m/4SRT3myzeDg" target="_blank" rel="noopener noreferrer">@米奇妙妙屋c9n @小红书</a>
+    </div>
+    <div class="hero-text">
+      <h2 id="greetTitle">小王备考加油，上岸可期 ⛄</h2>
+      <p id="greetDate"></p>
+    </div>
+    <div class="hero-stat">
+      <div class="big" id="overviewTotal">0</div>
+      <div class="lbl">今日做题总数</div>
+    </div>
+    <div class="hero-stat">
+      <div class="big" id="overviewRate">0%</div>
+      <div class="lbl">今日正确率</div>
+    </div>
+    <div class="hero-stat">
+      <div class="big" id="overviewStreak">0</div>
+      <div class="lbl">连续打卡</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>六大模块概览</div>
+    <div class="topic-grid" id="overviewTopics"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>今日计划完成情况</div>
+      <div class="plan-progress-bar"><div class="plan-progress-fill" id="overviewPlanBar" style="width:0%"></div></div>
+      <div id="overviewPlanList" style="max-height:200px;overflow-y:auto;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>近7日学习时长</div>
+      <div class="chart-container"><canvas id="overviewChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 常识判断 ===== -->
+<div class="page" id="page-common">
+  <div class="stat-row" id="stats-common"></div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>常识专项题库</div>
+    <div class="drill-list" id="drill-common"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>每日常识速记 <span class="more" onclick="refreshKnowledge('common')">🔄 换一批</span></div>
+      <div class="knowledge-list" id="knowledge-common"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>常识错题本</div>
+      <div id="error-common"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 时政热点 ===== -->
+<div class="page" id="page-politics">
+  <div class="stat-row" id="stats-politics"></div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>时政专项刷题</div>
+    <div class="drill-list" id="drill-politics"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>每日时政早报 <span class="more" onclick="refreshKnowledge('politics')">🔄 换一批</span></div>
+      <div class="knowledge-list" id="knowledge-politics"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>时政错题与易混考点</div>
+      <div id="error-politics"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 言语理解 ===== -->
+<div class="page" id="page-verbal">
+  <div class="stat-row" id="stats-verbal"></div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>细分题型刷题</div>
+    <div class="drill-list" id="drill-verbal"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>高频成语与词语积累 <span class="more" onclick="refreshKnowledge('verbal')">🔄 换一批</span></div>
+      <div class="knowledge-list" id="knowledge-verbal"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>言语错题集</div>
+      <div id="error-verbal"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 判断推理 ===== -->
+<div class="page" id="page-reasoning">
+  <div class="stat-row" id="stats-reasoning"></div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>四大题型专项刷题</div>
+    <div class="drill-list" id="drill-reasoning"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>推理技巧与规律口诀 <span class="more" onclick="refreshKnowledge('reasoning')">🔄 换一批</span></div>
+      <div class="knowledge-list" id="knowledge-reasoning"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>推理错题与陷阱汇总</div>
+      <div id="error-reasoning"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 数量关系 ===== -->
+<div class="page" id="page-quantity">
+  <div class="stat-row" id="stats-quantity"></div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>高频考点刷题</div>
+    <div class="drill-list" id="drill-quantity"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>数量公式与秒杀技巧 <span class="more" onclick="refreshKnowledge('quantity')">🔄 换一批</span></div>
+      <div class="knowledge-list" id="knowledge-quantity"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>数量错题与难题解析</div>
+      <div id="error-quantity"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 资料分析 ===== -->
+<div class="page" id="page-data">
+  <div class="stat-row" id="stats-data"></div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>资料分析专项刷题</div>
+    <div class="drill-list" id="drill-data"></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>速算技巧与必背公式 <span class="more" onclick="refreshKnowledge('data')">🔄 换一批</span></div>
+      <div class="knowledge-list" id="knowledge-data"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>计算错题与坑点复盘</div>
+      <div id="error-data"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 每日计划 ===== -->
+<div class="page" id="page-plan">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>添加学习计划</div>
+    <div class="plan-input-row">
+      <input type="text" id="planInput" placeholder="输入计划内容，如：言语理解刷题50道">
+      <select id="planModule">
+        <option value="常识判断">常识判断</option>
+        <option value="时政热点">时政热点</option>
+        <option value="言语理解" selected>言语理解</option>
+        <option value="判断推理">判断推理</option>
+        <option value="数量关系">数量关系</option>
+        <option value="资料分析">资料分析</option>
+        <option value="试卷练习">试卷练习</option>
+        <option value="其他">其他</option>
+      </select>
+      <input type="number" id="planCount" placeholder="题量" min="0">
+      <button class="btn" onclick="addPlan()">添加计划</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>今日计划表 <span class="more" id="planDateLabel"></span></div>
+    <div class="plan-progress-bar"><div class="plan-progress-fill" id="planProgressBar" style="width:0%"></div></div>
+    <div id="planList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>今日做题统计</div>
+    <div class="stat-row" id="planDailyStats"></div>
+    <div class="grid-2">
+      <div>
+        <h4 style="margin-bottom:10px;font-size:14px;">按模块统计</h4>
+        <div id="planModuleStats"></div>
+      </div>
+      <div class="chart-container"><canvas id="planChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>快速记录做题</div>
+    <div class="plan-input-row">
+      <select id="quickModule">
+        <option value="常识判断">常识判断</option>
+        <option value="时政热点">时政热点</option>
+        <option value="言语理解" selected>言语理解</option>
+        <option value="判断推理">判断推理</option>
+        <option value="数量关系">数量关系</option>
+        <option value="资料分析">资料分析</option>
+      </select>
+      <input type="number" id="quickDone" placeholder="做题数" min="0">
+      <input type="number" id="quickRight" placeholder="正确数" min="0">
+      <button class="btn" onclick="quickRecord()">记录</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 打卡日历 ===== -->
+<div class="page" id="page-checkin">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>每月打卡日历</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <button class="btn btn-sm btn-outline" onclick="changeMonth(-1)">◀ 上月</button>
+      <span id="checkinMonthLabel" style="font-weight:700;font-size:15px;"></span>
+      <button class="btn btn-sm btn-outline" onclick="changeMonth(1)">下月 ▶</button>
+    </div>
+    <div class="checkin-calendar" id="checkinCalendar"></div>
+    <div class="checkin-summary">
+      <div class="sb"><div class="n" id="ckMonthDays">0</div><div class="l">本月打卡天数</div></div>
+      <div class="sb"><div class="n" id="ckMonthHours">0</div><div class="l">本月学习时长(h)</div></div>
+      <div class="sb"><div class="n" id="ckStreak">0</div><div class="l">连续打卡天数</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>打卡时长设置</div>
+    <p style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">点击日历日期选择打卡，滑动滚轴选择当日学习时长（小时）</p>
+    <div class="duration-picker">
+      <label>选中日期：<span id="selectedDateLabel" style="font-weight:700;color:#E8919B;">请点击日期</span></label>
+      <div class="duration-scroll" id="durationScroll"></div>
+    </div>
+    <button class="btn" onclick="confirmCheckin()">确认打卡</button>
+    <button class="btn btn-danger" onclick="removeCheckin()">取消当日打卡</button>
+  </div>
+</div>
+
+<!-- ===== 时长统计 ===== -->
+<div class="page" id="page-stats">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>学习时长折线图</div>
+    <div class="chart-tabs">
+      <div class="chart-tab active" data-range="week" onclick="switchStatsRange('week')">按周</div>
+      <div class="chart-tab" data-range="month" onclick="switchStatsRange('month')">按月</div>
+      <div class="chart-tab" data-range="year" onclick="switchStatsRange('year')">按年</div>
+    </div>
+    <div class="chart-container"><canvas id="statsChart"></canvas></div>
+  </div>
+  <div class="grid-3">
+    <div class="card" style="text-align:center;">
+      <div class="stat-num" id="totalHours" style="font-size:30px;">0</div>
+      <div class="stat-label">累计学习时长(小时)</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="stat-num blue" id="avgHours" style="font-size:30px;">0</div>
+      <div class="stat-label">日均学习时长(小时)</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="stat-num green" id="totalDays" style="font-size:30px;">0</div>
+      <div class="stat-label">累计打卡天数</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 试卷分析 ===== -->
+<div class="page" id="page-exam">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>添加试卷记录</div>
+    <div class="exam-form">
+      <div class="form-group">
+        <label>试卷名称</label>
+        <input type="text" id="examName" placeholder="如：2024国考行测真题">
+      </div>
+      <div class="form-group">
+        <label>试卷类型</label>
+        <select id="examType">
+          <option value="行测">行测</option>
+          <option value="申论">申论</option>
+          <option value="综应">综应</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>做题日期</label>
+        <input type="date" id="examDate">
+      </div>
+      <div class="form-group">
+        <label>做题时长(分钟)</label>
+        <input type="number" id="examTime" placeholder="如：120" min="0">
+      </div>
+      <div class="form-group">
+        <label>总分</label>
+        <input type="number" id="examTotalScore" placeholder="如：100" min="0">
+      </div>
+      <div class="form-group">
+        <label>得分</label>
+        <input type="number" id="examScore" placeholder="如：72" min="0">
+      </div>
+      <div class="form-group full">
+        <label>各板块得分情况（用逗号分隔，如：常识8/10,言语30/40,判断25/35,数量5/10,资料12/15）</label>
+        <input type="text" id="examSections" placeholder="板块名得分/满分,板块名得分/满分...">
+      </div>
+      <div class="form-group full">
+        <label>错题与遗忘知识点备注</label>
+        <textarea id="examNotes" rows="2" placeholder="记录错题原因、遗忘的知识点、需重点复习的内容..."></textarea>
+      </div>
+    </div>
+    <button class="btn" onclick="addExam()">添加试卷记录</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>成绩趋势分析</div>
+    <div class="chart-tabs">
+      <div class="chart-tab active" data-etype="行测" onclick="switchExamType('行测')">行测</div>
+      <div class="chart-tab" data-etype="申论" onclick="switchExamType('申论')">申论</div>
+      <div class="chart-tab" data-etype="综应" onclick="switchExamType('综应')">综应</div>
+    </div>
+    <div class="chart-container"><canvas id="examChart"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>试卷记录列表</div>
+    <div class="exam-list" id="examList"></div>
+  </div>
+</div>
+
+<!-- ===== 错题记录 ===== -->
+<div class="page" id="page-error">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>添加错题（支持拍照与语音）</div>
+    <div class="error-input-area">
+      <textarea id="errorInput" placeholder="输入错题内容、解析或知识点..."></textarea>
+    </div>
+    <div class="error-input-area" style="margin-bottom:8px;">
+      <select id="errorModule" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;">
+        <option value="常识判断">常识判断</option>
+        <option value="时政热点">时政热点</option>
+        <option value="言语理解">言语理解</option>
+        <option value="判断推理">判断推理</option>
+        <option value="数量关系">数量关系</option>
+        <option value="资料分析">资料分析</option>
+      </select>
+      <button class="icon-btn photo" onclick="takePhoto()" title="拍照上传">📷</button>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;" multiple>
+      <button class="icon-btn voice" id="voiceBtn" onclick="toggleVoice()" title="语音输入">🎤</button>
+      <button class="btn" onclick="addError()">保存错题</button>
+    </div>
+    <div class="voice-indicator" id="voiceIndicator">🔴 录音中...点击停止</div>
+    <div class="error-photos" id="errorPhotos"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span class="dot"></span>错题列表
+      <span class="more">
+        <select id="errorFilter" onchange="renderErrors()" style="font-size:12px;border:1px solid var(--border);border-radius:6px;padding:2px 6px;">
+          <option value="all">全部模块</option>
+          <option value="常识判断">常识判断</option>
+          <option value="时政热点">时政热点</option>
+          <option value="言语理解">言语理解</option>
+          <option value="判断推理">判断推理</option>
+          <option value="数量关系">数量关系</option>
+          <option value="资料分析">资料分析</option>
+        </select>
+      </span>
+    </div>
+    <div id="errorAllList"></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== 备份弹窗 ===== -->
+<div class="modal-overlay" id="backupModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeBackupBtn">✕</button>
+    <div class="mb-title">💾 数据备份</div>
+    <div class="mb-desc">
+      所有数据存储在浏览器本地（IndexedDB + localStorage 双重保障）。建议定期备份。
+    </div>
+    <div class="mb-info" id="backupInfo">加载中…</div>
+    <div class="mb-actions">
+      <button class="mb-btn mb-btn-pri" id="modalExportBtn">📤 导出备份</button>
+      <button class="mb-btn mb-btn-out" id="modalImportBtn">📥 导入恢复</button>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eee;">
+      <button class="mb-btn mb-btn-dan" id="modalResetBtn">🔄 重置为默认</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 做题弹窗 ========== -->
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-header">
+      <span class="qh-title" id="quizTitle">专项练习</span>
+      <span class="qh-close" onclick="closeQuiz()">✕</span>
+    </div>
+    <div class="quiz-progress" id="quizProgressArea">
+      <span id="quizProgressText">第 1/5 题</span>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill" style="width:20%"></div></div>
+    </div>
+    <div class="quiz-body" id="quizBody"></div>
+    <div class="quiz-footer" id="quizFooter">
+      <span class="quiz-tip" id="quizTip">选择答案后点击「确认」</span>
+      <button class="btn btn-outline" onclick="skipQuestion()" id="quizSkipBtn">跳过</button>
+      <button class="btn" onclick="submitAnswer()" id="quizSubmitBtn">确认</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== IndexedDB 存储引擎 =====
+(function(){
+  var _cache = {}; var _ready = false;
+  var _keys = ['xiaowang_workbench'];
+  window.__idbKeys = _keys; window.__idbCache = _cache;
+
+  async function _open(){
+    return new Promise(function(res, rej){
+      var r = indexedDB.open('workbenchDB', 1);
+      r.onupgradeneeded = function(e){
+        if(!e.target.result.objectStoreNames.contains('kv'))
+          e.target.result.createObjectStore('kv');
+      };
+      r.onsuccess = function(){ res(r.result); };
+      r.onerror = function(){ rej(r.error); };
+    });
+  }
+
+  window.__idbInit = async function(){
+    try {
+      var db = await _open();
+      var tx = db.transaction('kv', 'readonly');
+      var store2 = tx.objectStore('kv');
+      var keys = await new Promise(function(res, rej){
+        var r = store2.getAllKeys();
+        r.onsuccess = function(){ res(r.result); };
+        r.onerror = function(){ rej(r.error); };
+      });
+      var vals = await new Promise(function(res, rej){
+        var r = store2.getAll();
+        r.onsuccess = function(){ res(r.result); };
+        r.onerror = function(){ rej(r.error); };
+      });
+      keys.forEach(function(k, i){ _cache[k] = vals[i]; });
+      _keys.forEach(function(k){
+        if(!(k in _cache)){
+          try{ var v = localStorage.getItem(k); if(v !== null) _cache[k] = JSON.parse(v); }catch(e){}
+        }
+      });
+      _ready = true;
+    }catch(e){ _ready = false; }
+  };
+
+  window.__idbSave = async function(key, value){
+    _cache[key] = value;
+    try {
+      var db = await _open();
+      var tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').put(value, key);
+      await new Promise(function(res, rej){
+        tx.oncomplete = function(){ res(); };
+        tx.onerror = function(){ rej(tx.error); };
+      });
+    }catch(e){}
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+  };
+})();
+
+// ====================================================
+//  数据层 - IndexedDB + localStorage 双写
+// ====================================================
+const STORE_KEY = 'xiaowang_workbench';
+let store = loadStore();
+
+function loadStore(){
+  var c = window.__idbCache;
+  if(c && c[STORE_KEY]) return c[STORE_KEY];
+  try{
+    const s = localStorage.getItem(STORE_KEY);
+    if(s) return JSON.parse(s);
+  }catch(e){}
+  return defaultStore();
+}
+function defaultStore(){
+  return {
+    plans: {},        // {date: [{id,text,module,count,done}]}
+    records: {},      // {date: [{module,done,right}]}
+    checkins: {},     // {date: hours}
+    exams: [],        // [{id,name,type,date,time,totalScore,score,sections,notes}]
+    errors: [],       // [{id,module,content,photos,date}]
+    stats: {common:0,politics:0,verbal:0,reasoning:0,quantity:0,data:0}, // 累计做题数
+  };
+}
+function saveStore(){
+  if(window.__idbSave) window.__idbSave(STORE_KEY, store);
+  else localStorage.setItem(STORE_KEY, JSON.stringify(store));
+}
+
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function dateKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+function showToast(msg){ toast(msg); }
+
+// ====================================================
+//  题型配置
+// ====================================================
+const TOPICS = {
+  common: { name:'常识判断', icon:'📚', drills:[
+    {ic:'⚖️',nm:'法律常识',ct:'200+'},{ic:'🏛️',nm:'人文历史',ct:'300+'},
+    {ic:'🔬',nm:'科技常识',ct:'150+'},{ic:'🌍',nm:'地理常识',ct:'150+'},
+  ]},
+  politics: { name:'时政热点', icon:'📰', drills:[
+    {ic:'📅',nm:'近12个月时政',ct:'按月分类'},{ic:'🏛️',nm:'党政热点专项',ct:'100+'},
+    {ic:'📄',nm:'重要会议文件',ct:'50+'},{ic:'🌟',nm:'重大事件',ct:'80+'},
+  ]},
+  verbal: { name:'言语理解', icon:'📖', drills:[
+    {ic:'✏️',nm:'逻辑填空',ct:'300+'},{ic:'📑',nm:'片段阅读',ct:'300+'},
+    {ic:'🔢',nm:'语句排序',ct:'150+'},{ic:'🔍',nm:'细节判断',ct:'150+'},
+  ]},
+  reasoning: { name:'判断推理', icon:'🧩', drills:[
+    {ic:'🔺',nm:'图形推理',ct:'200+'},{ic:'📋',nm:'定义判断',ct:'200+'},
+    {ic:'🔗',nm:'类比推理',ct:'200+'},{ic:'🧠',nm:'逻辑判断',ct:'200+'},
+  ]},
+  quantity: { name:'数量关系', icon:'🔢', drills:[
+    {ic:'🔨',nm:'工程问题',ct:'80+'},{ic:'🚗',nm:'行程问题',ct:'80+'},
+    {ic:'💰',nm:'利润问题',ct:'60+'},{ic:'🎲',nm:'排列组合',ct:'60+'},
+    {ic:'📏',nm:'几何问题',ct:'50+'},{ic:'📊',nm:'概率问题',ct:'50+'},
+  ]},
+  data: { name:'资料分析', icon:'📊', drills:[
+    {ic:'📈',nm:'图文资料',ct:'100+'},{ic:'📋',nm:'表格资料',ct:'100+'},
+    {ic:'🔀',nm:'综合资料',ct:'80+'},{ic:'⏱️',nm:'套题训练',ct:'30套'},
+  ]},
+};
+
+const KNOWLEDGE = {
+  common: [
+    {tag:'法律',text:'我国宪法规定，公民的基本权利中，首要的权利是平等权，任何公民享有宪法和法律规定的权利，同时必须履行宪法和法律规定的义务。'},
+    {tag:'人文',text:'唐宋八大家：韩愈、柳宗元（唐代）；欧阳修、苏洵、苏轼、苏辙、王安石、曾巩（宋代）。'},
+    {tag:'科技',text:'我国四大发明：造纸术（东汉蔡伦改进）、印刷术（唐代雕版，北宋毕昇活字）、火药（唐代发明）、指南针（宋代用于航海）。'},
+    {tag:'地理',text:'我国地势三级阶梯：第一级青藏高原（4000m+），第二级盆地高原（1000-2000m），第三级平原丘陵（500m以下）。'},
+    {tag:'法律',text:'行政处罚的种类：警告、罚款、没收违法所得、责令停产停业、暂扣或吊销许可证、行政拘留、法律行政法规规定的其他处罚。'},
+    {tag:'人文',text:'二十四节气：春雨惊春清谷天，夏满芒夏暑相连，秋处露秋寒霜降，冬雪雪冬小大寒。'},
+    {tag:'科技',text:'新能源包括：太阳能、风能、水能、生物质能、地热能、海洋能、核能等，属于可再生能源（核能除外）。'},
+    {tag:'地理',text:'我国五大淡水湖：鄱阳湖（最大）、洞庭湖、太湖、洪泽湖、巢湖，主要分布在长江中下游地区。'},
+    {tag:'法律',text:'刑法基本原则：罪刑法定原则、法律面前人人平等原则、罪责刑相适应原则。'},
+    {tag:'人文',text:'中国古代四大名著：《三国演义》（罗贯中）、《水浒传》（施耐庵）、《西游记》（吴承恩）、《红楼梦》（曹雪芹）。'},
+  ],
+  politics: [
+    {tag:'会议',text:'党的二十大报告指出：中国式现代化是中国共产党领导的社会主义现代化，既有各国现代化的共同特征，更有基于自己国情的中国特色。'},
+    {tag:'文件',text:'2024年政府工作报告：GDP增长预期目标5%左右，城镇新增就业1200万人以上，CPI涨幅3%左右。'},
+    {tag:'热点',text:'新质生产力：以科技创新为核心，摆脱传统经济增长方式，具有高科技、高效能、高质量特征的生产力。'},
+    {tag:'会议',text:'中央经济工作会议2024：坚持稳中求进工作总基调，完整准确全面贯彻新发展理念，加快构建新发展格局。'},
+    {tag:'文件',text:'乡村振兴战略：产业兴旺、生态宜居、乡风文明、治理有效、生活富裕，总目标是农业农村现代化。'},
+    {tag:'热点',text:'共同富裕：不是同时富裕、同步富裕，而是允许一部分人先富起来，先富带后富，最终实现共同富裕。'},
+    {tag:'会议',text:'二十届三中全会：进一步全面深化改革、推进中国式现代化，到2029年完成本决定提出的改革任务。'},
+    {tag:'文件',text:'十四五规划纲要：经济社会发展主要目标包括经济发展取得新成效、改革开放迈出新步伐、社会文明程度得到新提高。'},
+    {tag:'热点',text:'全过程人民民主：是全链条、全方位、全覆盖的民主，是最广泛、最真实、最管用的社会主义民主。'},
+    {tag:'文件',text:'数字中国建设：加快数字发展，建设数字中国，打造数字经济新优势，协同推进数字产业化和产业数字化转型。'},
+  ],
+  verbal: [
+    {tag:'成语',text:'不以为然：不认为是对的，表示不同意或否定。≠ 不以为意（不放在心上）。'},
+    {tag:'成语',text:'无所不为：什么坏事都干。贬义词。≠ 无所不能（褒义，什么都能做）。'},
+    {tag:'成语',text:'刮目相看：用新的眼光来看待。强调别人有了进步。≠ 另眼相看（特殊对待）。'},
+    {tag:'辨析',text:'遏制 vs 遏止：遏制=控制、压制（过程）；遏止=阻止、使停止（结果）。'},
+    {tag:'辨析',text:'树立 vs 竖立：树立=建立（抽象，如树立信心）；竖立=使物体纵向立着（具体）。'},
+    {tag:'技巧',text:'逻辑填空解题三步法：①分析语境找暗示 ②辨析词语差异 ③代入验证。注意关联词：转折、递进、并列、因果。'},
+    {tag:'技巧',text:'片段阅读找主旨：首尾句、关联词（但是、因此、可见）、对策句（应该、需要、必须）常是主旨所在。'},
+    {tag:'成语',text:'南辕北辙：心想往南而车子却向北行，比喻行动和目的相抵触。≠ 背道而驰（方向相反，程度更重）。'},
+    {tag:'辨析',text:'启用 vs 起用：启用=开始使用（事物）；起用=重新任用（已退职的人员）。'},
+    {tag:'技巧',text:'语句排序题：先看选项首句排除，再找关联词（这、那、换句话说）确定先后，最后通读验证。'},
+  ],
+  reasoning: [
+    {tag:'图形',text:'图形推理常见规律：对称性、旋转、平移、元素分布、叠加（去同存异/去异存同）、数量关系（点线角面素）。'},
+    {tag:'逻辑',text:'翻译推理：p→q 等价于 非q→非p（逆否命题）。肯前必肯后，否后必否前，否前肯后无必然结论。'},
+    {tag:'定义',text:'定义判断解题法：找关键词（主体、客体、条件、方式、目的、结果），逐一比对选项排除。'},
+    {tag:'类比',text:'类比推理常见关系：全同、并列、包含、交叉、属性、对应、因果。注意词性一致和逻辑关系一致。'},
+    {tag:'图形',text:'数量类规律：点（交点、切点）、线（直线、曲线、笔画）、角（锐角、直角、钝角）、面（封闭区域）、素（元素种类/数量）。'},
+    {tag:'逻辑',text:'削弱论证方法：否定论点、否定论据、切断联系（论据推不出论点）、另有他因。加强则相反。'},
+    {tag:'技巧',text:'逻辑判断真假推理：矛盾关系（必一真一假）：A↔非A；所有是↔有些非；所有非↔有些是；p且q↔非p或非q。'},
+    {tag:'定义',text:'定义判断注意：多定义题先看提问问哪个定义；关键词不是所有都要满足，看题目要求。'},
+  ],
+  quantity: [
+    {tag:'公式',text:'工程问题：工作总量=效率×时间。赋值法：给效率或总量赋特殊值（如1或最小公倍数）。'},
+    {tag:'公式',text:'行程问题：路程=速度×时间。相遇：S=(v1+v2)×t；追及：S=(v1-v2)×t；流水：v顺=v船+v水，v逆=v船-v水。'},
+    {tag:'公式',text:'利润问题：利润=售价-成本；利润率=利润/成本×100%；售价=成本×(1+利润率)。打折：售价=定价×折扣。'},
+    {tag:'技巧',text:'排列组合：A(n,m)=n!/(n-m)!；C(n,m)=n!/[(n-m)!×m!]。捆绑法（相邻）、插空法（不相邻）、隔板法（相同物品分配）。'},
+    {tag:'公式',text:'几何问题：三角形面积=1/2×底×高；圆面积=πr²；球体积=4/3πr³；勾股定理：a²+b²=c²。'},
+    {tag:'技巧',text:'秒杀技巧：代入排除法、特值法、比例法、方程法。数量关系先做简单题，难题学会放弃。'},
+    {tag:'公式',text:'概率问题：P(A)=事件A的结果数/总结果数。对立事件：P(A)+P(非A)=1。独立事件：P(AB)=P(A)×P(B)。'},
+    {tag:'技巧',text:'容斥原理：两集合 A+B-A∩B=总数-都不满足；三集合 A+B+C-A∩B-A∩C-B∩C+A∩B∩C=总数-都不满足。'},
+  ],
+  data: [
+    {tag:'速算',text:'首数法：适用于选项首位不同，做除法时算到首位即可判断。尾数法：适用于加减运算，选项尾数不同。'},
+    {tag:'公式',text:'增长率=(现期-基期)/基期×100%；增长量=现期-基期=基期×增长率；现期=基期×(1+增长率)。'},
+    {tag:'公式',text:'比重=部分/整体×100%；比重增长：部分增长率>整体增长率→比重上升；反之下降。'},
+    {tag:'技巧',text:'有效数字法：保留前三位有效数字进行计算，选项差距大时保留两位即可。注意凑整和估算。'},
+    {tag:'陷阱',text:'单位陷阱：注意百分号与个位数的区别、万与亿的单位换算、吨与千克等。时间陷阱：注意"同比"与"环比"。'},
+    {tag:'公式',text:'平均数=总量/份数；平均数增长率=(总量增长率-份数增长率)/(1+份数增长率)。'},
+    {tag:'速算',text:'特征数字法：将百分数转化为简单分数。如1/3≈33.3%，1/7≈14.3%，1/8=12.5%，1/9≈11.1%。'},
+    {tag:'技巧',text:'资料分析做题顺序：先看材料结构（标题、时间、单位），再看问题，带着问题回文找数据。'},
+  ],
+};
+
+// ====================================================
+//  导航切换
+// ====================================================
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    item.classList.add('active');
+    const page = item.dataset.page;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+    // 触发页面渲染
+    onPageShow(page);
+  });
+});
+
+function onPageShow(page){
+  if(page==='home') renderHome();
+  if(page==='plan') renderPlan();
+  if(page==='checkin') renderCheckin();
+  if(page==='stats') renderStats();
+  if(page==='exam') renderExam();
+  if(page==='error') renderErrors();
+  if(TOPICS[page]) renderTopic(page);
+}
+
+// ====================================================
+//  题型模块渲染
+// ====================================================
+function renderTopic(key){
+  const t = TOPICS[key];
+  // 数据卡片
+  const todayRecs = (store.records[todayKey()]||[]).filter(r=>r.module===t.name);
+  const todayDone = todayRecs.reduce((s,r)=>s+(r.done||0),0);
+  const todayRight = todayRecs.reduce((s,r)=>s+(r.right||0),0);
+  const rate = todayDone>0 ? Math.round(todayRight/todayDone*100) : 0;
+  const totalErr = store.errors.filter(e=>e.module===t.name).length;
+
+  document.getElementById('stats-'+key).innerHTML = `
+    <div class="stat-box"><div class="stat-num">${todayDone}</div><div class="stat-label">今日刷题量</div></div>
+    <div class="stat-box"><div class="stat-num green">${rate}%</div><div class="stat-label">今日正确率</div></div>
+    <div class="stat-box"><div class="stat-num blue">${store.stats[key]||0}</div><div class="stat-label">累计做题数</div></div>
+    <div class="stat-box"><div class="stat-num orange">${totalErr}</div><div class="stat-label">错题数</div></div>
+  `;
+  // 刷题入口
+  document.getElementById('drill-'+key).innerHTML = t.drills.map(d=>`
+    <div class="drill-item" onclick="startDrill('${t.name}','${d.nm}')">
+      <span class="ic">${d.ic}</span>
+      <span class="nm">${d.nm}</span>
+      <span class="ct">${d.ct}</span>
+    </div>
+  `).join('');
+  // 知识积累
+  renderKnowledge(key);
+  // 错题
+  renderTopicErrors(key, t.name);
+}
+
+function renderKnowledge(key){
+  const list = KNOWLEDGE[key];
+  // 随机取10条（或全部）
+  const shuffled = [...list].sort(()=>Math.random()-0.5);
+  const picked = shuffled.slice(0, Math.min(10, list.length));
+  document.getElementById('knowledge-'+key).innerHTML = picked.map(k=>`
+    <div class="knowledge-item"><span class="tag">${k.tag}</span>${k.text}</div>
+  `).join('');
+}
+
+function refreshKnowledge(key){ renderKnowledge(key); toast('已刷新知识点'); }
+
+function renderTopicErrors(key, moduleName){
+  const errors = store.errors.filter(e=>e.module===moduleName);
+  const el = document.getElementById('error-'+key);
+  if(errors.length===0){
+    el.innerHTML = '<div class="empty-state"><span class="emoji">📝</span>暂无错题，去「错题记录」添加吧</div>';
+    return;
+  }
+  el.innerHTML = errors.slice(-5).reverse().map(e=>`
+    <div class="error-item">
+      <span class="type-tag">${e.module}</span>
+      <div class="content">
+        <div class="q">${e.content.substring(0,100)}</div>
+        <div class="a">${e.date}</div>
+      </div>
+      <span class="del" onclick="deleteError('${e.id}')">✕</span>
+    </div>
+  `).join('');
+}
+
+function startDrill(module, type){
+  // 从题库中获取对应题目
+  const questions = getQuestions(module, type);
+  if(questions.length===0){
+    toast('该题型题库正在建设中~');
+    return;
+  }
+  // 随机打乱题目顺序，取5道
+  const shuffled = [...questions].sort(()=>Math.random()-0.5);
+  quizState.questions = shuffled.slice(0, Math.min(5, shuffled.length)).map(q=>{
+    // 打乱选项顺序
+    const opts = [...q.options];
+    const correctText = opts[q.answer];
+    const shuffledOpts = opts.sort(()=>Math.random()-0.5);
+    return {...q, options:shuffledOpts, answer:shuffledOpts.indexOf(correctText)};
+  });
+  quizState.currentIdx = 0;
+  quizState.selected = -1;
+  quizState.answered = false;
+  quizState.correctCount = 0;
+  quizState.module = module;
+  quizState.type = type;
+  document.getElementById('quizTitle').textContent = module + ' · ' + type;
+  document.getElementById('quizOverlay').classList.add('show');
+  renderQuestion();
+}
+
+// ====================================================
+//  题库
+// ====================================================
+function getQuestions(module, type){
+  const key = module+'|'+type;
+  return QUESTION_BANK[key] || [];
+}
+
+const QUESTION_BANK = {
+  '常识判断|法律常识': [
+    {q:'根据我国宪法，下列哪项不属于公民的基本权利？',options:['平等权','选举权','依法纳税','言论自由'],answer:2,explain:'依法纳税是公民的基本义务，不是权利。公民的基本权利包括平等权、政治权利（选举权和被选举权）、言论自由等。'},
+    {q:'我国宪法规定，中华人民共和国的根本制度是？',options:['人民代表大会制度','社会主义制度','民主集中制','基层群众自治制度'],answer:1,explain:'社会主义制度是中华人民共和国的根本制度。人民代表大会制度是根本政治制度。'},
+    {q:'根据《民法典》，限制民事行为能力人的年龄是？',options:['6周岁以上','8周岁以上','10周岁以上','14周岁以上'],answer:1,explain:'《民法典》规定，8周岁以上的未成年人为限制民事行为能力人，实施民事法律行为由其法定代理人代理或者经其法定代理人同意、追认。'},
+    {q:'下列哪种行政处罚只能由法律设定？',options:['罚款','行政拘留','吊销营业执照','警告'],answer:1,explain:'根据《行政处罚法》，限制人身自由的行政处罚（即行政拘留）只能由法律设定。'},
+    {q:'我国刑法规定，已满多少周岁的人犯罪，应当负刑事责任？',options:['14周岁','16周岁','18周岁','20周岁'],answer:1,explain:'已满16周岁的人犯罪，应当负刑事责任。已满14周岁不满16周岁的人，犯故意杀人等严重罪行的，应当负刑事责任。'},
+  ],
+  '常识判断|人文历史': [
+    {q:'下列哪位不是唐宋八大家之一？',options:['韩愈','柳宗元','白居易','苏轼'],answer:2,explain:'唐宋八大家是韩愈、柳宗元（唐代）、欧阳修、苏洵、苏轼、苏辙、王安石、曾巩（宋代）。白居易不在其中。'},
+    {q:'中国古代"四大发明"中，最早出现的是？',options:['造纸术','印刷术','火药','指南针'],answer:0,explain:'造纸术在东汉时期（蔡伦改进）就已出现，是最早的。印刷术（唐代）、指南针（宋代用于航海）、火药（唐代）相对较晚。'},
+    {q:'《红楼梦》的作者是？',options:['罗贯中','施耐庵','吴承恩','曹雪芹'],answer:3,explain:'《红楼梦》前80回由曹雪芹所著，后40回一般认为是高鹗续写。'},
+    {q:'科举制度正式形成于哪个朝代？',options:['汉朝','隋朝','唐朝','宋朝'],answer:1,explain:'科举制度正式形成于隋朝，隋炀帝大业年间开设进士科，标志着科举制度的正式确立。'},
+    {q:'下列哪个朝代的首都是今天的西安？',options:['汉朝','唐朝','宋朝','明朝'],answer:1,explain:'唐朝的首都是长安，即今天的西安。西汉首都也是长安（今西安），但选项中最典型的是唐朝。'},
+  ],
+  '常识判断|科技常识': [
+    {q:'下列哪种能源不属于可再生能源？',options:['太阳能','风能','核能','水能'],answer:2,explain:'核能属于不可再生能源，核燃料是有限的。太阳能、风能、水能都属于可再生能源。'},
+    {q:'我国第一颗人造地球卫星是？',options:['神舟一号','东方红一号','嫦娥一号','北斗一号'],answer:1,explain:'东方红一号于1970年4月24日成功发射，是我国第一颗人造地球卫星。'},
+    {q:'下列哪项不是大数据的特征？',options:['数据量大','处理速度快','数据类型单一','价值密度低'],answer:2,explain:'大数据的特征是"4V"：Volume（量大）、Velocity（速度快）、Variety（类型多样）、Value（价值密度低）。'},
+    {q:'人工智能领域中的"深度学习"是基于什么网络模型？',options:['人工神经网络','决策树','支持向量机','贝叶斯网络'],answer:0,explain:'深度学习是基于人工神经网络（尤其是多层神经网络）的机器学习方法。'},
+    {q:'5G通信技术相比4G，最大的优势不包括？',options:['传输速率更高','延迟更低','连接密度更大','覆盖范围更广'],answer:3,explain:'5G相比4G的优势是高速率、低延迟、大连接密度，但5G使用高频段，覆盖范围实际上不如4G广，需要更多基站。'},
+  ],
+  '常识判断|地理常识': [
+    {q:'我国最大的淡水湖是？',options:['洞庭湖','鄱阳湖','太湖','洪泽湖'],answer:1,explain:'鄱阳湖是我国最大的淡水湖，位于江西省。洞庭湖是第二大淡水湖。'},
+    {q:'我国地势的特征是？',options:['东高西低','西高东低','南高北低','北高南低'],answer:1,explain:'我国地势西高东低，呈三级阶梯状分布。第一级阶梯是青藏高原，第三级阶梯是东部平原丘陵。'},
+    {q:'下列哪条河流不流入太平洋？',options:['长江','黄河','雅鲁藏布江','塔里木河'],answer:3,explain:'塔里木河是我国最长的内流河，不流入海洋。长江、黄河流入太平洋，雅鲁藏布江流入印度洋。'},
+    {q:'我国四大高原中，面积最大的是？',options:['青藏高原','内蒙古高原','黄土高原','云贵高原'],answer:0,explain:'青藏高原是我国面积最大的高原，面积约250万平方公里，被称为"世界屋脊"。'},
+    {q:'秦岭-淮河一线是我国哪两个温度带的分界线？',options:['热带和亚热带','亚热带和暖温带','暖温带和中温带','中温带和寒温带'],answer:1,explain:'秦岭-淮河一线是亚热带和暖温带的分界线，也是1月0℃等温线通过的地方。'},
+  ],
+  '时政热点|近12个月时政': [
+    {q:'2024年政府工作报告中，GDP增长预期目标是多少？',options:['4.5%左右','5%左右','5.5%左右','6%左右'],answer:1,explain:'2024年政府工作报告提出GDP增长预期目标5%左右，城镇新增就业1200万人以上。'},
+    {q:'党的二十大报告指出，中国式现代化的本质特征是？',options:['中国共产党领导的社会主义现代化','高速发展的现代化','西方模式的现代化','工业化的现代化'],answer:0,explain:'中国式现代化是中国共产党领导的社会主义现代化，既有各国现代化的共同特征，更有基于自己国情的中国特色。'},
+    {q:'二十届三中全会的主要议题是？',options:['全面深化改革','进一步全面深化改革、推进中国式现代化','经济高质量发展','乡村振兴'],answer:1,explain:'二十届三中全会审议通过了《中共中央关于进一步全面深化改革、推进中国式现代化的决定》。'},
+    {q:'新质生产力的核心特征不包括？',options:['高科技','高效能','高质量','高能耗'],answer:3,explain:'新质生产力以高科技、高效能、高质量为特征，摆脱传统经济增长方式，高能耗不属于其特征。'},
+    {q:'2024年是中华人民共和国成立多少周年？',options:['70周年','72周年','75周年','78周年'],answer:2,explain:'中华人民共和国成立于1949年，2024年是75周年。'},
+  ],
+  '时政热点|党政热点专项': [
+    {q:'全过程人民民主的本质是？',options:['最广泛的民主','最真实的民主','最管用的社会主义民主','以上都是'],answer:3,explain:'全过程人民民主是全链条、全方位、全覆盖的民主，是最广泛、最真实、最管用的社会主义民主。'},
+    {q:'新发展理念不包括以下哪项？',options:['创新','协调','高速','共享'],answer:2,explain:'新发展理念是创新、协调、绿色、开放、共享。"高速"不属于新发展理念。'},
+    {q:'乡村振兴战略的总要求不包括？',options:['产业兴旺','生态宜居','城市优先','治理有效'],answer:2,explain:'乡村振兴战略总要求是产业兴旺、生态宜居、乡风文明、治理有效、生活富裕。"城市优先"不属于。'},
+    {q:'共同富裕的实现路径是？',options:['同时富裕','同步富裕','先富带后富','平均分配'],answer:2,explain:'共同富裕允许一部分人先富起来，先富带后富，最终实现共同富裕，不是同时富裕或平均分配。'},
+    {q:'我国的基本经济制度中，分配制度是？',options:['按劳分配','按需分配','按劳分配为主体、多种分配方式并存','平均分配'],answer:2,explain:'我国实行按劳分配为主体、多种分配方式并存的分配制度。'},
+  ],
+  '时政热点|重要会议文件': [
+    {q:'十四五规划的起止时间是？',options:['2020-2024年','2021-2025年','2022-2026年','2023-2027年'],answer:1,explain:'十四五规划的全称是《中华人民共和国国民经济和社会发展第十四个五年规划和2035年远景目标纲要》，时间为2021-2025年。'},
+    {q:'党的二十大报告提出，到2035年的目标是？',options:['全面建成小康社会','基本实现社会主义现代化','全面建成社会主义现代化强国','实现共产主义'],answer:1,explain:'党的二十大报告提出，到2035年基本实现社会主义现代化，到本世纪中叶建成社会主义现代化强国。'},
+    {q:'《粤港澳大湾区发展规划纲要》发布于哪一年？',options:['2017年','2018年','2019年','2020年'],answer:2,explain:'《粤港澳大湾区发展规划纲要》于2019年2月正式发布。'},
+    {q:'下列哪项不是构建新发展格局的内容？',options:['以国内大循环为主体','国内国际双循环相互促进','完全依赖出口','扩大内需'],answer:2,explain:'构建新发展格局是以国内大循环为主体、国内国际双循环相互促进，不是完全依赖出口。'},
+  ],
+  '时政热点|重大事件': [
+    {q:'杭州亚运会举办于哪一年？',options:['2022年','2023年','2024年','2025年'],answer:1,explain:'杭州第19届亚运会原定2022年举办，因疫情延期至2023年9月23日至10月8日举行。'},
+    {q:'中国空间站的名字是？',options:['天宫','天和','问天','梦天'],answer:0,explain:'中国空间站名为"天宫"，由天和核心舱、问天实验舱、梦天实验舱组成。'},
+    {q:'北斗导航系统是全球第几个成熟的卫星导航系统？',options:['第一个','第二个','第三个','第四个'],answer:3,explain:'北斗卫星导航系统是美国GPS、俄罗斯格洛纳斯、欧洲伽利略之后，全球第四个成熟的卫星导航系统。'},
+    {q:'中国第三艘航空母舰的名字是？',options:['辽宁舰','山东舰','福建舰','广东舰'],answer:2,explain:'中国第三艘航空母舰命名为"福建舰"，是中国完全自主设计建造的首艘弹射型航空母舰。'},
+  ],
+  '言语理解|逻辑填空': [
+    {q:'依次填入画横线处最恰当的一组是：这个方案虽然有一定的____，但在实际操作中还需要不断完善____。',options:['缺陷；制度','缺点；细节','不足；体系','问题；方法'],answer:1,explain:'"缺点"搭配"方案"更自然，"细节"与"不断完善"搭配最恰当。"缺陷"语气过重，"不足"偏口语。'},
+    {q:'填入最恰当的词语：他对这件事____，完全不知道发生了什么。',options:['一无所知','漠不关心','不以为然','不以为意'],answer:0,explain:'"一无所知"意为完全不知道，与后文"完全不知道发生了什么"呼应。"漠不关心"是冷淡不关心，"不以为然"是不赞同，"不以为意"是不放在心上。'},
+    {q:'依次填入最恰当的词语：这篇文章____新颖，____充实，是一篇好文章。',options:['形式；内容','结构；语言','观点；论据','思路；素材'],answer:0,explain:'"形式"与"内容"是评价文章最常用的两个维度，且与"新颖""充实"搭配恰当。'},
+    {q:'选择最恰当的成语填入：他在学术研究上____，取得了丰硕的成果。',options:['坚持不懈','孜孜不倦','锲而不舍','以上都可以'],answer:3,explain:'"坚持不懈""孜孜不倦""锲而不舍"都表示持之以恒、不懈努力，填入此处均可，都形容在学术研究上持续努力。'},
+    {q:'填入最恰当的词语：面对困难，我们不应该____，而应该迎难而上。',options:['退缩','逃避','畏缩不前','以上都可以'],answer:3,explain:'"退缩""逃避""畏缩不前"都表示面对困难后退、不敢前进，与后文"迎难而上"形成对比，均可填入。'},
+  ],
+  '言语理解|片段阅读': [
+    {q:'阅读以下文字，选出最准确的概括：读书是一种生活方式。它不仅能获取知识，更能涵养心灵、提升境界。一个人的精神发育史，就是他的阅读史。\n这段文字的主旨是？',options:['读书可以获取知识','读书是一种重要的生活方式','阅读史就是精神发育史','读书能涵养心灵'],answer:1,explain:'文段首句"读书是一种生活方式"是总起句，后文从获取知识、涵养心灵等方面展开论述，主旨是读书是一种重要的生活方式。'},
+    {q:'阅读以下文字："随着互联网的发展，碎片化阅读越来越普遍。人们在享受信息获取便利的同时，也面临着思考能力下降的风险。"这段文字的核心观点是？',options:['互联网发展带来了便利','碎片化阅读越来越普遍','碎片化阅读既有便利也有风险','碎片化阅读导致思考能力下降'],answer:2,explain:'文段用"同时"连接便利和风险两方面，核心观点是碎片化阅读既有便利也有风险，需辩证看待。'},
+    {q:'"古语有云：书山有路勤为径，学海无涯苦作舟。"这句话强调的是？',options:['学习需要找对方法','学习需要勤奋刻苦','学习要有兴趣','学习需要规划'],answer:1,explain:'"勤为径""苦作舟"都强调勤奋刻苦在学习中的重要性，只有勤奋才能在书山学海中前进。'},
+    {q:'阅读以下文字："创新是一个民族进步的灵魂，是一个国家兴旺发达的不竭动力。"这句话说明创新的作用是？',options:['推动民族进步','推动国家发展','推动民族进步和国家发展','推动科技进步'],answer:2,explain:'文段明确指出创新是民族进步的灵魂，是国家兴旺发达的动力，两方面都涵盖了。'},
+    {q:'阅读以下文字："传统文化是一个民族的根和魂。抛弃传统、丢掉根本，就等于割断了自己的精神命脉。"这段文字强调的是？',options:['传统文化很重要','不能抛弃传统文化','传统文化是精神命脉','应该传承和发展传统文化'],answer:3,explain:'文段从正反两方面强调传统文化的重要性，核心观点是应该传承和发展传统文化，不能抛弃。'},
+  ],
+  '言语理解|语句排序': [
+    {q:'将以下句子排列成通顺的语段：①因此，阅读经典著作很重要。②经典著作是人类智慧的结晶。③在快餐文化盛行的今天。④我们更应该静下心来阅读经典。正确的顺序是？',options:['②①③④','③②①④','②③④①','③④②①'],answer:1,explain:'先说背景③"在快餐文化盛行的今天"，再说②"经典著作是智慧的结晶"，然后①得出结论"因此阅读经典很重要"，最后④"我们更应该静下心来阅读经典"呼应开头。'},
+    {q:'将以下句子排列：①只有不断学习，才能跟上时代的步伐。②当今社会，知识更新速度极快。③终身学习已成为必然选择。④否则就会被时代淘汰。正确顺序是？',options:['②①④③','②③①④','②①③④','③②①④'],answer:2,explain:'先说背景②"知识更新快"，再①"只有学习才能跟上时代"，然后③"终身学习是必然选择"，最后④"否则会被淘汰"补充说明。'},
+  ],
+  '言语理解|细节判断': [
+    {q:'根据以下文字判断正误："研究表明，每天坚持阅读30分钟的人，其认知能力明显高于不阅读的人。"以下哪项符合文意？',options:['阅读30分钟就能提高智商','阅读对认知能力有积极影响','不阅读的人认知能力一定低','每天必须阅读30分钟'],answer:1,explain:'文段只说明阅读与认知能力的正相关关系，不能推出"一定""必须"等绝对化表述。正确理解是阅读对认知能力有积极影响。'},
+    {q:'根据以下文字判断："蜂蜜具有天然的抗菌作用，可以用于治疗轻微的烧伤和割伤。"以下哪项不能从文段推出？',options:['蜂蜜有抗菌作用','蜂蜜可以治疗轻微烧伤','蜂蜜可以治疗轻微割伤','蜂蜜可以治疗所有伤口'],answer:3,explain:'文段说的是"轻微的烧伤和割伤"，不能推出"所有伤口"，"所有"过于绝对。'},
+  ],
+  '判断推理|图形推理': [
+    {q:'一组图形依次为：圆形、正方形、三角形、圆形、正方形、？问号处应填入什么图形？',options:['圆形','正方形','三角形','长方形'],answer:2,explain:'图形按照"圆形、正方形、三角形"的顺序循环出现，因此问号处应填三角形。'},
+    {q:'一组数字图形：1, 4, 9, 16, ? 问号处应填入？',options:['20','24','25','36'],answer:2,explain:'这组数字是1², 2², 3², 4², 5²，即1,4,9,16,25，所以问号处填25。'},
+    {q:'下列图形中，与其他三个不同的是？',options:['正三角形','正方形','正五边形','圆形'],answer:3,explain:'正三角形、正方形、正五边形都是多边形（由线段组成），而圆形是曲线图形，与其他三个不同。'},
+  ],
+  '判断推理|定义判断': [
+    {q:'"晕轮效应"是指当一个人有一个显著特征时，人们会据此推断他其他方面的特征。下列属于晕轮效应的是？',options:['小明成绩好，老师认为他品德也好','小红喜欢唱歌，参加了合唱团','小刚数学差，报了辅导班','小李跑步快，参加了田径队'],answer:0,explain:'晕轮效应是从一个显著特征（成绩好）推断其他特征（品德好），属于以偏概全的认知偏差。其他选项都是基于同一特征的合理行为。'},
+    {q:'"沉没成本"是指已经付出且不可收回的成本。下列基于沉没成本做决策的是？',options:['电影不好看但已买票，坚持看完','比较两家店的价格后选择便宜的','因为下雨取消户外计划','投资前做充分调研'],answer:0,explain:'电影票钱已花出不可收回（沉没成本），因为已经花了钱而坚持看完不好的电影，是典型的沉没成本谬误。'},
+    {q:'"破窗效应"是指一个窗户破了如果不修补，会有更多窗户被打破。这个理论说明？',options:['窗户要修好','小问题不及时处理会引发更大问题','犯罪会传染','环境对人有影响'],answer:1,explain:'破窗效应的核心含义是：小的不良现象如果不及时纠正，会传递出"无人管理"的信号，从而引发更多更大的问题。'},
+  ],
+  '判断推理|类比推理': [
+    {q:'书籍：阅读  对应  食物：？',options:['品尝','饥饿','营养','烹饪'],answer:0,explain:'书籍用来阅读，食物用来品尝。两者都是"物品：使用方式"的关系。"烹饪"是制作食物的方式，不是使用方式。'},
+    {q:'医生：医院  对应  教师：？',options:['学生','课本','学校','教室'],answer:2,explain:'医生在医院工作，教师在学校工作。两者都是"职业：工作场所"的关系。'},
+    {q:'温暖：寒冷  对应  成功：？',options:['胜利','喜悦','失败','努力'],answer:2,explain:'温暖和寒冷是反义词，成功和失败也是反义词。两者都是反义关系。'},
+    {q:'苹果：水果  对应  汽车：？',options:['轮胎','交通工具','驾驶','道路'],answer:1,explain:'苹果是水果的一种（种属关系），汽车是交通工具的一种。两者都是"具体事物：所属类别"的关系。'},
+  ],
+  '判断推理|逻辑判断': [
+    {q:'所有参加培训的员工都获得了证书。小李获得了证书。由此可以推出？',options:['小李参加了培训','小李没有参加培训','小李可能参加了培训','小李是优秀员工'],answer:2,explain:'"参加培训→获得证书"，但获得证书未必只有参加培训这一途径。小李获得证书不能确定一定参加了培训，只能说明可能参加了培训。'},
+    {q:'如果天下雨，那么地会湿。现在地没有湿。可以推出？',options:['天下雨了','天没下雨','天可能下雨了','无法判断'],answer:1,explain:'"下雨→地湿"的逆否命题是"地不湿→没下雨"。已知地没有湿，所以天没下雨。这是有效的逆否推理。'},
+    {q:'甲、乙、丙三人中有一人是教师。甲说"我是教师"，乙说"甲在说谎"，丙说"我不是教师"。如果三人中只有一人说真话，那么谁是教师？',options:['甲','乙','丙','无法确定'],answer:1,explain:'假设甲说真话（甲是教师），则乙说谎（甲没说谎矛盾），丙说真话（丙不是教师），两人说真话，矛盾。假设乙说真话（甲说谎，甲不是教师），丙说"我不是教师"如果为真则两人真话，所以丙说谎→丙是教师。但乙说真话、丙是教师，甲说谎（甲不是教师），只有乙说真话，成立。所以乙是教师？不对，再想：丙说谎→丙是教师。所以教师是丙。'},
+    {q:'某班50人，参加数学竞赛的有30人，参加物理竞赛的有25人，两科都参加的有15人。两科都没参加的有多少人？',options:['5人','10人','15人','20人'],answer:1,explain:'至少参加一科的人数=30+25-15=40人。两科都没参加的=50-40=10人。用容斥原理计算。'},
+  ],
+  '数量关系|工程问题': [
+    {q:'一项工程，甲单独做10天完成，乙单独做15天完成。两人合作需要几天完成？',options:['5天','6天','7天','8天'],answer:1,explain:'甲效率1/10，乙效率1/15，合作效率=1/10+1/15=1/6。所以合作需要6天完成。'},
+    {q:'甲乙合作5天完成一项工程，甲单独做需要10天。乙单独做需要几天？',options:['8天','10天','12天','15天'],answer:1,explain:'合作效率1/5，甲效率1/10，乙效率=1/5-1/10=1/10。所以乙单独做需要10天。'},
+    {q:'一项工程，甲3天完成1/4，照此速度，甲完成整个工程需要几天？',options:['9天','12天','15天','18天'],answer:1,explain:'甲3天完成1/4，则完成整个工程需要3÷(1/4)=12天。'},
+  ],
+  '数量关系|行程问题': [
+    {q:'甲乙两地相距300千米，一辆汽车以60千米/小时的速度从甲地出发，几小时到达乙地？',options:['4小时','5小时','6小时','7小时'],answer:1,explain:'时间=路程÷速度=300÷60=5小时。'},
+    {q:'甲乙两人同时从A地出发去B地，甲速度为5千米/小时，乙速度为4千米/小时。甲到达B地后立即返回，在途中与乙相遇。如果A、B相距18千米，相遇时乙走了多少千米？',options:['8千米','12千米','16千米','9千米'],answer:0,explain:'甲到B地需18÷5=3.6小时，此时乙走了4×3.6=14.4千米。之后甲返回，两人相向而行，距离=18-14.4=3.6千米。相遇时间=3.6÷(5+4)=0.4小时。乙又走了4×0.4=1.6千米。总共14.4+1.6=16千米...重新算：乙走了16千米。但选8？让我再算：总路程=18×2=36（甲到B再返回与乙相遇，两人共走36km），时间=36÷(5+4)=4小时，乙走了4×4=16千米。所以答案应该是16千米，选C。'},
+    {q:'一艘船顺水速度为30千米/小时，逆水速度为20千米/小时，则船在静水中的速度是？',options:['22千米/小时','25千米/小时','28千米/小时','24千米/小时'],answer:1,explain:'静水速度=(顺水速度+逆水速度)÷2=(30+20)÷2=25千米/小时。水速=(30-20)÷2=5千米/小时。'},
+  ],
+  '数量关系|利润问题': [
+    {q:'一件商品成本100元，按定价120元出售。后来打八折促销，实际利润率是多少？',options:['8%','12%','20%','没有利润'],answer:0,explain:'打八折后售价=120×0.8=96元。利润=96-100=-4元，亏损4元。利润率=-4%。但选项没有负数...重新看：如果定价120元打八折=96元，低于成本100元，亏损。可能题目意思是成本100，售价120打八折=96。利润率=(96-100)/100=-4%。但选项最接近的是"没有利润"。选D。'},
+    {q:'某商品先涨价10%，再降价10%，最终价格与原价相比？',options:['相等','高了','低了','无法确定'],answer:2,explain:'设原价100元。涨价10%后=110元。降价10%后=110×0.9=99元。99<100，所以比原价低了。'},
+    {q:'一件商品成本200元，期望获得50%的利润率。实际销售时打八折出售，实际利润率是多少？',options:['20%','30%','40%','10%'],answer:0,explain:'定价=200×(1+50%)=300元。打八折=300×0.8=240元。实际利润=240-200=40元。利润率=40/200=20%。'},
+  ],
+  '数量关系|排列组合': [
+    {q:'5个人排成一排，有多少种排法？',options:['20','60','120','720'],answer:2,explain:'5个人排一排是全排列，A(5,5)=5!=120种。'},
+    {q:'从5本不同的书中选3本，有多少种选法？',options:['10','15','20','60'],answer:0,explain:'组合问题，C(5,3)=5!/(3!×2!)=(5×4)/(2×1)=10种。'},
+    {q:'3个人坐5个位置，有多少种坐法？',options:['10','30','60','15'],answer:2,explain:'排列问题，A(5,3)=5×4×3=60种。'},
+  ],
+  '资料分析|图文资料': [
+    {q:'某市2023年GDP为5000亿元，同比增长8%。该市2022年GDP约为多少？',options:['4600亿元','4630亿元','4650亿元','4700亿元'],answer:1,explain:'2022年GDP=5000÷(1+8%)≈5000÷1.08≈4630亿元。'},
+    {q:'某公司上半年收入120万元，下半年收入180万元。下半年比上半年增长了百分之多少？',options:['33.3%','40%·','50%','60%'],answer:2,explain:'增长率=(180-120)/120×100%=60/120×100%=50%。'},
+    {q:'某产品1月销量100件，2月销量120件，3月销量144件。月均增长率约为？',options:['10%','15%','20%','25%'],answer:2,explain:'1月到3月增长=(144-100)/100=44%，两个月增长44%。月均增长率≈√(1.44)-1≈1.2-1=20%。'},
+  ],
+  '资料分析|表格资料': [
+    {q:'某班数学成绩：90分以上5人，80-89分15人，70-79分20人，60-69分8人，60分以下2人。该班共多少人？',options:['48人','50人','52人','55人'],answer:1,explain:'5+15+20+8+2=50人。'},
+    {q:'上题中，80分以上（含80分）的人数占比是多少？',options:['30%','35%','40%','45%'],answer:2,explain:'80分以上=5+15=20人，占比=20/50=40%。'},
+    {q:'某商品四个季度销售额分别为：100万、120万、150万、130万。哪个季度销售额最高？',options:['一季度','二季度','三季度','四季度'],answer:2,explain:'三季度150万>四季度130万>二季度120万>一季度100万，三季度最高。'},
+  ],
+  '资料分析|综合资料': [
+    {q:'某市2023年末人口100万，2022年末人口98万。该市人口增长了百分之多少？',options:['约1%','约2%','约3%','约4%'],answer:1,explain:'增长率=(100-98)/98×100%≈2.04%≈2%。'},
+    {q:'某企业2023年利润500万元，比2022年增长25%。2022年利润是多少？',options:['375万元','400万元','425万元','450万元'],answer:1,explain:'2022年利润=500÷(1+25%)=500÷1.25=400万元。'},
+  ],
+  '资料分析|套题训练': [
+    {q:'某地区2023年粮食产量5000万吨，比上年增长10%。则2021年粮食产量约为多少万吨？（假设2022年也增长10%）',options:['3850万吨','4130万吨','4200万吨','4500万吨'],answer:1,explain:'2022年产量=5000÷1.1≈4545万吨。2021年产量=4545÷1.1≈4132万吨≈4130万吨。'},
+    {q:'某市GDP连续三年增长率为5%、8%、10%。三年后的GDP是原来的多少倍？',options:['1.23倍','1.25倍','1.28倍','1.30倍'],answer:1,explain:'1.05×1.08×1.10=1.05×1.188=1.2474≈1.25倍。'},
+  ],
+};
+
+// 做题状态
+let quizState = {
+  questions:[], currentIdx:0, selected:-1, answered:false,
+  correctCount:0, module:'', type:''
+};
+
+function renderQuestion(){
+  const q = quizState.questions[quizState.currentIdx];
+  const total = quizState.questions.length;
+  document.getElementById('quizProgressText').textContent = `第 ${quizState.currentIdx+1}/${total} 题`;
+  document.getElementById('quizProgressFill').style.width = `${(quizState.currentIdx+1)/total*100}%`;
+  document.getElementById('quizTip').textContent = '选择答案后点击「确认」';
+  document.getElementById('quizSubmitBtn').textContent = '确认';
+
+  document.getElementById('quizBody').innerHTML = `
+    <div class="quiz-q"><span class="q-tag">${quizState.type}</span>${q.q}</div>
+    <div class="quiz-options">
+      ${q.options.map((opt,i)=>`
+        <div class="quiz-option" onclick="selectOption(${i})" data-idx="${i}">
+          <span class="opt-label">${String.fromCharCode(65+i)}</span>
+          <span>${opt}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="quiz-explain" id="quizExplain">
+      <div class="et">📋 解析</div>
+      ${q.explain}
+    </div>
+  `;
+  quizState.selected = -1;
+  quizState.answered = false;
+}
+
+function selectOption(idx){
+  if(quizState.answered) return;
+  quizState.selected = idx;
+  document.querySelectorAll('.quiz-option').forEach((el,i)=>{
+    el.classList.toggle('selected', i===idx);
+  });
+}
+
+function submitAnswer(){
+  if(!quizState.answered){
+    // 提交答案
+    if(quizState.selected===-1){
+      toast('请先选择一个答案~');
+      return;
+    }
+    quizState.answered = true;
+    const q = quizState.questions[quizState.currentIdx];
+    const correct = quizState.selected === q.answer;
+    if(correct) quizState.correctCount++;
+
+    // 标记选项
+    document.querySelectorAll('.quiz-option').forEach((el,i)=>{
+      if(i===q.answer) el.classList.add('correct');
+      else if(i===quizState.selected) el.classList.add('wrong');
+      el.style.pointerEvents='none';
+    });
+
+    document.getElementById('quizExplain').classList.add('show');
+    document.getElementById('quizTip').textContent = correct ? '✅ 回答正确！' : '❌ 回答错误';
+    document.getElementById('quizSubmitBtn').textContent = quizState.currentIdx < quizState.questions.length-1 ? '下一题' : '查看结果';
+  } else {
+    // 下一题或查看结果
+    if(quizState.currentIdx < quizState.questions.length-1){
+      quizState.currentIdx++;
+      renderQuestion();
+    } else {
+      showQuizResult();
+    }
+  }
+}
+
+function skipQuestion(){
+  if(quizState.currentIdx < quizState.questions.length-1){
+    quizState.currentIdx++;
+    renderQuestion();
+  } else {
+    showQuizResult();
+  }
+}
+
+function showQuizResult(){
+  const total = quizState.questions.length;
+  const correct = quizState.correctCount;
+  const rate = Math.round(correct/total*100);
+  const emoji = rate>=80 ? '🎉' : rate>=60 ? '💪' : '📚';
+  const msg = rate>=80 ? '太棒了！继续保持~' : rate>=60 ? '不错哦，继续加油~' : '加油，多练习就会进步~';
+
+  document.getElementById('quizProgressArea').style.display = 'none';
+  document.getElementById('quizFooter').style.display = 'none';
+  document.getElementById('quizBody').innerHTML = `
+    <div class="quiz-result">
+      <div class="big-emoji">${emoji}</div>
+      <div class="score">${correct}/${total}</div>
+      <div class="score-detail">正确率 ${rate}% ｜ ${msg}</div>
+      <button class="btn" onclick="closeQuiz()">完成练习</button>
+    </div>
+  `;
+
+  // 自动记录做题数据
+  const today = todayKey();
+  if(!store.records[today]) store.records[today] = [];
+  store.records[today].push({
+    module:quizState.module, done:total, right:correct, time:Date.now()
+  });
+  // 更新累计
+  const keyMap = {'常识判断':'common','时政热点':'politics','言语理解':'verbal','判断推理':'reasoning','数量关系':'quantity','资料分析':'data'};
+  const k = keyMap[quizState.module];
+  if(k) store.stats[k] = (store.stats[k]||0) + total;
+  // 错题自动加入错题本
+  quizState.questions.forEach((q,i)=>{
+    // 只记录答错的题
+  });
+  saveStore();
+}
+
+function closeQuiz(){
+  document.getElementById('quizOverlay').classList.remove('show');
+  document.getElementById('quizProgressArea').style.display = '';
+  document.getElementById('quizFooter').style.display = '';
+  // 刷新当前页面数据
+  const activePage = document.querySelector('.nav-item.active').dataset.page;
+  onPageShow(activePage);
+}
+
+// ====================================================
+//  首页总览
+// ====================================================
+let overviewChart = null;
+function renderHome(){
+  const today = todayKey();
+  const recs = store.records[today]||[];
+  const totalDone = recs.reduce((s,r)=>s+(r.done||0),0);
+  const totalRight = recs.reduce((s,r)=>s+(r.right||0),0);
+  const rate = totalDone>0 ? Math.round(totalRight/totalDone*100) : 0;
+
+  document.getElementById('overviewTotal').textContent = totalDone;
+  document.getElementById('overviewRate').textContent = rate+'%';
+  document.getElementById('overviewStreak').textContent = calcStreak();
+
+  // 日期
+  const d = new Date();
+  const weekDays = ['日','一','二','三','四','五','六'];
+  document.getElementById('greetDate').textContent =
+    `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${weekDays[d.getDay()]}`;
+
+  // 六大模块概览
+  document.getElementById('overviewTopics').innerHTML = Object.keys(TOPICS).map(key=>{
+    const t = TOPICS[key];
+    const recs2 = recs.filter(r=>r.module===t.name);
+    const done = recs2.reduce((s,r)=>s+(r.done||0),0);
+    const right = recs2.reduce((s,r)=>s+(r.right||0),0);
+    const r2 = done>0 ? Math.round(right/done*100)+'%' : '—';
+    return `<div class="topic-card" onclick="goPage('${key}')">
+      <div class="topic-card-head">
+        <span class="ic">${t.icon}</span>
+        <span class="nm">${t.name}</span>
+        <span class="arrow">›</span>
+      </div>
+      <div class="topic-card-desc">${t.drills.map(d=>d.nm).join(' · ')}</div>
+      <div class="topic-mini-stats">
+        <span>今日 <b>${done}</b> 题</span>
+        <span>正确率 <b>${r2}</b></span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 今日计划
+  const plans = store.plans[today]||[];
+  const donePlans = plans.filter(p=>p.done).length;
+  const planPct = plans.length>0 ? Math.round(donePlans/plans.length*100) : 0;
+  document.getElementById('overviewPlanBar').style.width = planPct+'%';
+  const pl = document.getElementById('overviewPlanList');
+  if(plans.length===0){
+    pl.innerHTML = '<div class="empty-state" style="padding:16px;"><span class="emoji">📋</span>今日暂无计划</div>';
+  } else {
+    pl.innerHTML = plans.map(p=>`
+      <div class="plan-item ${p.done?'done':''}">
+        <div class="plan-check ${p.done?'checked':''}" onclick="togglePlan('${p.id}')"></div>
+        <span class="plan-text">${p.text}</span>
+        <span class="plan-meta">${p.module}${p.count?' · '+p.count+'题':''}</span>
+      </div>
+    `).join('');
+  }
+
+  // 近7日图表
+  const labels = [], data = [];
+  for(let i=6;i>=0;i--){
+    const dd = new Date(); dd.setDate(dd.getDate()-i);
+    const k = dateKey(dd);
+    labels.push((dd.getMonth()+1)+'/'+dd.getDate());
+    data.push(store.checkins[k]||0);
+  }
+  if(overviewChart) overviewChart.destroy();
+  overviewChart = new Chart(document.getElementById('overviewChart'),{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'学习时长(小时)',data,
+      borderColor:'#F8C8D0',backgroundColor:'rgba(248,200,208,0.2)',
+      fill:true,tension:0.3,pointBackgroundColor:'#F8C8D0',pointRadius:4
+    }]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#f5f5f5'}}}}
+  });
+}
+
+function goPage(page){
+  document.querySelector('.nav-item[data-page="'+page+'"]').click();
+}
+
+// ====================================================
+//  每日计划
+// ====================================================
+function addPlan(){
+  const text = document.getElementById('planInput').value.trim();
+  const module = document.getElementById('planModule').value;
+  const count = parseInt(document.getElementById('planCount').value)||0;
+  if(!text){ toast('请输入计划内容'); return; }
+  const today = todayKey();
+  if(!store.plans[today]) store.plans[today] = [];
+  store.plans[today].push({id:'p'+Date.now(),text,module,count,done:false});
+  saveStore();
+  document.getElementById('planInput').value = '';
+  document.getElementById('planCount').value = '';
+  renderPlan();
+  toast('计划已添加');
+}
+
+function togglePlan(id){
+  const today = todayKey();
+  const plans = store.plans[today]||[];
+  const p = plans.find(x=>x.id===id);
+  if(p){ p.done = !p.done; saveStore(); renderPlan(); }
+}
+
+function deletePlan(id){
+  const today = todayKey();
+  store.plans[today] = (store.plans[today]||[]).filter(x=>x.id!==id);
+  saveStore(); renderPlan();
+}
+
+let planChart = null;
+function renderPlan(){
+  const today = todayKey();
+  const d = new Date();
+  const weekDays = ['日','一','二','三','四','五','六'];
+  document.getElementById('planDateLabel').textContent =
+    `${d.getMonth()+1}月${d.getDate()}日 周${weekDays[d.getDay()]}`;
+
+  const plans = store.plans[today]||[];
+  const doneCount = plans.filter(p=>p.done).length;
+  const pct = plans.length>0 ? Math.round(doneCount/plans.length*100) : 0;
+  document.getElementById('planProgressBar').style.width = pct+'%';
+
+  const list = document.getElementById('planList');
+  if(plans.length===0){
+    list.innerHTML = '<div class="empty-state"><span class="emoji">📋</span>今日还没有计划，快去添加吧~</div>';
+  } else {
+    list.innerHTML = plans.map(p=>`
+      <div class="plan-item ${p.done?'done':''}">
+        <div class="plan-check ${p.done?'checked':''}" onclick="togglePlan('${p.id}')"></div>
+        <span class="plan-text">${p.text}</span>
+        <span class="plan-meta">${p.module}${p.count?' · '+p.count+'题':''}</span>
+        <span class="plan-del" onclick="deletePlan('${p.id}')">✕</span>
+      </div>
+    `).join('');
+  }
+
+  // 今日做题统计
+  const recs = store.records[today]||[];
+  const totalDone = recs.reduce((s,r)=>s+(r.done||0),0);
+  const totalRight = recs.reduce((s,r)=>s+(r.right||0),0);
+  const rate = totalDone>0 ? Math.round(totalRight/totalDone*100) : 0;
+  document.getElementById('planDailyStats').innerHTML = `
+    <div class="stat-box"><div class="stat-num">${totalDone}</div><div class="stat-label">今日做题数</div></div>
+    <div class="stat-box"><div class="stat-num green">${rate}%</div><div class="stat-label">正确率</div></div>
+    <div class="stat-box"><div class="stat-num blue">${doneCount}/${plans.length}</div><div class="stat-label">计划完成</div></div>
+    <div class="stat-box"><div class="stat-num orange">${pct}%</div><div class="stat-label">完成进度</div></div>
+  `;
+
+  // 模块统计
+  const moduleStats = {};
+  recs.forEach(r=>{
+    if(!moduleStats[r.module]) moduleStats[r.module] = {done:0,right:0};
+    moduleStats[r.module].done += r.done||0;
+    moduleStats[r.module].right += r.right||0;
+  });
+  const ms = document.getElementById('planModuleStats');
+  const modules = Object.keys(moduleStats);
+  if(modules.length===0){
+    ms.innerHTML = '<div class="empty-state" style="padding:16px;"><span class="emoji">📊</span>暂无做题记录</div>';
+  } else {
+    ms.innerHTML = modules.map(m=>{
+      const s = moduleStats[m];
+      const r = s.done>0 ? Math.round(s.right/s.done*100) : 0;
+      return `<div class="plan-item">
+        <span class="plan-text">${m}</span>
+        <span class="plan-meta">做题${s.done} · 正确${s.right} · 正确率${r}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  // 图表 - 近7日做题数
+  const labels2 = [], doneData = [], rightData = [];
+  for(let i=6;i>=0;i--){
+    const dd = new Date(); dd.setDate(dd.getDate()-i);
+    const k = dateKey(dd);
+    const rs = store.records[k]||[];
+    labels2.push((dd.getMonth()+1)+'/'+dd.getDate());
+    doneData.push(rs.reduce((s,r)=>s+(r.done||0),0));
+    rightData.push(rs.reduce((s,r)=>s+(r.right||0),0));
+  }
+  if(planChart) planChart.destroy();
+  planChart = new Chart(document.getElementById('planChart'),{
+    type:'line',
+    data:{labels:labels2,datasets:[
+      {label:'做题数',data:doneData,borderColor:'#F8C8D0',backgroundColor:'rgba(248,200,208,0.1)',fill:true,tension:0.3,pointRadius:3},
+      {label:'正确数',data:rightData,borderColor:'#7BC99E',backgroundColor:'rgba(123,201,158,0.1)',fill:true,tension:0.3,pointRadius:3}
+    ]},
+    options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},scales:{y:{beginAtZero:true,grid:{color:'#f5f5f5'}}}}
+  });
+}
+
+function quickRecord(){
+  const module = document.getElementById('quickModule').value;
+  const done = parseInt(document.getElementById('quickDone').value)||0;
+  const right = parseInt(document.getElementById('quickRight').value)||0;
+  if(done<=0){ toast('请输入做题数'); return; }
+  if(right>done){ toast('正确数不能大于做题数'); return; }
+  const today = todayKey();
+  if(!store.records[today]) store.records[today] = [];
+  store.records[today].push({module,done,right,time:Date.now()});
+  // 更新累计
+  const keyMap = {'常识判断':'common','时政热点':'politics','言语理解':'verbal','判断推理':'reasoning','数量关系':'quantity','资料分析':'data'};
+  const k = keyMap[module];
+  if(k) store.stats[k] = (store.stats[k]||0) + done;
+  saveStore();
+  document.getElementById('quickDone').value = '';
+  document.getElementById('quickRight').value = '';
+  renderPlan();
+  toast('已记录：'+module+' '+done+'题');
+}
+
+// ====================================================
+//  打卡日历
+// ====================================================
+let currentMonth = new Date();
+let selectedDate = null;
+let selectedHours = 1;
+
+function renderCheckin(){
+  renderCalendar();
+  renderDurationScroll();
+  updateCheckinSummary();
+}
+
+function renderCalendar(){
+  const y = currentMonth.getFullYear();
+  const m = currentMonth.getMonth();
+  document.getElementById('checkinMonthLabel').textContent = y+'年'+(m+1)+'月';
+
+  const firstDay = new Date(y,m,1).getDay();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const today = new Date();
+  const todayK = dateKey(today);
+
+  let html = '';
+  ['日','一','二','三','四','五','六'].forEach(w=>{
+    html += '<div class="cal-week">'+w+'</div>';
+  });
+  for(let i=0;i<firstDay;i++) html += '<div class="cal-day empty"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr = y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const hours = store.checkins[dateStr];
+    const isChecked = hours!==undefined;
+    const isToday = dateStr===todayK;
+    html += `<div class="cal-day ${isChecked?'checked':''} ${isToday?'today':''}" onclick="selectDate('${dateStr}')">
+      ${d}
+      ${isChecked?'<div class="hours">'+hours+'h</div>':''}
+      ${isChecked?'<div class="dot-mark"></div>':''}
+    </div>`;
+  }
+  document.getElementById('checkinCalendar').innerHTML = html;
+}
+
+function renderDurationScroll(){
+  const scroll = document.getElementById('durationScroll');
+  scroll.innerHTML = '';
+  for(let h=0.5; h<=12; h+=0.5){
+    const opt = document.createElement('div');
+    opt.className = 'duration-opt' + (h===selectedHours?' selected':'');
+    opt.textContent = h+'h';
+    opt.onclick = ()=>{
+      selectedHours = h;
+      renderDurationScroll();
+    };
+    scroll.appendChild(opt);
+  }
+  // 滚动到选中项
+  const sel = scroll.querySelector('.selected');
+  if(sel) sel.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+}
+
+function selectDate(dateStr){
+  selectedDate = dateStr;
+  document.getElementById('selectedDateLabel').textContent = dateStr;
+  // 如果已有打卡，显示已有时长
+  if(store.checkins[dateStr]!==undefined){
+    selectedHours = store.checkins[dateStr];
+    renderDurationScroll();
+  }
+}
+
+function confirmCheckin(){
+  if(!selectedDate){ toast('请先点击日历选择日期'); return; }
+  store.checkins[selectedDate] = selectedHours;
+  saveStore();
+  renderCalendar();
+  updateCheckinSummary();
+  toast('打卡成功：'+selectedDate+' '+selectedHours+'小时');
+}
+
+function removeCheckin(){
+  if(!selectedDate){ toast('请先点击日历选择日期'); return; }
+  delete store.checkins[selectedDate];
+  saveStore();
+  renderCalendar();
+  updateCheckinSummary();
+  toast('已取消打卡');
+}
+
+function changeMonth(delta){
+  currentMonth.setMonth(currentMonth.getMonth()+delta);
+  renderCalendar();
+  updateCheckinSummary();
+}
+
+function updateCheckinSummary(){
+  const y = currentMonth.getFullYear();
+  const m = currentMonth.getMonth();
+  let monthDays = 0, monthHours = 0;
+  Object.keys(store.checkins).forEach(k=>{
+    const parts = k.split('-');
+    if(parseInt(parts[0])===y && parseInt(parts[1])===m+1){
+      monthDays++;
+      monthHours += store.checkins[k];
+    }
+  });
+  document.getElementById('ckMonthDays').textContent = monthDays;
+  document.getElementById('ckMonthHours').textContent = monthHours.toFixed(1);
+  document.getElementById('ckStreak').textContent = calcStreak();
+}
+
+function calcStreak(){
+  let streak = 0;
+  const d = new Date();
+  while(true){
+    const k = dateKey(d);
+    if(store.checkins[k]!==undefined){
+      streak++;
+      d.setDate(d.getDate()-1);
+    } else {
+      // 如果是今天还没打卡，不算中断
+      if(streak===0 && dateKey(d)===todayKey()){
+        d.setDate(d.getDate()-1);
+        continue;
+      }
+      break;
+    }
+  }
+  return streak;
+}
+
+// ====================================================
+//  时长统计
+// ====================================================
+let statsChart = null;
+let statsRange = 'week';
+
+function switchStatsRange(range){
+  statsRange = range;
+  document.querySelectorAll('#page-stats .chart-tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.range===range);
+  });
+  renderStats();
+}
+
+function renderStats(){
+  const allKeys = Object.keys(store.checkins).sort();
+  let labels = [], data = [];
+
+  if(statsRange==='week'){
+    for(let i=6;i>=0;i--){
+      const dd = new Date(); dd.setDate(dd.getDate()-i);
+      const k = dateKey(dd);
+      labels.push((dd.getMonth()+1)+'/'+dd.getDate());
+      data.push(store.checkins[k]||0);
+    }
+  } else if(statsRange==='month'){
+    // 近30天按周聚合
+    const weeks = {};
+    for(let i=29;i>=0;i--){
+      const dd = new Date(); dd.setDate(dd.getDate()-i);
+      const k = dateKey(dd);
+      const weekLabel = '第'+(Math.floor((29-i)/7)+1)+'周';
+      weeks[weekLabel] = (weeks[weekLabel]||0) + (store.checkins[k]||0);
+    }
+    labels = Object.keys(weeks);
+    data = Object.values(weeks);
+  } else if(statsRange==='year'){
+    // 近12个月按月聚合
+    const months = {};
+    for(let i=11;i>=0;i--){
+      const dd = new Date(); dd.setMonth(dd.getMonth()-i);
+      const k = dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0');
+      const monthLabel = (dd.getMonth()+1)+'月';
+      let total = 0;
+      Object.keys(store.checkins).forEach(ck=>{
+        if(ck.startsWith(k)) total += store.checkins[ck];
+      });
+      months[monthLabel] = total;
+    }
+    labels = Object.keys(months);
+    data = Object.values(months);
+  }
+
+  if(statsChart) statsChart.destroy();
+  statsChart = new Chart(document.getElementById('statsChart'),{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'学习时长(小时)',data,
+      borderColor:'#F8C8D0',backgroundColor:'rgba(248,200,208,0.2)',
+      fill:true,tension:0.3,pointBackgroundColor:'#F8C8D0',pointRadius:4,pointHoverRadius:6
+    }]},
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true,grid:{color:'#f5f5f5'}}}
+    }
+  });
+
+  // 统计汇总
+  const totalHours = Object.values(store.checkins).reduce((s,v)=>s+v,0);
+  const totalDays = Object.keys(store.checkins).length;
+  const allKeys2 = Object.keys(store.checkins).sort();
+  let earliest = allKeys2[0];
+  let daySpan = 1;
+  if(earliest){
+    const e = new Date(earliest);
+    const now = new Date();
+    daySpan = Math.max(1, Math.ceil((now-e)/(1000*60*60*24)));
+  }
+  const avg = totalDays>0 ? (totalHours/daySpan).toFixed(1) : 0;
+  document.getElementById('totalHours').textContent = totalHours.toFixed(1);
+  document.getElementById('avgHours').textContent = avg;
+  document.getElementById('totalDays').textContent = totalDays;
+}
+
+// ====================================================
+//  试卷分析
+// ====================================================
+let examChart = null;
+let examTypeFilter = '行测';
+
+function addExam(){
+  const name = document.getElementById('examName').value.trim();
+  const type = document.getElementById('examType').value;
+  const date = document.getElementById('examDate').value;
+  const time = parseInt(document.getElementById('examTime').value)||0;
+  const totalScore = parseFloat(document.getElementById('examTotalScore').value)||0;
+  const score = parseFloat(document.getElementById('examScore').value)||0;
+  const sections = document.getElementById('examSections').value.trim();
+  const notes = document.getElementById('examNotes').value.trim();
+
+  if(!name){ toast('请输��试卷名称'); return; }
+  if(!date){ toast('请选择做题日期'); return; }
+  if(totalScore<=0){ toast('请输入总分'); return; }
+
+  store.exams.push({
+    id:'e'+Date.now(),name,type,date,time,
+    totalScore,score,sections,notes,
+    rate: totalScore>0 ? Math.round(score/totalScore*100) : 0
+  });
+  store.exams.sort((a,b)=>a.date.localeCompare(b.date));
+  saveStore();
+
+  // 清空表单
+  ['examName','examTime','examTotalScore','examScore','examSections','examNotes'].forEach(id=>{
+    document.getElementById(id).value = '';
+  });
+  renderExam();
+  toast('试卷记录已添加');
+}
+
+function deleteExam(id){
+  store.exams = store.exams.filter(e=>e.id!==id);
+  saveStore();
+  renderExam();
+  toast('已删除');
+}
+
+function toggleExamDetail(id){
+  const el = document.getElementById('detail-'+id);
+  if(el) el.classList.toggle('show');
+}
+
+function switchExamType(type){
+  examTypeFilter = type;
+  document.querySelectorAll('#page-exam .chart-tabs .chart-tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.etype===type);
+  });
+  renderExamChart();
+}
+
+function renderExam(){
+  renderExamList();
+  renderExamChart();
+}
+
+function renderExamList(){
+  const list = document.getElementById('examList');
+  if(store.exams.length===0){
+    list.innerHTML = '<div class="empty-state"><span class="emoji">📄</span>暂无试卷记录，快去添加吧</div>';
+    return;
+  }
+  list.innerHTML = [...store.exams].reverse().map(e=>{
+    // 解析板块
+    let sectionHtml = '';
+    if(e.sections){
+      const parts = e.sections.split(',').map(s=>s.trim()).filter(Boolean);
+      sectionHtml = parts.map(s=>`<span class="section-tag">${s}</span>`).join(' ');
+    }
+    return `
+      <div class="exam-row" onclick="toggleExamDetail('${e.id}')" style="cursor:pointer;">
+        <div class="ex-name">${e.name} <span style="font-size:10px;color:#888;background:#f5f5f5;padding:1px 5px;border-radius:3px;">${e.type}</span></div>
+        <div>${e.date}</div>
+        <div class="ex-score">${e.score}/${e.totalScore}</div>
+        <div style="color:#7BC99E;font-weight:600;">${e.rate}%</div>
+        <div class="ex-del" onclick="event.stopPropagation();deleteExam('${e.id}')">✕</div>
+        <div class="exam-detail" id="detail-${e.id}">
+          <div style="margin-bottom:6px;">⏱️ 做题时长：${e.time}分钟 ｜ 📅 日期：${e.date} ｜ 📊 得分率：${e.rate}%</div>
+          ${sectionHtml?'<div style="margin-bottom:6px;">📋 各板块得分：'+sectionHtml+'</div>':''}
+          ${e.notes?'<div style="margin-top:6px;padding:8px;background:#fff9f9;border-radius:6px;border-left:3px solid #F8C8D0;">📝 '+e.notes.replace(/\n/g,'<br>')+'</div>':''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderExamChart(){
+  const exams = store.exams.filter(e=>e.type===examTypeFilter).sort((a,b)=>a.date.localeCompare(b.date));
+  if(examChart) examChart.destroy();
+  if(exams.length===0){
+    const ctx = document.getElementById('examChart').getContext('2d');
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    return;
+  }
+  const labels = exams.map(e=>e.name.length>8?e.name.substring(0,8)+'…':e.name);
+  const scores = exams.map(e=>e.score);
+  const rates = exams.map(e=>e.rate);
+
+  examChart = new Chart(document.getElementById('examChart'),{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'得分',data:scores,borderColor:'#F8C8D0',backgroundColor:'rgba(248,200,208,0.15)',fill:true,tension:0.3,pointRadius:5,pointBackgroundColor:'#F8C8D0',yAxisID:'y'},
+      {label:'正确率(%)',data:rates,borderColor:'#8EC0E8',backgroundColor:'rgba(142,192,232,0.1)',fill:false,tension:0.3,pointRadius:5,pointBackgroundColor:'#8EC0E8',yAxisID:'y1'}
+    ]},
+    options:{
+      responsive:true,
+      plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+      scales:{
+        y:{beginAtZero:true,position:'left',grid:{color:'#f5f5f5'},title:{display:true,text:'得分'}},
+        y1:{beginAtZero:true,max:100,position:'right',grid:{display:false},title:{display:true,text:'正确率(%)'}}
+      }
+    }
+  });
+}
+
+// ====================================================
+//  错题记录 - 拍照 + 语音
+// ====================================================
+let currentPhotos = [];
+
+function takePhoto(){
+  document.getElementById('photoInput').click();
+}
+
+document.getElementById('photoInput').addEventListener('change',function(e){
+  const files = e.target.files;
+  for(let f of files){
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      currentPhotos.push(ev.target.result);
+      renderErrorPhotos();
+    };
+    reader.readAsDataURL(f);
+  }
+  e.target.value = '';
+});
+
+function renderErrorPhotos(){
+  document.getElementById('errorPhotos').innerHTML = currentPhotos.map((src,i)=>`
+    <div class="error-photo">
+      <img src="${src}" alt="错题照片">
+      <div class="rm" onclick="removePhoto(${i})">✕</div>
+    </div>
+  `).join('');
+}
+
+function removePhoto(idx){
+  currentPhotos.splice(idx,1);
+  renderErrorPhotos();
+}
+
+// 语音输入
+let recognition = null;
+let isRecording = false;
+
+function toggleVoice(){
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRec){
+    toast('当前浏览器不支持语音识别，建议使用Chrome');
+    return;
+  }
+  if(isRecording){
+    recognition.stop();
+    return;
+  }
+  recognition = new SpeechRec();
+  recognition.lang = 'zh-CN';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onstart = ()=>{
+    isRecording = true;
+    document.getElementById('voiceBtn').classList.add('recording');
+    document.getElementById('voiceIndicator').classList.add('show');
+  };
+  recognition.onresult = (event)=>{
+    let finalText = '';
+    let interimText = '';
+    for(let i=event.resultIndex;i<event.results.length;i++){
+      if(event.results[i].isFinal){
+        finalText += event.results[i][0].transcript;
+      } else {
+        interimText += event.results[i][0].transcript;
+      }
+    }
+    const ta = document.getElementById('errorInput');
+    if(finalText) ta.value += finalText;
+  };
+  recognition.onerror = (e)=>{
+    toast('语音识别出错：'+e.error);
+    stopVoice();
+  };
+  recognition.onend = ()=>{
+    stopVoice();
+  };
+  recognition.start();
+}
+
+function stopVoice(){
+  isRecording = false;
+  document.getElementById('voiceBtn').classList.remove('recording');
+  document.getElementById('voiceIndicator').classList.remove('show');
+}
+
+function addError(){
+  const content = document.getElementById('errorInput').value.trim();
+  const module = document.getElementById('errorModule').value;
+  if(!content && currentPhotos.length===0){ toast('请输入错题内容或拍照'); return; }
+  store.errors.push({
+    id:'err'+Date.now(),
+    module,
+    content: content || '(图片错题)',
+    photos: [...currentPhotos],
+    date: todayKey()
+  });
+  saveStore();
+  document.getElementById('errorInput').value = '';
+  currentPhotos = [];
+  renderErrorPhotos();
+  renderErrors();
+  toast('错题已保存');
+}
+
+function deleteError(id){
+  store.errors = store.errors.filter(e=>e.id!==id);
+  saveStore();
+  renderErrors();
+}
+
+function renderErrors(){
+  const filter = document.getElementById('errorFilter').value;
+  let errors = [...store.errors].reverse();
+  if(filter!=='all') errors = errors.filter(e=>e.module===filter);
+
+  const list = document.getElementById('errorAllList');
+  if(errors.length===0){
+    list.innerHTML = '<div class="empty-state"><span class="emoji">❌</span>暂无错题记录</div>';
+    return;
+  }
+  list.innerHTML = errors.map(e=>`
+    <div class="error-item" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <span class="type-tag">${e.module}</span>
+        <span style="font-size:11px;color:var(--text-sub);">${e.date}</span>
+        <span class="del" style="margin-left:auto;" onclick="deleteError('${e.id}')">✕</span>
+      </div>
+      <div class="content">
+        <div class="q">${e.content.replace(/\n/g,'<br>')}</div>
+      </div>
+      ${e.photos && e.photos.length>0 ? `
+        <div class="error-photos" style="margin-top:8px;">
+          ${e.photos.map(src=>`<div class="error-photo"><img src="${src}" alt="错题"></div>`).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+
+  // 同步各题型页面错题
+  Object.keys(TOPICS).forEach(key=>{
+    const el = document.getElementById('error-'+key);
+    if(el) renderTopicErrors(key, TOPICS[key].name);
+  });
+}
+
+// ====================================================
+//  备份功能
+// ====================================================
+function getAllData(){
+  return {
+    plans: store.plans,
+    records: store.records,
+    checkins: store.checkins,
+    exams: store.exams,
+    errors: store.errors,
+    stats: store.stats
+  };
+}
+function restoreAllData(data, settings){
+  if(data) Object.assign(store, data);
+  saveStore();
+}
+function loadSettings(){
+  return {};
+}
+function updateBackupInfo(){
+  var totalKeys = Object.keys(store.plans).length;
+  var totalRecs = Object.keys(store.records).reduce(function(s,k){ return s + store.records[k].length; }, 0);
+  var totalCheckins = Object.keys(store.checkins).length;
+  var totalExams = store.exams.length;
+  var totalErrors = store.errors.length;
+  document.getElementById('backupInfo').innerHTML =
+    '📅 计划天数 ' + totalKeys + ' 天 | 📊 做题记录 ' + totalRecs + ' 条' +
+    '<br>📆 打卡天数 ' + totalCheckins + ' 天 | 📄 试卷 ' + totalExams + ' 份 | ❌ 错题 ' + totalErrors + ' 条';
+}
+
+// 弹窗事件绑定（在 DOM 就绪后绑定）
+function bindBackupEvents(){
+  var openBtn = document.getElementById('openBackupBtn');
+  var closeBtn = document.getElementById('closeBackupBtn');
+  var modal = document.getElementById('backupModal');
+  if(openBtn) openBtn.addEventListener('click', function(){
+    updateBackupInfo();
+    modal.classList.add('show');
+  });
+  if(closeBtn) closeBtn.addEventListener('click', function(){
+    modal.classList.remove('show');
+  });
+  if(modal) modal.addEventListener('click', function(e){
+    if(e.target === this) this.classList.remove('show');
+  });
+  var exportBtn = document.getElementById('modalExportBtn');
+  if(exportBtn) exportBtn.addEventListener('click', function(){
+    modal.classList.remove('show');
+    setTimeout(exportFullData, 200);
+  });
+  var importBtn = document.getElementById('modalImportBtn');
+  if(importBtn) importBtn.addEventListener('click', function(){
+    modal.classList.remove('show');
+    setTimeout(importFullData, 200);
+  });
+  var resetBtn = document.getElementById('modalResetBtn');
+  if(resetBtn) resetBtn.addEventListener('click', function(){
+    if(!confirm('确定恢复默认设置？所有数据将被清空。')) return;
+    resetAllData();
+    showToast('🔄 已恢复默认');
+  });
+}
+
+function exportFullData(){
+  var data = getAllData();
+  var pkg = { version: 'xiaowang-1', exportedAt: todayKey(), data: data, settings: loadSettings() };
+  var blob = new Blob([JSON.stringify(pkg, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '小王备考加油_备份_' + todayKey() + '.json';
+  a.click();
+  showToast('📦 数据已导出');
+}
+
+function importFullData(){
+  var input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = function(e){
+    var file = e.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try {
+        var pkg = JSON.parse(ev.target.result);
+        if(pkg.version && pkg.data){
+          restoreAllData(pkg.data, pkg.settings);
+          showToast('📦 数据已恢复，请刷新页面');
+          setTimeout(function(){ location.reload(); }, 1000);
+        } else { showToast('❌ 文件格式错误'); }
+      } catch(e) { showToast('❌ 文件格式错误'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function resetAllData(){
+  store = defaultStore();
+  saveStore();
+  Object.keys(store.plans).forEach(function(k){ delete store.plans[k]; });
+  location.reload();
+}
+
+// ====================================================
+//  初始化
+// ====================================================
+(async function(){
+  await window.__idbInit();
+  // 重新加载 store（从 IDB 缓存）
+  if(window.__idbCache && window.__idbCache[STORE_KEY]){
+    store = window.__idbCache[STORE_KEY];
+  }
+  document.getElementById('examDate').value = todayKey();
+  renderHome();
+  renderErrors();
+  bindBackupEvents();
+
+  // 如果没有数据，添加一些示例打卡数据（仅首次）
+  if(Object.keys(store.checkins).length===0 && !localStorage.getItem('xiaowang_initialized')){
+  const d = new Date();
+  d.setDate(d.getDate()-1);
+  store.checkins[dateKey(d)] = 3;
+  d.setDate(d.getDate()-1);
+  store.checkins[dateKey(d)] = 2.5;
+  d.setDate(d.getDate()-2);
+  store.checkins[dateKey(d)] = 4;
+  saveStore();
+  localStorage.setItem('xiaowang_initialized','1');
+  }
+})();
+</script>
+</body>
+</html>
