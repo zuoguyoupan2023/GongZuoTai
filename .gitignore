@@ -18,3 +18,8 @@ glm-vision.js
 
 demo/
 .gstack/
+
+# 工作台采集相关（不上传公开仓库）
+.collected-workbenches/
+collect-workbenches.sh
+scan-workbenches.sh
