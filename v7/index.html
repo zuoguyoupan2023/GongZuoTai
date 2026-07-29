@@ -1186,30 +1186,55 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 
 <div class="toast" id="toast"></div>
 
-<!-- ===== 知识注入弹窗 ===== -->
-<div class="modal-overlay" id="injectModal">
-  <div class="modal-box" style="max-width:560px;">
-    <button class="modal-close" id="closeInjectBtn">✕</button>
-    <div class="mb-title">📥 知识注入</div>
+<!-- ===== AI 设置弹窗 ===== -->
+<div class="modal-overlay" id="aiSettingsModal">
+  <div class="modal-box" style="max-width:480px;">
+    <button class="modal-close" id="closeAiSettingsBtn">✕</button>
+    <div class="mb-title">🤖 AI 注入设置</div>
     <div class="mb-desc">
-      将从文档中提取的段落注入到备考模块的知识卡片中。
-      每个段落将生成一条知识卡片，带有对应的标签。
+      AI Agent 负责理解文档内容并按工作台的数据格式生成注入指令。
+      需要自备 API Key。默认模型为智谱 GLM 5.2。
     </div>
-    <div id="injectPreview" style="max-height:220px;overflow-y:auto;margin-bottom:14px;border:1px solid #FFF0F3;border-radius:10px;padding:10px;"></div>
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <label style="font-size:13px;font-weight:600;">注入到模块：</label>
-      <select id="injectModuleSelect" style="padding:8px 12px;border:2px solid var(--border);border-radius:12px;font-size:13px;flex:1;min-width:150px;">
-        <option value="common">常识判断</option>
-        <option value="politics">时政热点</option>
-        <option value="verbal">言语理解</option>
-        <option value="reasoning">判断推理</option>
-        <option value="quantity">数量关系</option>
-        <option value="data">资料分析</option>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API 提供商</label>
+      <select id="aiProvider" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+        <option value="zhipu">智谱 AI（Zhipu / GLM）</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="openai">OpenAI（ChatGPT）</option>
+        <option value="kimi">Kimi（月之暗面）</option>
       </select>
     </div>
-    <div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;">
-      <button class="btn btn-outline" id="cancelInjectBtn">取消</button>
-      <button class="btn" id="confirmInjectBtn">✅ 确认注入</button>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API 地址（Endpoint）</label>
+      <input type="text" id="aiEndpoint" placeholder="https://open.bigmodel.cn/api/paas/v4/chat/completions" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">模型名称</label>
+      <input type="text" id="aiModel" value="glm-5.2-flash" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API Key</label>
+      <input type="password" id="aiApiKey" placeholder="输入你的 API Key" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-outline" id="testAiBtn">🔍 测试连接</button>
+      <button class="btn" id="saveAiBtn">💾 保存配置</button>
+    </div>
+    <div id="aiTestResult" style="margin-top:10px;font-size:12px;display:none;"></div>
+  </div>
+</div>
+
+<!-- ===== 知识注入（AI 结果预览）弹窗 ===== -->
+<div class="modal-overlay" id="aiInjectModal">
+  <div class="modal-box" style="max-width:600px;">
+    <button class="modal-close" id="closeAiInjectBtn">✕</button>
+    <div class="mb-title">📥 AI 知识注入</div>
+    <div class="mb-desc" id="aiInjectDesc">AI 正在分析文档内容…</div>
+    <div id="aiInjectPreview" style="max-height:350px;overflow-y:auto;margin-bottom:14px;border:1px solid #FFF0F3;border-radius:10px;padding:10px;font-size:13px;line-height:1.6;"></div>
+    <div id="aiInjectStatus" style="font-size:12px;color:var(--text-sub);margin-bottom:10px;"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-outline" id="cancelAiInjectBtn">取消</button>
+      <button class="btn" id="confirmAiInjectBtn" style="display:none;">✅ 确认注入</button>
     </div>
   </div>
 </div>
@@ -2985,17 +3010,8 @@ let fpParser = null;
 let fpDropzone = null;
 let fpViewer = null;
 let fpInitialized = false;
-let fpLastResult = null; // 最近一次解析结果，供注入使用
 
-// 知识注入模块选择列表
-const INJECT_MODULES = [
-  { key: 'common', name: '常识判断' },
-  { key: 'politics', name: '时政热点' },
-  { key: 'verbal', name: '言语理解' },
-  { key: 'reasoning', name: '判断推理' },
-  { key: 'quantity', name: '数量关系' },
-  { key: 'data', name: '资料分析' },
-];
+
 
 function initFileParser(){
   if(fpInitialized) return;
@@ -3038,10 +3054,7 @@ function handleFileParse(file){
 
   fpParser.parse(file).then(function(result){
     fpViewer.render(result);
-    fpLastResult = result; // 保存以供注入
 
-    // 在 DocViewer 工具栏添加「注入」按钮
-    addInjectToolbarButton();
 
     // 解析成功自动折叠上传区，让阅读区有更多空间
     var ub = document.getElementById('fpUploadBody');
@@ -3064,140 +3077,463 @@ function escapeHtml(s){
 }
 
 // ====================================================
-//  知识注入（文件解析 → 知识卡片）
+//  AI Agent 模块（方案022）
 // ====================================================
-function addInjectToolbarButton(){
-  if(!fpViewer || !fpViewer._toolbar) return;
-  // 避免重复添加
-  if(fpViewer._toolbar.querySelector('.fp-inject-btn')) return;
-  var btn = document.createElement('button');
-  btn.className = 'fp-viewer-export'; // 复用导出按钮样式
-  btn.textContent = '📥 注入';
-  btn.title = '将解析结果注入到知识积累模块';
-  btn.onclick = function(){
-    injectToWorkbench(fpLastResult);
-  };
-  fpViewer._toolbar.appendChild(btn);
+
+// --- AI 配置管理 ---
+const AI_CONFIG_KEY = 'xiaowang_ai_config';
+
+const AI_PROVIDERS = {
+  zhipu:   { endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-5.2-flash' },
+  deepseek:{ endpoint: 'https://api.deepseek.com/v1/chat/completions',           model: 'deepseek-chat' },
+  openai:  { endpoint: 'https://api.openai.com/v1/chat/completions',             model: 'gpt-4o-mini' },
+  kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',            model: 'moonshot-v1-8k' },
+};
+
+function loadAiConfig(){
+  try{ var c = localStorage.getItem(AI_CONFIG_KEY); return c ? JSON.parse(c) : {}; }
+  catch(e){ return {}; }
 }
 
-function injectToWorkbench(result){
-  if(!result || !result.content || result.content.length === 0){
-    toast('⚠️ 没有可注入的内容');
+function saveAiConfig(cfg){
+  localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(cfg));
+}
+
+function getDefaultEndpoint(provider){
+  return AI_PROVIDERS[provider] ? AI_PROVIDERS[provider].endpoint : '';
+}
+
+function getDefaultModel(provider){
+  return AI_PROVIDERS[provider] ? AI_PROVIDERS[provider].model : '';
+}
+
+// --- AI 设置弹窗 ---
+function openAiSettings(){
+  var cfg = loadAiConfig();
+  document.getElementById('aiProvider').value = cfg.provider || 'zhipu';
+  document.getElementById('aiEndpoint').value = cfg.endpoint || getDefaultEndpoint('zhipu');
+  document.getElementById('aiModel').value = cfg.model || 'glm-5.2-flash';
+  document.getElementById('aiApiKey').value = cfg.apiKey || '';
+  document.getElementById('aiTestResult').style.display = 'none';
+  document.getElementById('aiSettingsModal').classList.add('show');
+}
+
+function closeAiSettings(){
+  document.getElementById('aiSettingsModal').classList.remove('show');
+}
+
+function bindAiSettingsEvents(){
+  var modal = document.getElementById('aiSettingsModal');
+  var closeBtn = document.getElementById('closeAiSettingsBtn');
+  var provider = document.getElementById('aiProvider');
+  var saveBtn = document.getElementById('saveAiBtn');
+  var testBtn = document.getElementById('testAiBtn');
+
+  if(closeBtn) closeBtn.onclick = closeAiSettings;
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === this) closeAiSettings();
+    });
+  }
+
+  // 切换提供商时自动填充默认值
+  if(provider){
+    provider.addEventListener('change', function(){
+      var p = this.value;
+      document.getElementById('aiEndpoint').value = getDefaultEndpoint(p);
+      document.getElementById('aiModel').value = getDefaultModel(p);
+    });
+  }
+
+  if(saveBtn){
+    saveBtn.onclick = function(){
+      var cfg = {
+        provider: document.getElementById('aiProvider').value,
+        endpoint: document.getElementById('aiEndpoint').value.trim(),
+        model: document.getElementById('aiModel').value.trim(),
+        apiKey: document.getElementById('aiApiKey').value.trim()
+      };
+      if(!cfg.apiKey){ toast('⚠️ 请输入 API Key'); return; }
+      if(!cfg.endpoint){ toast('⚠️ 请输入 API 地址'); return; }
+      saveAiConfig(cfg);
+      closeAiSettings();
+      toast('✅ AI 配置已保存');
+    };
+  }
+
+  if(testBtn){
+    testBtn.onclick = function(){
+      var cfg = {
+        provider: document.getElementById('aiProvider').value,
+        endpoint: document.getElementById('aiEndpoint').value.trim(),
+        model: document.getElementById('aiModel').value.trim(),
+        apiKey: document.getElementById('aiApiKey').value.trim()
+      };
+      if(!cfg.apiKey){ toast('⚠️ 请先输入 API Key'); return; }
+      testAiConnection(cfg);
+    };
+  }
+}
+
+function testAiConnection(cfg){
+  var result = document.getElementById('aiTestResult');
+  result.style.display = 'block';
+  result.innerHTML = '🔄 正在测试连接…';
+  result.style.color = 'var(--text-sub)';
+
+  callAiApi('回复"ok"表示连接正常', '', cfg)
+    .then(function(res){
+      result.innerHTML = '✅ 连接成功！模型响应正常';
+      result.style.color = '#7BC99E';
+    })
+    .catch(function(err){
+      result.innerHTML = '❌ 连接失败：' + escapeHtml(err.message);
+      result.style.color = '#e88';
+    });
+}
+
+// --- AI API 调用 ---
+function callAiApi(userText, schemaJson, cfg){
+  if(!cfg || !cfg.apiKey){
+    return Promise.reject(new Error('AI 未配置，请在设置中填写 API Key'));
+  }
+
+  var sysPrompt = '你是一个工作台数据注入助手。你的任务是根据工作台的 JSON Schema，理解用户文档内容，判断它属于什么类型，并输出符合 Schema 的结构化注入指令。';
+
+  // 如果有 schema，传给 AI
+  if(schemaJson){
+    sysPrompt += '\n\n## 工作台 JSON Schema\n' + JSON.stringify(schemaJson, null, 2);
+  }
+
+  sysPrompt += '\n\n## 输出格式要求\n输出一个 JSON 数组，每个元素表示一条注入指令：\n[{\n  "type": "knowledge_card | question | error_log | exam_record | plan_task | skip",\n  "confidence": 0.5-1.0,\n  "target": {"store": "目标 store 名称", ...},\n  "data": {符合目标 schema 的数据},\n  "reason": "为什么判断为这个类型"\n}]\n注：如果一段内容没有意义（标题、引导语、页码等），设 confidence<0.5 且 type="skip"。';
+
+  var body = {
+    model: cfg.model || 'glm-5.2-flash',
+    messages: [
+      { role: 'system', content: sysPrompt },
+      { role: 'user', content: '请分析以下文档内容，输出注入指令：\n\n' + userText.substring(0, 8000) }
+    ],
+    temperature: 0.3,
+    max_tokens: 4096
+  };
+
+  return fetch(cfg.endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + cfg.apiKey
+    },
+    body: JSON.stringify(body)
+  }).then(function(resp){
+    if(!resp.ok){
+      return resp.text().then(function(txt){
+        throw new Error('API 返回 ' + resp.status + ': ' + txt.substring(0, 200));
+      });
+    }
+    return resp.json();
+  }).then(function(json){
+    if(json.error){
+      throw new Error(json.error.message || JSON.stringify(json.error));
+    }
+    var reply = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content;
+    if(!reply) throw new Error('AI 返回格式异常');
+    return reply;
+  });
+}
+
+// --- AI 注入（工具函数） ---
+function loadV7Schema(){
+  return fetch('./FileParser/workbench/v7/schema.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; });
+}
+
+function addAiInjectToolbarButton(){
+  if(!fpViewer || !fpViewer._toolbar) return;
+  if(fpViewer._toolbar.querySelector('.fp-ai-inject-btn')) return;
+
+  // AI 注入按钮
+  var btn = document.createElement('button');
+  btn.className = 'fp-viewer-export';
+  btn.textContent = '🤖 AI 注入';
+  btn.title = 'AI 理解文档内容并注入到工作台';
+  btn.onclick = function(){ startAiInject(); };
+  fpViewer._toolbar.appendChild(btn);
+
+  // AI 设置按钮
+  var setBtn = document.createElement('button');
+  setBtn.className = 'fp-viewer-export';
+  setBtn.textContent = '⚙️';
+  setBtn.title = 'AI 设置';
+  setBtn.onclick = function(){ openAiSettings(); };
+  fpViewer._toolbar.appendChild(setBtn);
+}
+
+function startAiInject(){
+  if(!fpViewer || !fpViewer._files || fpViewer._files.length === 0){
+    toast('⚠️ 请先解析文件');
     return;
   }
 
-  // 从 content[] 中提取段落，用最近 heading 做标签
-  var cards = [];   // [{tag, text}]
-  var lastHeading = '知识点';
-  for(var i = 0; i < result.content.length; i++){
-    var item = result.content[i];
-    if(item.type === 'heading' && item.text){
-      lastHeading = item.text.trim().substring(0, 20);
-    } else if(item.type === 'paragraph' && item.text){
-      var text = item.text.trim();
-      if(text.length > 0){
-        cards.push({
-          tag: lastHeading,
-          text: text.length > 200 ? text.substring(0, 200) + '…' : text
-        });
-      }
-    } else if(item.type === 'list' && item.items){
-      // 列表项也作为知识卡片
-      (item.items || []).forEach(function(li){
-        if(li && li.trim()){
-          cards.push({
-            tag: lastHeading,
-            text: li.trim().length > 200 ? li.trim().substring(0, 200) + '…' : li.trim()
-          });
-        }
-      });
-    }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){
+    toast('⚠️ 请先配置 AI 设置');
+    openAiSettings();
+    return;
   }
 
-  if(cards.length === 0){
-    toast('⚠️ 未找到可注入的段落内容');
+  // 获取当前激活文件的文本内容
+  var activeFile = null;
+  for(var i = 0; i < fpViewer._files.length; i++){
+    if(fpViewer._files[i].id === fpViewer._activeTabId){
+      activeFile = fpViewer._files[i];
+      break;
+    }
+  }
+  if(!activeFile || !activeFile.result){
+    toast('⚠️ 没有可注入的文档内容');
+    return;
+  }
+
+  var text = activeFile.result.text || '';
+  if(text.length < 10){
+    toast('⚠️ 文档内容过短，无法注入');
     return;
   }
 
   // 显示注入弹窗
-  showInjectModal(cards);
+  showAiInjectModal(text, activeFile.result.fileName);
 }
 
-function showInjectModal(cards){
-  var modal = document.getElementById('injectModal');
-  var preview = document.getElementById('injectPreview');
-  var select = document.getElementById('injectModuleSelect');
+function showAiInjectModal(text, fileName){
+  var modal = document.getElementById('aiInjectModal');
+  var preview = document.getElementById('aiInjectPreview');
+  var desc = document.getElementById('aiInjectDesc');
+  var status = document.getElementById('aiInjectStatus');
+  var confirmBtn = document.getElementById('confirmAiInjectBtn');
 
-  // 显示预览列表（最多显示前 20 条）
-  var displayCards = cards.slice(0, 20);
-  var more = cards.length > 20 ? '<div style="text-align:center;font-size:12px;color:var(--text-sub);padding:6px;">…还有 ' + (cards.length - 20) + ' 条</div>' : '';
-
-  preview.innerHTML = '<div style="font-size:12px;color:var(--text-sub);margin-bottom:6px;">共提取 ' + cards.length + ' 条知识卡片</div>'
-    + displayCards.map(function(c, i){
-      return '<div style="padding:6px 8px;border-bottom:1px solid #FFF0F3;font-size:12px;line-height:1.5;">'
-        + '<span style="color:#999;margin-right:4px;">#' + (i+1) + '</span>'
-        + '<span class="tag">' + escapeHtml(c.tag) + '</span>'
-        + '<span style="color:var(--text-main);">' + escapeHtml(c.text.substring(0, 80)) + (c.text.length > 80 ? '…' : '') + '</span>'
-        + '</div>';
-    }).join('') + more;
-
-  // 重置选中
-  select.selectedIndex = 0;
-
-  // 存储 cards 供确认按钮使用
-  modal._injectCards = cards;
   modal.classList.add('show');
+  confirmBtn.style.display = 'none';
+  preview.innerHTML = '<div class="fp-loading">🤖 AI 正在分析文档…</div>';
+  desc.textContent = '📄 ' + escapeHtml(fileName) + ' — AI 语义理解中，请稍候';
+  status.textContent = '';
+
+  // 异步加载 schema + 调用 AI
+  loadV7Schema().then(function(schema){
+    var cfg = loadAiConfig();
+    return callAiApi(text, schema, cfg);
+  }).then(function(aiReply){
+    // 解析 AI 返回的 JSON
+    var instructions = null;
+    try {
+      // 尝试从 markdown 代码块中提取 JSON
+      var jsonMatch = aiReply.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if(jsonMatch){
+        instructions = JSON.parse(jsonMatch[1]);
+      } else {
+        instructions = JSON.parse(aiReply);
+      }
+    } catch(e){
+      preview.innerHTML = '<div style="padding:20px;text-align:center;">'
+        + '<div style="font-size:36px;margin-bottom:10px;">❌</div>'
+        + '<div style="font-weight:600;margin-bottom:8px;">AI 返回格式异常</div>'
+        + '<div style="font-size:12px;color:#999;margin-bottom:10px;">AI 返回了无法解析的响应，请重试或检查 API Key</div>'
+        + '<pre style="background:#f8f8f8;padding:10px;border-radius:8px;font-size:11px;text-align:left;max-height:200px;overflow:auto;">' + escapeHtml(aiReply.substring(0, 1000)) + '</pre>'
+        + '</div>';
+      status.textContent = '❌ 注入失败';
+      return;
+    }
+
+    if(!Array.isArray(instructions)){
+      preview.innerHTML = '<div style="padding:20px;text-align:center;color:#e88;">❌ AI 返回格式不是数组，请重试</div>';
+      return;
+    }
+
+    // 过滤掉 skip 项
+    var valid = instructions.filter(function(ins){ return ins.type !== 'skip' && ins.confidence >= 0.5; });
+    var skipped = instructions.filter(function(ins){ return ins.type === 'skip' || ins.confidence < 0.5; });
+
+    if(valid.length === 0){
+      preview.innerHTML = '<div style="padding:30px;text-align:center;">'
+        + '<div style="font-size:42px;margin-bottom:10px;">📭</div>'
+        + '<div style="font-weight:600;">没有识别到可注入的内容</div>'
+        + '<div style="font-size:12px;color:#999;margin-top:6px;">AI 判断文档内容不适合注入工作台</div>'
+        + '</div>';
+      status.textContent = '共 ' + instructions.length + ' 条，' + skipped.length + ' 条已跳过';
+      return;
+    }
+
+    // 按类型分组展示
+    var byType = {};
+    valid.forEach(function(ins){
+      if(!byType[ins.type]) byType[ins.type] = [];
+      byType[ins.type].push(ins);
+    });
+
+    var typeLabels = {
+      knowledge_card: '📚 知识卡片',
+      question: '✍️ 考题',
+      error_log: '❌ 错题',
+      exam_record: '📄 试卷记录',
+      plan_task: '📝 计划任务'
+    };
+
+    var html = '';
+    Object.keys(byType).forEach(function(type){
+      var items = byType[type];
+      var label = typeLabels[type] || '📦 ' + type;
+      html += '<div style="margin-bottom:10px;">';
+      html += '<div style="font-weight:600;font-size:13px;margin-bottom:6px;">' + label + '（' + items.length + '条）</div>';
+      items.forEach(function(ins, i){
+        var dataPreview = JSON.stringify(ins.data || {}).substring(0, 120);
+        html += '<div style="padding:6px 8px;background:#FFFAFB;border-radius:6px;margin-bottom:4px;font-size:12px;border-left:3px solid var(--pink-btn);">'
+          + '<div style="color:#999;font-size:11px;margin-bottom:2px;">' + escapeHtml(ins.reason || '') + '</div>'
+          + '<div style="color:var(--text-main);">' + escapeHtml(dataPreview) + (dataPreview.length >= 120 ? '…' : '') + '</div>'
+          + '</div>';
+      });
+      html += '</div>';
+    });
+
+    preview.innerHTML = html;
+
+    // 统计
+    var totalItems = valid.length;
+    var typesSummary = Object.keys(byType).map(function(t){
+      return (typeLabels[t] || t) + ' ' + byType[t].length + '条';
+    }).join('、');
+    desc.textContent = '📄 ' + escapeHtml(fileName) + ' — 共 ' + totalItems + ' 条注入指令';
+    status.textContent = '✅ 识别到：' + typesSummary + (skipped.length > 0 ? '（已跳过 ' + skipped.length + ' 条无意义内容）' : '');
+
+    // 存储供确认使用
+    modal._aiInstructions = valid;
+    confirmBtn.style.display = '';
+  }).catch(function(err){
+    preview.innerHTML = '<div style="padding:20px;text-align:center;">'
+      + '<div style="font-size:36px;margin-bottom:10px;">❌</div>'
+      + '<div style="font-weight:600;margin-bottom:8px;">AI 调用失败</div>'
+      + '<div style="font-size:12px;color:#e88;">' + escapeHtml(err.message) + '</div>'
+      + '</div>';
+    status.textContent = '❌ 注入失败';
+  });
 }
 
-function closeInjectModal(){
-  document.getElementById('injectModal').classList.remove('show');
+function closeAiInjectModal(){
+  document.getElementById('aiInjectModal').classList.remove('show');
 }
 
-// 绑定注入弹窗事件（DOM ready 后调用）
-function bindInjectEvents(){
-  var modal = document.getElementById('injectModal');
-  var closeBtn = document.getElementById('closeInjectBtn');
-  var cancelBtn = document.getElementById('cancelInjectBtn');
-  var confirmBtn = document.getElementById('confirmInjectBtn');
+// 绑定 AI 注入弹窗事件
+function bindAiInjectEvents(){
+  var injectModal = document.getElementById('aiInjectModal');
+  var closeBtn = document.getElementById('closeAiInjectBtn');
+  var cancelBtn = document.getElementById('cancelAiInjectBtn');
+  var confirmBtn = document.getElementById('confirmAiInjectBtn');
 
-  if(closeBtn) closeBtn.onclick = closeInjectModal;
-  if(cancelBtn) cancelBtn.onclick = closeInjectModal;
-  if(modal){
-    modal.addEventListener('click', function(e){
-      if(e.target === this) closeInjectModal();
+  if(closeBtn) closeBtn.onclick = closeAiInjectModal;
+  if(cancelBtn) cancelBtn.onclick = closeAiInjectModal;
+  if(injectModal){
+    injectModal.addEventListener('click', function(e){
+      if(e.target === this) closeAiInjectModal();
     });
   }
 
   if(confirmBtn){
     confirmBtn.onclick = function(){
-      var cards = modal._injectCards;
-      if(!cards || cards.length === 0){
-        toast('⚠️ 没有可注入的内容');
+      var instructions = injectModal._aiInstructions;
+      if(!instructions || instructions.length === 0){
+        toast('⚠️ 没有可注入的指令');
         return;
       }
-      var moduleKey = document.getElementById('injectModuleSelect').value;
-      var moduleName = document.getElementById('injectModuleSelect').selectedOptions[0].textContent;
 
-      // 确保 store.knowledge[moduleKey] 存在
-      if(!store.knowledge[moduleKey]) store.knowledge[moduleKey] = [];
+      // 按类型分流注入
+      var injected = 0;
+      instructions.forEach(function(ins){
+        var data = ins.data || {};
+        var type = ins.type;
 
-      // 注入卡片
-      var now = todayKey();
-      cards.forEach(function(c){
-        store.knowledge[moduleKey].push({
-          tag: c.tag,
-          text: c.text,
-          source: fpLastResult ? fpLastResult.fileName : '',
-          date: now
-        });
+        if(type === 'knowledge_card'){
+          var moduleKey = data.module || ins.target?.module || 'common';
+          if(!store.knowledge[moduleKey]) store.knowledge[moduleKey] = [];
+          store.knowledge[moduleKey].push({
+            tag: data.tag || '知识点',
+            text: (data.text || '').substring(0, 200),
+            source: data.source || '',
+            date: todayKey()
+          });
+          injected++;
+
+        } else if(type === 'question'){
+          var qModule = data.module || '常识判断';
+          var qType = data.subType || '综合';
+          var bankKey = qModule + '|' + qType;
+          if(!window.QUESTION_BANK[bankKey]) window.QUESTION_BANK[bankKey] = [];
+          window.QUESTION_BANK[bankKey].push({
+            q: data.question || data.q || '',
+            options: data.options || [],
+            answer: data.answer !== undefined ? data.answer : 0,
+            explain: data.explain || ''
+          });
+          injected++;
+
+        } else if(type === 'error_log'){
+          store.errors.push({
+            id: 'err' + Date.now() + Math.random().toString(36).substring(2,6),
+            module: data.module || '常识判断',
+            content: data.content || data.question || '',
+            photos: data.photos || [],
+            date: todayKey()
+          });
+          injected++;
+
+        } else if(type === 'exam_record'){
+          store.exams.push({
+            id: 'e' + Date.now() + Math.random().toString(36).substring(2,6),
+            name: data.name || 'AI导入试卷',
+            type: data.type || data.examType || '行测',
+            date: data.date || todayKey(),
+            time: data.time || 0,
+            totalScore: data.totalScore || 100,
+            score: data.score || 0,
+            sections: data.sections || '',
+            notes: data.notes || ''
+          });
+          injected++;
+
+        } else if(type === 'plan_task'){
+          var planDate = data.date || todayKey();
+          if(!store.plans[planDate]) store.plans[planDate] = [];
+          store.plans[planDate].push({
+            id: 'p' + Date.now() + Math.random().toString(36).substring(2,6),
+            text: data.text || '',
+            module: data.module || '其他',
+            count: data.count || 0,
+            done: false
+          });
+          injected++;
+        }
       });
 
-      saveStore();
-      closeInjectModal();
-      toast('✅ 已注入 ' + cards.length + ' 条知识卡片到「' + moduleName + '」');
+      if(injected > 0){
+        saveStore();
+        closeAiInjectModal();
+        toast('✅ 成功注入 ' + injected + ' 条数据到工作台');
+      } else {
+        toast('⚠️ 没有匹配到可注入的数据类型');
+      }
     };
   }
 }
+
+// 修改 initFileParser，增加 AI 按钮
+(function(){
+  var origInit = initFileParser;
+  var origInitFn = window.initFileParser;
+  // 在 handleFileParse 成功后添加 AI 按钮
+  var origHandle = window.handleFileParse;
+  if(typeof origHandle === 'function'){
+    var origHandleFn = handleFileParse;
+    // Already handled in handleFileParse
+  }
+})();
 
 // ====================================================
 //  动态 viewport 高度（解决移动端 100vh 底部被遮挡）
@@ -3224,7 +3560,7 @@ window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight
   renderHome();
   renderErrors();
   bindBackupEvents();
-  bindInjectEvents();
+
 
   // 如果没有数据，添加一些示例打卡数据（仅首次）
   if(Object.keys(store.checkins).length===0 && !localStorage.getItem('xiaowang_initialized')){
