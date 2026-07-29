@@ -555,12 +555,15 @@ input,textarea,select{font-family:inherit;outline:none;}
   .nav-item .nav-icon{width:auto;font-size:20px;}
   .nav-item:not(.active){background:transparent;}
   .nav-badge,.nav-item .arrow{display:none;}
-  .sidebar-footer{padding:8px 4px;}
-  .sidebar-footer .backup-btn{font-size:0;gap:0;padding:8px;width:auto;justify-content:center;border-radius:50%;min-width:36px;height:36px;}
-  .sidebar-footer .backup-btn::before{content:'💾';font-size:16px;}
+  .sidebar-footer{padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .sidebar-footer .backup-btn{
+    font-size:0;gap:0;padding:0;margin:0;width:36px !important;height:36px;min-width:unset;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .sidebar-footer .backup-btn::before{content:'💾';font-size:16px;display:block;line-height:1;}
   .side-credit{font-size:0;}
-  .side-credit a::before{content:'📕';font-size:14px;}
-  .side-credit a{font-size:0;}
+  .side-credit a{font-size:0;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;overflow:hidden;}
+  .side-credit a::before{content:'📕';font-size:16px;display:block;line-height:1;}
 }
 </style>
 
@@ -777,7 +780,7 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div class="nav-item" data-page="error"><span class="nav-icon">❌</span>错题记录</div>
   </div>
   <div class="sidebar-footer">
-    <button class="backup-btn" id="openBackupBtn" style="background:var(--pink-btn);color:#fff;width:100%;justify-content:center;margin-bottom:8px;">💾 数据备份</button>
+    <button class="backup-btn" id="openBackupBtn" style="background:var(--pink-btn);color:#fff;width:100%;justify-content:center;">💾 数据备份</button>
     <div class="side-credit">
       📕 来自 <a href="https://xhslink.cn/m/4SRT3myzeDg" target="_blank" rel="noopener noreferrer">@米奇妙妙屋c9n @小红书</a>
     </div>
