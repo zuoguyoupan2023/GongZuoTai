@@ -1186,6 +1186,34 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 
 <div class="toast" id="toast"></div>
 
+<!-- ===== 知识注入弹窗 ===== -->
+<div class="modal-overlay" id="injectModal">
+  <div class="modal-box" style="max-width:560px;">
+    <button class="modal-close" id="closeInjectBtn">✕</button>
+    <div class="mb-title">📥 知识注入</div>
+    <div class="mb-desc">
+      将从文档中提取的段落注入到备考模块的知识卡片中。
+      每个段落将生成一条知识卡片，带有对应的标签。
+    </div>
+    <div id="injectPreview" style="max-height:220px;overflow-y:auto;margin-bottom:14px;border:1px solid #FFF0F3;border-radius:10px;padding:10px;"></div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <label style="font-size:13px;font-weight:600;">注入到模块：</label>
+      <select id="injectModuleSelect" style="padding:8px 12px;border:2px solid var(--border);border-radius:12px;font-size:13px;flex:1;min-width:150px;">
+        <option value="common">常识判断</option>
+        <option value="politics">时政热点</option>
+        <option value="verbal">言语理解</option>
+        <option value="reasoning">判断推理</option>
+        <option value="quantity">数量关系</option>
+        <option value="data">资料分析</option>
+      </select>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-outline" id="cancelInjectBtn">取消</button>
+      <button class="btn" id="confirmInjectBtn">✅ 确认注入</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== 备份弹窗 ===== -->
 <div class="modal-overlay" id="backupModal">
   <div class="modal-box">
@@ -1414,6 +1442,10 @@ function defaultStore(){
     exams: [],        // [{id,name,type,date,time,totalScore,score,sections,notes}]
     errors: [],       // [{id,module,content,photos,date}]
     stats: {common:0,politics:0,verbal:0,reasoning:0,quantity:0,data:0}, // 累计做题数
+    knowledge: {      // 文件解析注入的知识卡片
+      common: [], politics: [], verbal: [],
+      reasoning: [], quantity: [], data: []
+    },
   };
 }
 function saveStore(){
@@ -1593,13 +1625,20 @@ function renderTopic(key){
 }
 
 function renderKnowledge(key){
-  const list = KNOWLEDGE[key];
-  // 随机取10条（或全部）
-  const shuffled = [...list].sort(()=>Math.random()-0.5);
-  const picked = shuffled.slice(0, Math.min(10, list.length));
-  document.getElementById('knowledge-'+key).innerHTML = picked.map(k=>`
-    <div class="knowledge-item"><span class="tag">${k.tag}</span>${k.text}</div>
-  `).join('');
+  // 优先读 store.knowledge 注入数据，不够补硬编码
+  var injected = store.knowledge[key] || [];
+  var defaults = KNOWLEDGE[key] || [];
+  var combined = injected.concat(defaults);
+  if(combined.length === 0){
+    document.getElementById('knowledge-'+key).innerHTML = '<div class="empty-state"><span class="emoji">📝</span>暂无积累</div>';
+    return;
+  }
+  // 随机取10条
+  var shuffled = [...combined].sort(function(){ return Math.random()-0.5; });
+  var picked = shuffled.slice(0, Math.min(10, combined.length));
+  document.getElementById('knowledge-'+key).innerHTML = picked.map(function(k){
+    return '<div class="knowledge-item"><span class="tag">'+k.tag+'</span>'+k.text+'</div>';
+  }).join('');
 }
 
 function refreshKnowledge(key){ renderKnowledge(key); toast('已刷新知识点'); }
@@ -2635,7 +2674,8 @@ function getAllData(){
     checkins: store.checkins,
     exams: store.exams,
     errors: store.errors,
-    stats: store.stats
+    stats: store.stats,
+    knowledge: store.knowledge
   };
 }
 function restoreAllData(data, settings){
@@ -2651,6 +2691,12 @@ function updateBackupInfo(){
   var totalCheckins = Object.keys(store.checkins).length;
   var totalExams = store.exams.length;
   var totalErrors = store.errors.length;
+  var totalKnowledge = 0;
+  if(store.knowledge){
+    Object.keys(store.knowledge).forEach(function(k){
+      totalKnowledge += (store.knowledge[k] || []).length;
+    });
+  }
   document.getElementById('backupInfo').innerHTML =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:12px;">' +
     '<span>📅 计划天数：<b>' + totalKeys + '</b> 天</span>' +
@@ -2659,8 +2705,9 @@ function updateBackupInfo(){
     '<span>📄 试卷记录：<b>' + totalExams + '</b> 份</span>' +
     '<span>❌ 错题记录：<b>' + totalErrors + '</b> 条</span>' +
     '<span>📈 各科累计：<b>' + (store.stats.common+store.stats.politics+store.stats.verbal+store.stats.reasoning+store.stats.quantity+store.stats.data) + '</b> 题</span>' +
+    '<span>🃏 知识卡片：<b>' + totalKnowledge + '</b> 条</span>' +
     '</div>' +
-    '<div style="margin-top:8px;font-size:10px;color:#999;">备份范围：计划 / 做题记录 / 打卡 / 试卷 / 错题 / 各科累计统计</div>';
+    '<div style="margin-top:8px;font-size:10px;color:#999;">备份范围：计划 / 做题记录 / 打卡 / 试卷 / 错题 / 各科累计统计 / 知识卡片</div>';
 }
 
 // 弹窗事件绑定（在 DOM 就绪后绑定）
@@ -2938,6 +2985,17 @@ let fpParser = null;
 let fpDropzone = null;
 let fpViewer = null;
 let fpInitialized = false;
+let fpLastResult = null; // 最近一次解析结果，供注入使用
+
+// 知识注入模块选择列表
+const INJECT_MODULES = [
+  { key: 'common', name: '常识判断' },
+  { key: 'politics', name: '时政热点' },
+  { key: 'verbal', name: '言语理解' },
+  { key: 'reasoning', name: '判断推理' },
+  { key: 'quantity', name: '数量关系' },
+  { key: 'data', name: '资料分析' },
+];
 
 function initFileParser(){
   if(fpInitialized) return;
@@ -2980,6 +3038,11 @@ function handleFileParse(file){
 
   fpParser.parse(file).then(function(result){
     fpViewer.render(result);
+    fpLastResult = result; // 保存以供注入
+
+    // 在 DocViewer 工具栏添加「注入」按钮
+    addInjectToolbarButton();
+
     // 解析成功自动折叠上传区，让阅读区有更多空间
     var ub = document.getElementById('fpUploadBody');
     var tb = document.getElementById('fpToggleBtn');
@@ -2998,6 +3061,142 @@ function handleFileParse(file){
 
 function escapeHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ====================================================
+//  知识注入（文件解析 → 知识卡片）
+// ====================================================
+function addInjectToolbarButton(){
+  if(!fpViewer || !fpViewer._toolbar) return;
+  // 避免重复添加
+  if(fpViewer._toolbar.querySelector('.fp-inject-btn')) return;
+  var btn = document.createElement('button');
+  btn.className = 'fp-viewer-export'; // 复用导出按钮样式
+  btn.textContent = '📥 注入';
+  btn.title = '将解析结果注入到知识积累模块';
+  btn.onclick = function(){
+    injectToWorkbench(fpLastResult);
+  };
+  fpViewer._toolbar.appendChild(btn);
+}
+
+function injectToWorkbench(result){
+  if(!result || !result.content || result.content.length === 0){
+    toast('⚠️ 没有可注入的内容');
+    return;
+  }
+
+  // 从 content[] 中提取段落，用最近 heading 做标签
+  var cards = [];   // [{tag, text}]
+  var lastHeading = '知识点';
+  for(var i = 0; i < result.content.length; i++){
+    var item = result.content[i];
+    if(item.type === 'heading' && item.text){
+      lastHeading = item.text.trim().substring(0, 20);
+    } else if(item.type === 'paragraph' && item.text){
+      var text = item.text.trim();
+      if(text.length > 0){
+        cards.push({
+          tag: lastHeading,
+          text: text.length > 200 ? text.substring(0, 200) + '…' : text
+        });
+      }
+    } else if(item.type === 'list' && item.items){
+      // 列表项也作为知识卡片
+      (item.items || []).forEach(function(li){
+        if(li && li.trim()){
+          cards.push({
+            tag: lastHeading,
+            text: li.trim().length > 200 ? li.trim().substring(0, 200) + '…' : li.trim()
+          });
+        }
+      });
+    }
+  }
+
+  if(cards.length === 0){
+    toast('⚠️ 未找到可注入的段落内容');
+    return;
+  }
+
+  // 显示注入弹窗
+  showInjectModal(cards);
+}
+
+function showInjectModal(cards){
+  var modal = document.getElementById('injectModal');
+  var preview = document.getElementById('injectPreview');
+  var select = document.getElementById('injectModuleSelect');
+
+  // 显示预览列表（最多显示前 20 条）
+  var displayCards = cards.slice(0, 20);
+  var more = cards.length > 20 ? '<div style="text-align:center;font-size:12px;color:var(--text-sub);padding:6px;">…还有 ' + (cards.length - 20) + ' 条</div>' : '';
+
+  preview.innerHTML = '<div style="font-size:12px;color:var(--text-sub);margin-bottom:6px;">共提取 ' + cards.length + ' 条知识卡片</div>'
+    + displayCards.map(function(c, i){
+      return '<div style="padding:6px 8px;border-bottom:1px solid #FFF0F3;font-size:12px;line-height:1.5;">'
+        + '<span style="color:#999;margin-right:4px;">#' + (i+1) + '</span>'
+        + '<span class="tag">' + escapeHtml(c.tag) + '</span>'
+        + '<span style="color:var(--text-main);">' + escapeHtml(c.text.substring(0, 80)) + (c.text.length > 80 ? '…' : '') + '</span>'
+        + '</div>';
+    }).join('') + more;
+
+  // 重置选中
+  select.selectedIndex = 0;
+
+  // 存储 cards 供确认按钮使用
+  modal._injectCards = cards;
+  modal.classList.add('show');
+}
+
+function closeInjectModal(){
+  document.getElementById('injectModal').classList.remove('show');
+}
+
+// 绑定注入弹窗事件（DOM ready 后调用）
+function bindInjectEvents(){
+  var modal = document.getElementById('injectModal');
+  var closeBtn = document.getElementById('closeInjectBtn');
+  var cancelBtn = document.getElementById('cancelInjectBtn');
+  var confirmBtn = document.getElementById('confirmInjectBtn');
+
+  if(closeBtn) closeBtn.onclick = closeInjectModal;
+  if(cancelBtn) cancelBtn.onclick = closeInjectModal;
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === this) closeInjectModal();
+    });
+  }
+
+  if(confirmBtn){
+    confirmBtn.onclick = function(){
+      var cards = modal._injectCards;
+      if(!cards || cards.length === 0){
+        toast('⚠️ 没有可注入的内容');
+        return;
+      }
+      var moduleKey = document.getElementById('injectModuleSelect').value;
+      var moduleName = document.getElementById('injectModuleSelect').selectedOptions[0].textContent;
+
+      // 确保 store.knowledge[moduleKey] 存在
+      if(!store.knowledge[moduleKey]) store.knowledge[moduleKey] = [];
+
+      // 注入卡片
+      var now = todayKey();
+      cards.forEach(function(c){
+        store.knowledge[moduleKey].push({
+          tag: c.tag,
+          text: c.text,
+          source: fpLastResult ? fpLastResult.fileName : '',
+          date: now
+        });
+      });
+
+      saveStore();
+      closeInjectModal();
+      toast('✅ 已注入 ' + cards.length + ' 条知识卡片到「' + moduleName + '」');
+    };
+  }
 }
 
 // ====================================================
@@ -3025,6 +3224,7 @@ window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight
   renderHome();
   renderErrors();
   bindBackupEvents();
+  bindInjectEvents();
 
   // 如果没有数据，添加一些示例打卡数据（仅首次）
   if(Object.keys(store.checkins).length===0 && !localStorage.getItem('xiaowang_initialized')){
