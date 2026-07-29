@@ -1198,6 +1198,19 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eee;">
       <button class="mb-btn mb-btn-dan" id="modalResetBtn">🔄 重置为默认</button>
     </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--pink-highlight);">
+      <div style="font-size:12px;font-weight:600;color:var(--text-main);margin-bottom:6px;">⏱️ 定时自动导出测试</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <select id="timerSelect" style="padding:6px 8px;border:1px solid #ddd;border-radius:8px;font-size:12px;">
+          <option value="1">1 分钟后</option>
+          <option value="2">2 分钟后</option>
+          <option value="5">5 分钟后</option>
+          <option value="10">10 分钟后</option>
+        </select>
+        <button class="mb-btn mb-btn-out" id="startTimerBtn" style="font-size:12px;padding:6px 14px;">▶ 开始倒计时</button>
+        <span id="timerDisplay" style="font-size:13px;font-weight:700;color:#E8919B;min-width:80px;"></span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2576,6 +2589,54 @@ function bindBackupEvents(){
     resetAllData();
     showToast('🔄 已恢复默认');
   });
+
+  // 定时导出测试
+  var timerBtn = document.getElementById('startTimerBtn');
+  var timerDisplay = document.getElementById('timerDisplay');
+  var timerSelect = document.getElementById('timerSelect');
+  var timerId = null;
+  if(timerBtn && timerDisplay && timerSelect){
+    timerBtn.addEventListener('click', function(){
+      // 如果有正在运行的计时器，先取消
+      if(timerId){
+        clearTimeout(timerId);
+        clearInterval(timerId);
+        timerId = null;
+        timerBtn.textContent = '▶ 开始倒计时';
+        timerDisplay.textContent = '';
+        timerSelect.disabled = false;
+        return;
+      }
+      var minutes = parseInt(timerSelect.value);
+      var seconds = minutes * 60;
+      timerSelect.disabled = true;
+      timerBtn.textContent = '■ 取消';
+      updateTimerDisplay(seconds);
+      // 每秒更新
+      var interval = setInterval(function(){
+        seconds--;
+        if(seconds <= 0){
+          clearInterval(interval);
+          clearTimeout(timerId);
+          timerId = null;
+          timerDisplay.textContent = '⏰ 导出中…';
+          timerBtn.textContent = '▶ 开始倒计时';
+          timerSelect.disabled = false;
+          // 自动导出
+          document.getElementById('backupModal').classList.remove('show');
+          setTimeout(exportFullData, 500);
+        } else {
+          updateTimerDisplay(seconds);
+        }
+      }, 1000);
+      timerId = interval;
+    });
+    function updateTimerDisplay(sec){
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      timerDisplay.textContent = '⏳ ' + m + '分' + String(s).padStart(2,'0') + '秒';
+    }
+  }
 }
 
 function exportFullData(){
