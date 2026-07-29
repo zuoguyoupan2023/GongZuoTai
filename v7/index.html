@@ -568,19 +568,41 @@ input,textarea,select{font-family:inherit;outline:none;}
 <style>
 /* -- Dropzone -- */
 .fp-dropzone-area{
-  border:3px dashed var(--pink-highlight);border-radius:20px;
-  padding:40px 24px;text-align:center;cursor:pointer;
+  border:3px dashed var(--pink-highlight);border-radius:16px;
+  padding:20px 20px;text-align:center;cursor:pointer;
   background:#FFFAFB;transition:all .3s;position:relative;
 }
 .fp-dropzone-area:hover{border-color:var(--pink-btn);background:#FFF5F7;}
 .fp-dropzone-dragover{border-color:#E8919B;background:#FDF0F3;transform:scale(1.01);}
-.fp-dropzone-icon{font-size:48px;margin-bottom:12px;}
-.fp-dropzone-text{font-size:15px;color:var(--text-main);margin-bottom:8px;}
+.fp-dropzone-icon{font-size:32px;margin-bottom:6px;}
+.fp-dropzone-text{font-size:14px;color:var(--text-main);margin-bottom:6px;}
 .fp-dropzone-text span{color:var(--pink-btn);text-decoration:underline;cursor:pointer;font-weight:600;}
 .fp-dropzone-hint{font-size:12px;color:var(--text-sub);margin-bottom:8px;}
 .fp-dropzone-status{font-size:13px;margin-top:8px;padding:6px 12px;border-radius:8px;display:inline-block;}
 .fp-dropzone-status-success{background:#f0fff4;color:#7BC99E;}
 .fp-dropzone-status-error{background:#fff0f0;color:#e88;}
+
+/* -- 折叠上传区 -- */
+.fp-section-card{
+  background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+  margin-bottom:12px;border:2px solid #FFF8FA;overflow:hidden;
+}
+.fp-section-header{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  padding:10px 16px;user-select:none;transition:background .2s;
+}
+.fp-section-header:hover{background:#FFFAFB;}
+.fp-toggle-arrow{
+  font-size:10px;color:var(--text-sub);transition:transform .25s;
+  flex-shrink:0;width:16px;text-align:center;
+}
+.fp-section-header.collapsed .fp-toggle-arrow{transform:rotate(-90deg);}
+.fp-toggle-title{font-size:14px;font-weight:600;color:var(--text-main);}
+.fp-toggle-hint{font-size:11px;color:var(--text-sub);margin-left:auto;}
+.fp-section-body{
+  padding:0 12px 12px;overflow:hidden;transition:max-height .3s ease;
+}
+.fp-section-body.collapsed{max-height:0;padding:0 12px;}
 
 /* -- DocViewer -- */
 .fp-viewer-wrapper{
@@ -725,7 +747,8 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 @media(max-width:768px){
   .fp-viewer-toc{display:none;}
   .fp-viewer-search-input{width:100px;}
-  .fp-dropzone-area{padding:24px 16px;}
+  .fp-dropzone-area{padding:16px;}
+  .fp-toggle-hint{display:none;}
 }
 </style>
 </head>
@@ -1141,12 +1164,17 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 
 <!-- ===== 文件学习（FileParser 方案011 Phase A） ===== -->
 <div class="page" id="page-fileparser">
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>📂 文件学习</div>
-    <p style="font-size:13px;color:var(--text-sub);margin-bottom:14px;">支持 PDF / TXT / Markdown / Word 文档。拖拽或点击上传学习资料，自动解析为可搜索、可标注的正文。</p>
-    <div id="fpDropzone"></div>
+  <div class="fp-section-card" id="fpUploadCard">
+    <div class="fp-section-header" id="fpToggleBtn">
+      <span class="fp-toggle-arrow">▼</span>
+      <span class="fp-toggle-title">📂 文件上传区</span>
+      <span class="fp-toggle-hint">拖拽或点击上传 · 支持 PDF / TXT / Markdown / Word</span>
+    </div>
+    <div class="fp-section-body" id="fpUploadBody">
+      <div id="fpDropzone"></div>
+    </div>
   </div>
-  <div id="fpViewer" style="height:calc(100vh - 240px);"></div>
+  <div id="fpViewer" style="height:calc(100vh - 180px);"></div>
 </div>
 
 </div><!-- /main -->
@@ -2615,6 +2643,16 @@ function initFileParser(){
   // 创建文档查看器
   fpViewer = new DocViewer('#fpViewer');
   fpViewer.clear();
+
+  // 折叠/展开切换
+  const toggleBtn = document.getElementById('fpToggleBtn');
+  const uploadBody = document.getElementById('fpUploadBody');
+  if(toggleBtn && uploadBody){
+    toggleBtn.addEventListener('click', function(){
+      var isCollapsed = uploadBody.classList.toggle('collapsed');
+      toggleBtn.classList.toggle('collapsed', isCollapsed);
+    });
+  }
 }
 
 function handleFileParse(file){
@@ -2628,6 +2666,13 @@ function handleFileParse(file){
 
   fpParser.parse(file).then(function(result){
     fpViewer.render(result);
+    // 解析成功自动折叠上传区，让阅读区有更多空间
+    var ub = document.getElementById('fpUploadBody');
+    var tb = document.getElementById('fpToggleBtn');
+    if(ub && !ub.classList.contains('collapsed')){
+      ub.classList.add('collapsed');
+      if(tb) tb.classList.add('collapsed');
+    }
     toast('✅ 已解析：' + file.name);
   }).catch(function(err){
     toast('❌ 解析失败：' + err.message);
