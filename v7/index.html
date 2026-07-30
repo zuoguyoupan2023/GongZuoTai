@@ -1530,6 +1530,22 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 // ====================================================
 const STORE_KEY = 'xiaowang_workbench';
 let store = loadStore();
+// 确保 store 包含所有默认字段（兼容旧版本 store）
+migrateStore();
+
+function migrateStore(){
+  var def = defaultStore();
+  Object.keys(def).forEach(function(k){
+    if(store[k] === undefined) store[k] = JSON.parse(JSON.stringify(def[k]));
+  });
+  // 确保 knowledge 的子字段也存在
+  if(store.knowledge){
+    var defKnowledge = def.knowledge || {};
+    Object.keys(defKnowledge).forEach(function(k){
+      if(!store.knowledge[k]) store.knowledge[k] = [];
+    });
+  }
+}
 
 function loadStore(){
   var c = window.__idbCache;
@@ -3427,47 +3443,54 @@ function testAiConnection(cfg){
 }
 
 // --- AI API 调用 ---
-function callAiApi(userText, schemaJson, cfg, extraPrompt){
+function callAiApi(userText, schemaJson, cfg, extraPrompt, mode){
   if(!cfg || !cfg.apiKey){
     return Promise.reject(new Error('AI 未配置，请在设置中填写 API Key'));
   }
 
-  var sysPrompt = '你是一个工作台数据注入助手。你的任务是根据工作台的 JSON Schema，理解用户文档内容，判断它属于什么类型，并输出符合 Schema 的结构化注入指令。';
-  if(extraPrompt){
-    sysPrompt += '\n\n## 用户的注入要求\n' + extraPrompt;
+  var sysPrompt;
+  if(mode === 'chat'){
+    // 对话模式：无注入指令，用于条目级 AI 问答
+    sysPrompt = '你是一个智能学习助手。请用通俗易懂的语言回答用户的问题，不需要输出 JSON 或结构化数据。回答内容要详细、准确、有帮助。';
+  } else {
+    // 注入模式：用于文档 → store 的 AI 注入
+    sysPrompt = '你是一个工作台数据注入助手。你的任务是根据工作台的 JSON Schema，理解用户文档内容，判断它属于什么类型，并输出符合 Schema 的结构化注入指令。';
+    if(extraPrompt){
+      sysPrompt += '\n\n## 用户的注入要求\n' + extraPrompt;
+    }
+
+    // 工作台可用模块列表（AI 注入时只能使用以下模块，不得自创）
+    var moduleList = '## 可用模块（注入时请使用以下 module/key）\n'
+      + '| 模块 key | 模块名称 | 可用的题型名称（question 的 subType） |\n'
+      + '|----------|---------|-----------------------------------|\n'
+      + '| common   | 常识判断 | 法律常识、人文历史、科技常识、地理常识 |\n'
+      + '| politics | 时政热点 | 近12个月时政、党政热点专项、重要会议文件、重大事件 |\n'
+      + '| verbal   | 言语理解 | 逻辑填空、片段阅读、语句排序、细节判断 |\n'
+      + '| reasoning| 判断推理 | 图形推理、定义判断、类比推理、逻辑判断 |\n'
+      + '| quantity | 数量关系 | 工程问题、行程问题、利润问题、排列组合 |\n'
+      + '| data     | 资料分析 | 图文资料、表格资料、综合资料、套题训练 |\n'
+      + '\n知识卡片的 module 字段必须使用上表中的 key（common/politics/verbal/reasoning/quantity/data）。\n'
+      + '考题的 module 字段必须使用上表中的"模块名称"（如"常识判断""言语理解"），subType 必须使用对应模块的可用题型。\n'
+      + '错题的 module 字段必须使用上表中的"模块名称"。\n';
+
+    // 如果有 schema，传给 AI
+    if(schemaJson){
+      sysPrompt += '\n\n## 工作台 JSON Schema\n' + JSON.stringify(schemaJson, null, 2);
+    }
+
+    sysPrompt += '\n\n' + moduleList;
+
+    sysPrompt += '\n\n## 输出格式要求\n输出一个 JSON 数组，每个元素表示一条注入指令：\n[{\n  "type": "knowledge_card | question | error_log | exam_record | plan_task | skip",\n  "confidence": 0.5-1.0,\n  "target": {"store": "目标 store 名称", ...},\n  "data": {符合目标 schema 的数据},\n  "reason": "为什么判断为这个类型"\n}]\n注：如果一段内容没有意义（标题、引导语、页码等），设 confidence<0.5 且 type="skip"。';
   }
-
-  // 工作台可用模块列表（AI 注入时只能使用以下模块，不得自创）
-  var moduleList = '## 可用模块（注入时请使用以下 module/key）\n'
-    + '| 模块 key | 模块名称 | 可用的题型名称（question 的 subType） |\n'
-    + '|----------|---------|-----------------------------------|\n'
-    + '| common   | 常识判断 | 法律常识、人文历史、科技常识、地理常识 |\n'
-    + '| politics | 时政热点 | 近12个月时政、党政热点专项、重要会议文件、重大事件 |\n'
-    + '| verbal   | 言语理解 | 逻辑填空、片段阅读、语句排序、细节判断 |\n'
-    + '| reasoning| 判断推理 | 图形推理、定义判断、类比推理、逻辑判断 |\n'
-    + '| quantity | 数量关系 | 工程问题、行程问题、利润问题、排列组合 |\n'
-    + '| data     | 资料分析 | 图文资料、表格资料、综合资料、套题训练 |\n'
-    + '\n知识卡片的 module 字段必须使用上表中的 key（common/politics/verbal/reasoning/quantity/data）。\n'
-    + '考题的 module 字段必须使用上表中的"模块名称"（如"常识判断""言语理解"），subType 必须使用对应模块的可用题型。\n'
-    + '错题的 module 字段必须使用上表中的"模块名称"。\n';
-
-  // 如果有 schema，传给 AI
-  if(schemaJson){
-    sysPrompt += '\n\n## 工作台 JSON Schema\n' + JSON.stringify(schemaJson, null, 2);
-  }
-
-  sysPrompt += '\n\n' + moduleList;
-
-  sysPrompt += '\n\n## 输出格式要求\n输出一个 JSON 数组，每个元素表示一条注入指令：\n[{\n  "type": "knowledge_card | question | error_log | exam_record | plan_task | skip",\n  "confidence": 0.5-1.0,\n  "target": {"store": "目标 store 名称", ...},\n  "data": {符合目标 schema 的数据},\n  "reason": "为什么判断为这个类型"\n}]\n注：如果一段内容没有意义（标题、引导语、页码等），设 confidence<0.5 且 type="skip"。';
 
   var body = {
     model: cfg.model || 'glm-5.2',
     messages: [
       { role: 'system', content: sysPrompt },
-      { role: 'user', content: '请分析以下文档内容，输出注入指令：\n\n' + userText.substring(0, 8000) }
+      { role: 'user', content: userText.substring(0, mode === 'chat' ? 6000 : 8000) }
     ],
-    temperature: 0.3,
-    max_tokens: 4096
+    temperature: mode === 'chat' ? 0.7 : 0.3,
+    max_tokens: mode === 'chat' ? 2048 : 4096
   };
 
   return fetch(cfg.endpoint, {
@@ -3907,37 +3930,6 @@ function bindAiInjectEvents(){
   if(confirmBtn) confirmBtn.onclick = handleConfirmAiInject;
 }
 
-// --- 通用 AI 聊天（无注入提示词，用于条目级对话） ---
-function callAiChat(userText, cfg){
-  if(!cfg || !cfg.apiKey){
-    return Promise.reject(new Error('AI 未配置，请在设置中填写 API Key'));
-  }
-  var body = {
-    model: cfg.model || 'glm-5.2',
-    messages: [
-      { role:'system', content:'你是一个智能学习助手。请用通俗易懂的语言回答用户的问题，不需要输出 JSON 或结构化数据。回答内容要详细、准确、有帮助。' },
-      { role:'user', content: userText.substring(0, 6000) }
-    ],
-    temperature: 0.7,
-    max_tokens: 2048
-  };
-  return fetch(cfg.endpoint, {
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'Authorization':'Bearer ' + cfg.apiKey
-    }
-  }).then(function(resp){
-    if(!resp.ok) return resp.text().then(function(txt){ throw new Error('API 返回 ' + resp.status + ': ' + txt.substring(0,200)); });
-    return resp.json();
-  }).then(function(json){
-    if(json.error) throw new Error(json.error.message || JSON.stringify(json.error));
-    var reply = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content;
-    if(!reply) throw new Error('AI 返回格式异常');
-    return reply;
-  });
-}
-
 // ====================================================
 //  上下文 AI 助手（每个内容区域内的 AI 按钮）
 // ====================================================
@@ -4036,7 +4028,7 @@ function sendItemAi(){
   resDiv.className = 'ctx-ai-response show';
   resDiv.innerHTML = '<div class="fp-loading">思考中…</div>';
   var prompt = '## 上下文内容（仅本条条目）\n' + context.substring(0, 2000) + '\n\n## 用户请求\n' + text;
-  callAiChat(prompt, cfg).then(function(reply){
+  callAiApi(prompt, null, cfg, '', 'chat').then(function(reply){
     var html = '<div>' + escapeHtml(reply) + '</div>';
     html += '<div style="display:flex;gap:6px;margin-top:4px;">';
     html += '<button class="ctx-ai-preset" onclick="var t=this.parentElement.parentElement.textContent.replace(\'复制\',\'\').trim();navigator.clipboard.writeText(t).then(function(){toast(\'已复制\');})">复制</button>';
@@ -4175,6 +4167,8 @@ window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight
   if(window.__idbCache && window.__idbCache[STORE_KEY]){
     store = window.__idbCache[STORE_KEY];
   }
+  // 二次迁移：确保 store 包含所有默认字段（兼容旧版本 store）
+  migrateStore();
   document.getElementById('examDate').value = todayKey();
   renderHome();
   renderErrors();
