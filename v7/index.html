@@ -778,7 +778,6 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div class="nav-item" data-page="stats"><span class="nav-icon">📈</span>时长统计</div>
     <div class="nav-item" data-page="exam"><span class="nav-icon">📄</span>试卷分析</div>
     <div class="nav-item" data-page="fileparser"><span class="nav-icon">📂</span>文件学习</div>
-    <div class="nav-item" data-page="aiinject"><span class="nav-icon">🤖</span>AI 注入</div>
     <div class="nav-item" data-page="error"><span class="nav-icon">❌</span>错题记录</div>
   </div>
   <div class="sidebar-footer">
@@ -1119,14 +1118,6 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
   <div class="card">
     <div class="card-title"><span class="dot"></span>试卷记录列表</div>
     <div class="exam-list" id="examList"></div>
-  </div>
-</div>
-
-<!-- ===== AI 注入 ===== -->
-<div class="page" id="page-aiinject">
-  <div class="card">
-    <div class="card-title"><span class="dot"></span>🤖 AI 注入内容</div>
-    <div id="aiInjectList" style="font-size:13px;color:var(--text-sub);">暂无 AI 注入记录</div>
   </div>
 </div>
 
@@ -1623,7 +1614,6 @@ function onPageShow(page){
   if(page==='exam') renderExam();
   if(page==='error') renderErrors();
   if(page==='fileparser') initFileParser();
-  if(page==='aiinject') renderAiInjectPage();
   if(TOPICS[page]) renderTopic(page);
 }
 
@@ -1660,20 +1650,42 @@ function renderTopic(key){
 }
 
 function renderKnowledge(key){
-  // 优先读 store.knowledge 注入数据，不够补硬编码
-  var injected = store.knowledge[key] || [];
+  var container = document.getElementById('knowledge-'+key);
+  moduleKeyNames = moduleKeyNames || {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
+
+  // 硬编码默认知识
   var defaults = KNOWLEDGE[key] || [];
-  var combined = injected.concat(defaults);
-  if(combined.length === 0){
-    document.getElementById('knowledge-'+key).innerHTML = '<div class="empty-state"><span class="emoji">📝</span>暂无积累</div>';
-    return;
+  // AI 注入的知识卡片
+  var injected = store.knowledge[key] || [];
+
+  // 默认知识部分（随机取8条）
+  var shuffDefaults = [...defaults].sort(function(){ return Math.random()-0.5; });
+  var pickedDefaults = shuffDefaults.slice(0, Math.min(8, shuffDefaults.length));
+
+  var html = '';
+  // 默认知识
+  if(pickedDefaults.length > 0){
+    html += pickedDefaults.map(function(k){
+      return '<div class="knowledge-item"><span class="tag">'+k.tag+'</span>'+k.text+'</div>';
+    }).join('');
   }
-  // 随机取10条
-  var shuffled = [...combined].sort(function(){ return Math.random()-0.5; });
-  var picked = shuffled.slice(0, Math.min(10, combined.length));
-  document.getElementById('knowledge-'+key).innerHTML = picked.map(function(k){
-    return '<div class="knowledge-item"><span class="tag">'+k.tag+'</span>'+k.text+'</div>';
-  }).join('');
+
+  // AI 注入部分
+  if(injected.length > 0){
+    html += '<div style="margin-top:10px;padding-top:8px;border-top:2px dashed var(--pink-highlight);">';
+    html += '<div style="font-size:11px;font-weight:600;color:#E8919B;margin-bottom:6px;">🤖 AI 注入（' + injected.length + '条）</div>';
+    html += injected.map(function(k){
+      var fileName = k.source || '';
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;">'
+        + '<span class="tag">'+(k.tag||'知识点')+'</span>'+k.text
+        + (fileName ? '<span style="font-size:10px;color:#ccc;display:block;margin-top:2px;">📄 '+escapeHtml(fileName)+'</span>' : '')
+        + '</div>';
+    }).join('');
+    html += '</div>';
+  }
+
+  if(!html) html = '<div class="empty-state"><span class="emoji">📝</span>暂无积累</div>';
+  container.innerHTML = html;
 }
 
 function refreshKnowledge(key){ renderKnowledge(key); toast('已刷新知识点'); }
@@ -3683,65 +3695,6 @@ function bindAiInjectEvents(){
   }
 
   if(confirmBtn) confirmBtn.onclick = handleConfirmAiInject;
-}
-
-
-// ====================================================
-//  AI 注入页面渲染
-// ====================================================
-function renderAiInjectPage(){
-  var list = document.getElementById('aiInjectList');
-  // 查询所有 store 中标记了 source 的知识卡片，按文件分组
-  var fileGroups = {};
-  var moduleNames = {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
-
-  Object.keys(store.knowledge || {}).forEach(function(mod){
-    (store.knowledge[mod] || []).forEach(function(item){
-      var f = item.source || '未分组';
-      if(!fileGroups[f]) fileGroups[f] = [];
-      fileGroups[f].push({type:'knowledge_card',module:mod,moduleName:moduleNames[mod]||mod,data:item});
-    });
-  });
-
-  var keys = Object.keys(fileGroups);
-  if(keys.length === 0){
-    list.innerHTML = '<div class="empty-state"><span class="emoji">🤖</span>暂无 AI 注入记录<br><span style="font-size:12px;">先去「文件学习」解析文档，然后点「🤖 AI 注入」</span></div>';
-    return;
-  }
-
-  var html = '';
-  keys.sort().forEach(function(file, fi){
-    var items = fileGroups[file];
-    var isActive = (window._aiFilter === undefined || window._aiFilter === null || window._aiFilter[file] !== false);
-
-    html += '<div style="margin-bottom:14px;border:2px solid #FFF0F3;border-radius:12px;overflow:hidden;">';
-    html += '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--pink-main);cursor:pointer;" onclick="toggleAiFile(\'' + file.replace(/'/g,"\\'") + '\')">';
-    html += '<span id="aiCheck_' + fi + '" style="font-size:16px;">' + (isActive ? '☑️' : '⬜') + '</span>';
-    html += '<span style="font-weight:600;font-size:13px;">📄 ' + escapeHtml(file) + '</span>';
-    html += '<span style="font-size:11px;color:#999;margin-left:auto;">' + items.length + ' 条</span>';
-    html += '</div>';
-
-    if(isActive){
-      html += '<div style="padding:8px 14px 12px;">';
-      items.forEach(function(item, i){
-        if(item.type === 'knowledge_card'){
-          html += '<div class="knowledge-item" style="margin-bottom:6px;"><span class="tag">' + escapeHtml(item.data.tag || '') + '</span>' + escapeHtml(item.data.text || '') + '</div>';
-        }
-      });
-      html += '</div>';
-    }
-
-    html += '</div>';
-  });
-
-  list.innerHTML = html;
-}
-
-// 切换文件分组显示
-function toggleAiFile(file){
-  if(!window._aiFilter) window._aiFilter = {};
-  window._aiFilter[file] = (window._aiFilter[file] === false) ? true : false;
-  renderAiInjectPage();
 }
 
 // ====================================================
