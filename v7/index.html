@@ -1541,6 +1541,8 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 // ====================================================
 const STORE_KEY = 'xiaowang_workbench';
 let store = loadStore();
+// 模块名称映射（全局，供 renderKnowledge / renderAiImport 使用）
+var moduleKeyNames = {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
 // 确保 store 包含所有默认字段（兼容旧版本 store）
 migrateStore();
 
