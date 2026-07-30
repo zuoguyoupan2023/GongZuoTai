@@ -1861,6 +1861,32 @@ function getQuestions(module, type){
   return QUESTION_BANK[key] || [];
 }
 
+// AI 导入页单题刷题（复用 quiz 弹窗）
+function startAiDrill(bankKey, idx){
+  var bank = QUESTION_BANK[bankKey];
+  if(!bank || !bank[idx]){ toast('该题目不可用'); return; }
+  var q = bank[idx];
+  // 打乱选项顺序，记录正确答案
+  var opts = [...(q.options || [])];
+  var correctText = opts[q.answer !== undefined ? q.answer : 0];
+  var shuffledOpts = opts.sort(function(){ return Math.random() - 0.5; });
+  quizState.questions = [{
+    q: q.q,
+    options: shuffledOpts,
+    answer: shuffledOpts.indexOf(correctText),
+    explain: q.explain || ''
+  }];
+  quizState.currentIdx = 0;
+  quizState.selected = -1;
+  quizState.answered = false;
+  quizState.correctCount = 0;
+  quizState.module = 'AI导入';
+  quizState.type = '考题';
+  document.getElementById('quizTitle').textContent = '🤖 AI 导入 · 考题';
+  document.getElementById('quizOverlay').classList.add('show');
+  renderQuestion();
+}
+
 const QUESTION_BANK = {
   '常识判断|法律常识': [
     {q:'根据我国宪法，下列哪项不属于公民的基本权利？',options:['平等权','选举权','依法纳税','言论自由'],answer:2,explain:'依法纳税是公民的基本义务，不是权利。公民的基本权利包括平等权、政治权利（选举权和被选举权）、言论自由等。'},
@@ -2939,30 +2965,23 @@ function renderAiImport(){
   // AI 注入的考题（标记了 _aiInjected 的题目）
   var allQuestions = [];
   Object.keys(QUESTION_BANK).forEach(function(key){
-    (QUESTION_BANK[key] || []).forEach(function(q){
+    (QUESTION_BANK[key] || []).forEach(function(q, idx){
       if(q._aiInjected){
-        allQuestions.push({bankKey: key, q: q.q, options: q.options || [], answer: q.answer, explain: q.explain || ''});
+        allQuestions.push({bankKey: key, q: q.q, options: q.options || [], answer: q.answer, explain: q.explain || '', bankIdx: idx});
       }
     });
   });
   var qHtml = '';
   if(allQuestions.length > 0){
-    allQuestions.reverse().forEach(function(q){
-      var optsHtml = q.options.map(function(o, oi){
-        return '<div style="font-size:12px;' + (oi === q.answer ? 'color:#E8919B;font-weight:600;' : '') + '">'
-          + String.fromCharCode(65 + oi) + '. ' + escapeHtml(o)
-          + (oi === q.answer ? ' ✓' : '') + '</div>';
-      }).join('');
-      qHtml += '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+    qHtml = allQuestions.reverse().map(function(q){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;cursor:pointer;" onclick="startAiDrill(\'' + q.bankKey.replace(/'/g, "\\'") + '\',' + q.bankIdx + ')">'
         + '<div style="flex:1;">'
         + '<div style="font-size:12px;font-weight:600;margin-bottom:4px;">' + escapeHtml(q.q.substring(0, 100)) + '</div>'
-        + optsHtml
-        + (q.explain ? '<div style="font-size:11px;color:#999;margin-top:4px;">💡 ' + escapeHtml(q.explain.substring(0, 150)) + '</div>' : '')
-        + '<div style="font-size:10px;color:#ccc;margin-top:2px;">📦 ' + escapeHtml(q.bankKey) + '</div>'
+        + '<div style="font-size:11px;color:#999;">📦 ' + escapeHtml(q.bankKey) + '</div>'
         + '</div>'
-        + '<span class="item-ai-btn" data-type="question" onclick="showItemAi(this)">🤖</span>'
+        + '<span class="item-ai-btn" data-type="question" onclick="event.stopPropagation();showItemAi(this)">🤖</span>'
         + '</div>';
-    });
+    }).join('');
   } else {
     qHtml = '<div class="empty-state"><span class="emoji">✍️</span>暂无 AI 注入的考题</div>';
   }
