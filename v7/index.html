@@ -824,8 +824,8 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div class="nav-item" data-page="checkin"><span class="nav-icon">📅</span>打卡日历</div>
     <div class="nav-item" data-page="stats"><span class="nav-icon">📈</span>时长统计</div>
     <div class="nav-item" data-page="exam"><span class="nav-icon">📄</span>试卷分析</div>
-    <div class="nav-item" data-page="fileparser"><span class="nav-icon">📂</span>文件学习</div>
     <div class="nav-item" data-page="error"><span class="nav-icon">❌</span>错题记录</div>
+    <div class="nav-item" data-page="fileparser"><span class="nav-icon">📂</span>文件学习</div>
     <div class="nav-item" data-page="aiimport"><span class="nav-icon">🤖</span>AI 导入</div>
   </div>
   <div class="sidebar-footer">
@@ -1268,13 +1268,13 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div class="mb-title">🤖 AI 注入设置</div>
     <div class="mb-desc">
       AI Agent 负责理解文档内容并按工作台的数据格式生成注入指令。
-      需要自备 API Key。默认模型为智谱 GLM 5.2。
+      需要自备 API Key。默认模型为 DeepSeek V4 Flash。
     </div>
     <div style="margin-bottom:14px;">
       <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API 提供商</label>
       <select id="aiProvider" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
-        <option value="zhipu">智谱 AI（GLM-5.2）</option>
         <option value="deepseek">DeepSeek（V4-Flash / V4-Pro）</option>
+        <option value="zhipu">智谱 AI（GLM-5.2 / 4.7）</option>
         <option value="openai">OpenAI（GPT-5.4 / GPT-5.4-mini）</option>
         <option value="anthropic">Anthropic（Claude Sonnet 5 / Opus 4.8）</option>
         <option value="minimax">MiniMax（M3 / M2.7）</option>
@@ -1287,8 +1287,14 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
       <input type="text" id="aiEndpoint" placeholder="https://open.bigmodel.cn/api/paas/v4/chat/completions" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
     </div>
     <div style="margin-bottom:14px;">
-      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">模型名称</label>
-      <input type="text" id="aiModel" value="glm-5.2" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">
+        模型名称
+        <a id="apiKeyLink" href="#" target="_blank" style="float:right;font-size:12px;color:var(--pink-btn);font-weight:400;">🔑 获取 API Key</a>
+      </label>
+      <select id="aiModelSelect" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;"></select>
+      <div id="aiModelCustomWrap" style="margin-top:6px;display:none;">
+        <input type="text" id="aiModel" placeholder="输入自定义模型名称" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+      </div>
     </div>
     <div style="margin-bottom:14px;">
       <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API Key</label>
@@ -3430,6 +3436,26 @@ const AI_PROVIDERS = {
   kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',                   model: 'moonshot-v1-8k' },
 };
 
+const PROVIDER_API_URLS = {
+  deepseek: 'https://platform.deepseek.com/api_keys',
+  zhipu: 'https://open.bigmodel.cn/usercenter/apikeys',
+  openai: 'https://platform.openai.com/api-keys',
+  anthropic: 'https://console.anthropic.com/settings/keys',
+  minimax: 'https://platform.minimax.io/usercenter/api-keys',
+  qwen: 'https://bailian.console.aliyun.com/#/api-key',
+  kimi: 'https://kimi.moonshot.cn/user/api-keys',
+};
+
+const PROVIDER_MODELS = {
+  deepseek: ['deepseek-v4-flash', 'deepseek-v4-pro', 'deepseek-chat', 'deepseek-coder'],
+  zhipu: ['glm-5.2', 'glm-4.7', 'glm-4.7v', 'glm-4.7-long', 'glm-4.7-flash'],
+  openai: ['gpt-5.4', 'gpt-5.4-mini', 'gpt-5.4-turbo', 'gpt-4.1'],
+  anthropic: ['claude-sonnet-5', 'claude-opus-4.8', 'claude-haiku-4.5'],
+  minimax: ['MiniMax-M3', 'MiniMax-M2.7'],
+  qwen: ['qwen3.8-max', 'qwen3.7-plus', 'qwen3.8-plus'],
+  kimi: ['moonshot-v1-8k', 'moonshot-v1-32k'],
+};
+
 function loadAiConfig(){
   try{ var c = localStorage.getItem(AI_CONFIG_KEY); return c ? JSON.parse(c) : {}; }
   catch(e){ return {}; }
@@ -3450,11 +3476,13 @@ function getDefaultModel(provider){
 // --- AI 设置弹窗 ---
 function openAiSettings(){
   var cfg = loadAiConfig();
-  document.getElementById('aiProvider').value = cfg.provider || 'zhipu';
-  document.getElementById('aiEndpoint').value = cfg.endpoint || getDefaultEndpoint('zhipu');
-  document.getElementById('aiModel').value = cfg.model || 'glm-5.2';
+  var provider = cfg.provider || 'deepseek';
+  document.getElementById('aiProvider').value = provider;
+  document.getElementById('aiEndpoint').value = cfg.endpoint || getDefaultEndpoint(provider);
+  updateModelSelect(provider, cfg.model || 'deepseek-v4-flash');
   document.getElementById('aiApiKey').value = cfg.apiKey || '';
   document.getElementById('aiTestResult').style.display = 'none';
+  document.getElementById('apiKeyLink').href = PROVIDER_API_URLS[provider] || '#';
   document.getElementById('aiSettingsModal').classList.add('show');
 }
 
@@ -3462,16 +3490,52 @@ function closeAiSettings(){
   document.getElementById('aiSettingsModal').classList.remove('show');
 }
 
+function updateModelSelect(provider, savedModel){
+  var select = document.getElementById('aiModelSelect');
+  var customWrap = document.getElementById('aiModelCustomWrap');
+  var customInput = document.getElementById('aiModel');
+  select.innerHTML = '';
+  var models = PROVIDER_MODELS[provider] || [];
+  models.forEach(function(m){
+    var opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    select.appendChild(opt);
+  });
+  var customOpt = document.createElement('option');
+  customOpt.value = '__custom__';
+  customOpt.textContent = '自定义...';
+  select.appendChild(customOpt);
+  if(savedModel && models.indexOf(savedModel) !== -1){
+    select.value = savedModel;
+    customWrap.style.display = 'none';
+  } else {
+    select.value = '__custom__';
+    customWrap.style.display = 'block';
+    customInput.value = savedModel || '';
+  }
+}
+
+function getModelValue(){
+  var select = document.getElementById('aiModelSelect');
+  var customWrap = document.getElementById('aiModelCustomWrap');
+  if(select.value === '__custom__' || customWrap.style.display === 'block'){
+    return document.getElementById('aiModel').value.trim();
+  }
+  return select.value;
+}
+
 // 全局函数，供 HTML onclick 直接调用
 function handleSaveAi(){
   var cfg = {
     provider: document.getElementById('aiProvider').value,
     endpoint: document.getElementById('aiEndpoint').value.trim(),
-    model: document.getElementById('aiModel').value.trim(),
+    model: getModelValue(),
     apiKey: document.getElementById('aiApiKey').value.trim()
   };
   if(!cfg.apiKey){ toast('⚠️ 请输入 API Key'); return; }
   if(!cfg.endpoint){ toast('⚠️ 请输入 API 地址'); return; }
+  if(!cfg.model){ toast('⚠️ 请输入模型名称'); return; }
   saveAiConfig(cfg);
   closeAiSettings();
   toast('✅ AI 配置已保存');
@@ -3481,7 +3545,7 @@ function handleTestAi(){
   var cfg = {
     provider: document.getElementById('aiProvider').value,
     endpoint: document.getElementById('aiEndpoint').value.trim(),
-    model: document.getElementById('aiModel').value.trim(),
+    model: getModelValue(),
     apiKey: document.getElementById('aiApiKey').value.trim()
   };
   if(!cfg.apiKey){ toast('⚠️ 请先输入 API Key'); return; }
@@ -3507,12 +3571,27 @@ function bindAiSettingsEvents(){
     provider.addEventListener('change', function(){
       var p = this.value;
       document.getElementById('aiEndpoint').value = getDefaultEndpoint(p);
-      document.getElementById('aiModel').value = getDefaultModel(p);
+      document.getElementById('apiKeyLink').href = PROVIDER_API_URLS[p] || '#';
+      updateModelSelect(p, getDefaultModel(p));
     });
   }
 
   if(saveBtn) saveBtn.onclick = handleSaveAi;
   if(testBtn) testBtn.onclick = handleTestAi;
+
+  // 模型选择切换：自定义时显示文本输入框
+  var modelSelect = document.getElementById('aiModelSelect');
+  if(modelSelect){
+    modelSelect.addEventListener('change', function(){
+      var customWrap = document.getElementById('aiModelCustomWrap');
+      if(this.value === '__custom__'){
+        customWrap.style.display = 'block';
+        document.getElementById('aiModel').focus();
+      } else {
+        customWrap.style.display = 'none';
+      }
+    });
+  }
 }
 
 function testAiConnection(cfg){
