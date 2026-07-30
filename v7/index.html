@@ -1189,7 +1189,7 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 <!-- ===== AI 设置弹窗 ===== -->
 <div class="modal-overlay" id="aiSettingsModal">
   <div class="modal-box" style="max-width:480px;">
-    <button class="modal-close" id="closeAiSettingsBtn">✕</button>
+    <button class="modal-close" id="closeAiSettingsBtn" onclick="closeAiSettings()">✕</button>
     <div class="mb-title">🤖 AI 注入设置</div>
     <div class="mb-desc">
       AI Agent 负责理解文档内容并按工作台的数据格式生成注入指令。
@@ -1210,7 +1210,7 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     </div>
     <div style="margin-bottom:14px;">
       <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">模型名称</label>
-      <input type="text" id="aiModel" value="glm-5.2-flash" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+      <input type="text" id="aiModel" value="glm-5.2" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
     </div>
     <div style="margin-bottom:14px;">
       <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API Key</label>
@@ -1227,7 +1227,7 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 <!-- ===== 知识注入（AI 结果预览）弹窗 ===== -->
 <div class="modal-overlay" id="aiInjectModal">
   <div class="modal-box" style="max-width:600px;">
-    <button class="modal-close" id="closeAiInjectBtn">✕</button>
+    <button class="modal-close" id="closeAiInjectBtn" onclick="closeAiInjectModal()">✕</button>
     <div class="mb-title">📥 AI 知识注入</div>
     <div class="mb-desc" id="aiInjectDesc">AI 正在分析文档内容…</div>
     <div id="aiInjectPreview" style="max-height:350px;overflow-y:auto;margin-bottom:14px;border:1px solid #FFF0F3;border-radius:10px;padding:10px;font-size:13px;line-height:1.6;"></div>
@@ -3086,7 +3086,7 @@ function escapeHtml(s){
 const AI_CONFIG_KEY = 'xiaowang_ai_config';
 
 const AI_PROVIDERS = {
-  zhipu:   { endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-5.2-flash' },
+  zhipu:   { endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-5.2' },
   deepseek:{ endpoint: 'https://api.deepseek.com/v1/chat/completions',           model: 'deepseek-chat' },
   openai:  { endpoint: 'https://api.openai.com/v1/chat/completions',             model: 'gpt-4o-mini' },
   kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',            model: 'moonshot-v1-8k' },
@@ -3114,7 +3114,7 @@ function openAiSettings(){
   var cfg = loadAiConfig();
   document.getElementById('aiProvider').value = cfg.provider || 'zhipu';
   document.getElementById('aiEndpoint').value = cfg.endpoint || getDefaultEndpoint('zhipu');
-  document.getElementById('aiModel').value = cfg.model || 'glm-5.2-flash';
+  document.getElementById('aiModel').value = cfg.model || 'glm-5.2';
   document.getElementById('aiApiKey').value = cfg.apiKey || '';
   document.getElementById('aiTestResult').style.display = 'none';
   document.getElementById('aiSettingsModal').classList.add('show');
@@ -3210,7 +3210,7 @@ function callAiApi(userText, schemaJson, cfg){
   sysPrompt += '\n\n## 输出格式要求\n输出一个 JSON 数组，每个元素表示一条注入指令：\n[{\n  "type": "knowledge_card | question | error_log | exam_record | plan_task | skip",\n  "confidence": 0.5-1.0,\n  "target": {"store": "目标 store 名称", ...},\n  "data": {符合目标 schema 的数据},\n  "reason": "为什么判断为这个类型"\n}]\n注：如果一段内容没有意义（标题、引导语、页码等），设 confidence<0.5 且 type="skip"。';
 
   var body = {
-    model: cfg.model || 'glm-5.2-flash',
+    model: cfg.model || 'glm-5.2',
     messages: [
       { role: 'system', content: sysPrompt },
       { role: 'user', content: '请分析以下文档内容，输出注入指令：\n\n' + userText.substring(0, 8000) }
