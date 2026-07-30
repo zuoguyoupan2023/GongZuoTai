@@ -1500,13 +1500,24 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
         r.onsuccess = function(){ res(r.result); };
         r.onerror = function(){ rej(r.error); };
       });
-      keys.forEach(function(k, i){ _cache[k] = vals[i]; });
+      // ⚠️ 不覆盖已被 saveStore 同步写入的 _cache 条目
+      // 防止以下时序竞态：
+      // 1. saveStore() → _cache[key] = value（已写入）
+      // 2. __idbInit() 异步读取完成 → 旧数据覆盖 _cache[key]
+      keys.forEach(function(k, i){
+        if(vals[i] !== undefined && !(k in _cache)){
+          _cache[k] = vals[i];
+        } else if(k in _cache && vals[i] !== undefined){
+          console.log('[IDB] 跳过覆盖 ' + k + '（已被 newer 数据占据）');
+        }
+      });
       _keys.forEach(function(k){
         if(!(k in _cache)){
           try{ var v = localStorage.getItem(k); if(v !== null) _cache[k] = JSON.parse(v); }catch(e){}
         }
       });
       _ready = true;
+      console.log('[IDB] 初始化完成，_cache 包含 key:', Object.keys(_cache));
     }catch(e){ _ready = false; }
   };
 
@@ -2877,6 +2888,7 @@ function renderErrors(){
 //  AI 导入页面（集中展示所有 AI 注入内容）
 // ====================================================
 function renderAiImport(){
+  console.log('[AI导入页] store.knowledge:', Object.keys(store.knowledge||{}).map(function(k){return k+':'+(store.knowledge[k]||[]).length;}).join(', ')||'(空)', '| store引用===__idbCache:', window.__idbCache && window.__idbCache[STORE_KEY] === store);
   var moduleNames = moduleKeyNames || {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
 
   // 统计
@@ -3787,6 +3799,7 @@ function showAiInjectModal(text, fileName, mode){
 }
 
 function handleConfirmAiInject(){
+  console.log('[AI注入] 写入前 store.knowledge:', JSON.parse(JSON.stringify(store.knowledge)));
   var modal = document.getElementById('aiInjectModal');
   var instructions = modal._aiInstructions;
   if(!instructions || instructions.length === 0){
@@ -3874,6 +3887,7 @@ function handleConfirmAiInject(){
   });
 
   if(injected > 0){
+    console.log('[AI注入] 写入后 store.knowledge:', JSON.parse(JSON.stringify(store.knowledge)), '| 缓存指向:', window.__idbCache && window.__idbCache[STORE_KEY] === store);
     saveStore();
     closeAiInjectModal();
     // 展示去向汇总
