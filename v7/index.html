@@ -825,6 +825,7 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div class="nav-item" data-page="exam"><span class="nav-icon">📄</span>试卷分析</div>
     <div class="nav-item" data-page="fileparser"><span class="nav-icon">📂</span>文件学习</div>
     <div class="nav-item" data-page="error"><span class="nav-icon">❌</span>错题记录</div>
+    <div class="nav-item" data-page="aiimport"><span class="nav-icon">🤖</span>AI 导入</div>
   </div>
   <div class="sidebar-footer">
     <button class="backup-btn" id="openBackupBtn" style="background:var(--pink-btn);color:#fff;width:100%;justify-content:center;">💾 数据备份</button>
@@ -1211,6 +1212,33 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
   </div>
 </div>
 
+<!-- ===== AI 导入 ===== -->
+<div class="page" id="page-aiimport">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>🤖 AI 导入总览</div>
+    <div class="mb-desc" style="margin-bottom:14px;font-size:13px;color:var(--text-sub);">
+      以下是从文件解析中由 AI 识别并注入的内容，集中展示方便查阅。
+    </div>
+    <div id="aiImportStats" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>📚 AI 导入的知识卡片</div>
+    <div id="aiImportKnowledge"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>✍️ AI 导入的考题</span></div>
+    <div id="aiImportQuestions"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>❌ AI 导入的错题</div>
+    <div id="aiImportErrors"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>📄 AI 导入的试卷</div>
+    <div id="aiImportExams"></div>
+  </div>
+</div>
+
 
 <!-- ===== 文件学习（FileParser 方案011 Phase A） ===== -->
 <div class="page" id="page-fileparser">
@@ -1419,7 +1447,10 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
   <div class="quiz-modal">
     <div class="quiz-header">
       <span class="qh-title" id="quizTitle">专项练习</span>
-      <span class="qh-close" onclick="closeQuiz()">✕</span>
+      <span style="display:flex;align-items:center;gap:6px;">
+        <span class="item-ai-btn" id="quizAiBtn" onclick="showQuizAi()" style="opacity:0.5;font-size:15px;display:none;" title="AI 讲解本题">🤖</span>
+        <span class="qh-close" onclick="closeQuiz()">✕</span>
+      </span>
     </div>
     <div class="quiz-progress" id="quizProgressArea">
       <span id="quizProgressText">第 1/5 题</span>
@@ -1662,6 +1693,7 @@ function onPageShow(page){
   if(page==='stats') renderStats();
   if(page==='exam') renderExam();
   if(page==='error') renderErrors();
+  if(page==='aiimport') renderAiImport();
   if(page==='fileparser') initFileParser();
   if(TOPICS[page]) renderTopic(page);
 }
@@ -1690,7 +1722,6 @@ function renderTopic(key){
       <span style="font-size:20px;flex-shrink:0;">${d.ic}</span>
       <span style="font-size:13px;font-weight:600;flex:1;" onclick="startDrill('${t.name}','${d.nm}')">${d.nm}</span>
       <span style="font-size:11px;color:var(--text-sub);background:#fff;padding:2px 8px;border-radius:8px;">${d.ct}</span>
-      <span class="ctx-ai-btn" style="font-size:14px;padding:2px 6px;" title="AI 讲解" onclick="event.stopPropagation();showDrillAi('${t.name}','${d.nm}')">🤖</span>
     </div>
   `).join('');
   // 知识积累
@@ -1952,6 +1983,8 @@ function renderQuestion(){
   document.getElementById('quizProgressFill').style.width = `${(quizState.currentIdx+1)/total*100}%`;
   document.getElementById('quizTip').textContent = '选择答案后点击「确认」';
   document.getElementById('quizSubmitBtn').textContent = '确认';
+  // 显示 AI 按钮
+  document.getElementById('quizAiBtn').style.display = 'inline-flex';
 
   document.getElementById('quizBody').innerHTML = `
     <div class="quiz-q"><span class="q-tag">${quizState.type}</span>${q.q}</div>
@@ -2061,9 +2094,63 @@ function closeQuiz(){
   document.getElementById('quizOverlay').classList.remove('show');
   document.getElementById('quizProgressArea').style.display = '';
   document.getElementById('quizFooter').style.display = '';
+  // 隐藏 AI 按钮
+  document.getElementById('quizAiBtn').style.display = 'none';
   // 刷新当前页面数据
   const activePage = document.querySelector('.nav-item.active').dataset.page;
   onPageShow(activePage);
+}
+
+// 弹出每道考题的 AI 讲解面板
+function showQuizAi(){
+  const q = quizState.questions[quizState.currentIdx];
+  if(!q){ toast('没有题目内容'); return; }
+  // 构造完整的题目内容
+  var content = '题目：' + q.q;
+  content += '\n选项：\n' + q.options.map(function(o,i){ return '  ' + String.fromCharCode(65+i) + '. ' + o; }).join('\n');
+  content += '\n正确答案：' + String.fromCharCode(65+q.answer);
+  content += '\n解析：' + q.explain;
+
+  var moduleName = quizState.module || '';
+  var drillName = quizState.type || '';
+  var title = (moduleName ? moduleName + ' · ' : '') + (drillName ? drillName : '') + ' 第' + (quizState.currentIdx+1) + '题';
+
+  // 移除旧面板
+  var old = document.getElementById('itemAiPanel');
+  if(old) old.remove();
+
+  var panel = document.createElement('div');
+  panel.id = 'itemAiPanel';
+  panel.style.cssText = 'position:fixed;bottom:100px;right:20px;width:360px;max-width:calc(100vw-40px);background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9996;overflow:hidden;animation:panelPop .25s ease;';
+
+  panel.dataset.context = content;
+
+  var quizPresets = [
+    { id:'explain',  label:'💡 详解',    prompt:'请详细解析这道题，包括每个选项为什么对/错：' },
+    { id:'similar',  label:'🔁 同类题',  prompt:'请出一道同类型题目（带答案和解析）：' },
+    { id:'analyze',  label:'🔍 考点',    prompt:'请分析这道题考查的知识点、常见陷阱和解题技巧：' },
+    { id:'expand',   label:'📖 拓展',    prompt:'请围绕这道题考查的知识点做全面的拓展讲解：' },
+  ];
+
+  var presetsHtml = quizPresets.map(function(p){
+    return '<button class="ctx-ai-preset" data-prompt="' + p.prompt.replace(/"/g,'&quot;') + '">' + p.label + '</button>';
+  }).join('');
+
+  panel.innerHTML = '<div style="padding:10px 14px;background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));color:#fff;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;">'
+    + '<span style="flex:1;">🤖 考题讲解 · ' + escapeHtml(title) + '</span>'
+    + '<span style="cursor:pointer;font-size:16px;" onclick="this.parentElement.parentElement.remove()">✕</span></div>'
+    + '<div style="padding:10px 12px;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<textarea class="ctx-ai-input" id="itemAiInput" placeholder="或输入你的问题…" rows="1" style="margin-top:6px;"></textarea>'
+    + '<button class="ctx-ai-send" onclick="sendItemAi()" style="margin-top:6px;">发送</button>'
+    + '<div class="ctx-ai-response" id="itemAiResponse" style="margin-top:6px;"></div></div>';
+  document.body.appendChild(panel);
+
+  panel.querySelectorAll('.ctx-ai-preset').forEach(function(b){
+    b.onclick = function(){
+      document.getElementById('itemAiInput').value = b.dataset.prompt;
+      sendItemAi();
+    };
+  });
 }
 
 // ====================================================
@@ -2770,8 +2857,69 @@ function renderErrors(){
 }
 
 // ====================================================
-//  备份功能
+//  AI 导入页面（集中展示所有 AI 注入内容）
 // ====================================================
+function renderAiImport(){
+  var moduleNames = moduleKeyNames || {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
+
+  // 统计
+  var totalKnowledge = 0;
+  var moduleCounts = {};
+  Object.keys(store.knowledge || {}).forEach(function(k){
+    var arr = store.knowledge[k] || [];
+    totalKnowledge += arr.length;
+    if(arr.length > 0) moduleCounts[k] = {count:arr.length, name:moduleNames[k]||k};
+  });
+
+  document.getElementById('aiImportStats').innerHTML = Object.keys(moduleCounts).length > 0
+    ? '<div style="font-size:13px;line-height:1.8;">📊 共 <b>' + totalKnowledge + '</b> 条 AI 注入知识卡片'
+      + Object.keys(moduleCounts).map(function(k){
+          return '<span style="margin-left:12px;padding:2px 10px;background:var(--pink-main);border-radius:8px;font-size:12px;">' + escapeHtml(moduleCounts[k].name) + '：' + moduleCounts[k].count + '条</span>';
+        }).join('')
+      + '</div>'
+    : '<div style="font-size:13px;color:var(--text-sub);">暂无 AI 注入内容，请先用「文件学习」上传文档并点击「AI 注入」</div>';
+
+  // 知识卡片（全部跨模块展示）
+  var allKnowledge = [];
+  Object.keys(store.knowledge || {}).forEach(function(k){
+    (store.knowledge[k] || []).forEach(function(item){
+      allKnowledge.push({module:k, moduleName:moduleNames[k]||k, tag:item.tag, text:item.text, source:item.source, date:item.date});
+    });
+  });
+
+  var kHtml = '';
+  if(allKnowledge.length > 0){
+    kHtml = allKnowledge.reverse().map(function(k, idx){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;">'
+        + '<span style="font-size:10px;background:var(--pink-highlight);color:#c66;padding:1px 6px;border-radius:4px;margin-right:4px;">' + escapeHtml(k.moduleName) + '</span>'
+        + '<span class="tag">' + escapeHtml(k.tag||'知识点') + '</span>'
+        + escapeHtml(k.text)
+        + (k.source ? '<span style="font-size:10px;color:#ccc;display:block;margin-top:2px;">📄 ' + escapeHtml(k.source) + (k.date ? ' · ' + k.date : '') + '</span>' : '')
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="knowledge" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  } else {
+    kHtml = '<div class="empty-state"><span class="emoji">📝</span>暂无 AI 注入的知识卡片</div>';
+  }
+  document.getElementById('aiImportKnowledge').innerHTML = kHtml;
+
+  // AI 注入的考题（QUESTION_BANK 中以 | 分隔且含有 "AI" 标记的）
+  var allQuestions = [];
+  Object.keys(QUESTION_BANK).forEach(function(key){
+    // 检查 key 中是否包含 "综合" 或人工判断为 AI 注入的 format
+    // 简单处理：显示所有题库也可以，但更合理的是标记 AI 注入的题目
+    // 目前没有标记，先留空
+  });
+  document.getElementById('aiImportQuestions').innerHTML = '<div class="empty-state"><span class="emoji">✍️</span>AI 注入的考题将显示在这里</div>';
+
+  // AI 注入的错题（暂无法区分 AI 注入 vs 手动添加，留空）
+  document.getElementById('aiImportErrors').innerHTML = '<div class="empty-state"><span class="emoji">❌</span>AI 注入的错题将显示在这里</div>';
+
+  // AI 注入的试卷（暂无法区分）
+  document.getElementById('aiImportExams').innerHTML = '<div class="empty-state"><span class="emoji">📄</span>AI 注入的试卷将显示在这里</div>';
+}
 function getAllData(){
   return {
     plans: store.plans,
