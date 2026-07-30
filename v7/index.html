@@ -3502,78 +3502,96 @@ function handleConfirmAiInject(){
     return;
   }
 
-  // 按类型分流注入
+  // 按类型分流注入 + 统计去向
   var injected = 0;
+  var injectedTargets = []; // 记录去向
+
   instructions.forEach(function(ins){
     var data = ins.data || {};
     var type = ins.type;
 
-    if(type === 'knowledge_card'){
-      var moduleKey = data.module || (ins.target && ins.target.module) || 'common';
-      if(!store.knowledge[moduleKey]) store.knowledge[moduleKey] = [];
-      store.knowledge[moduleKey].push({
-        tag: data.tag || '知识点',
-        text: (data.text || '').substring(0, 200),
-        source: data.source || '',
-        date: todayKey()
-      });
-      injected++;
+    try {
+      if(type === 'knowledge_card'){
+        var moduleKey = data.module || (ins.target && ins.target.module) || 'common';
+        if(!store.knowledge[moduleKey]) store.knowledge[moduleKey] = [];
+        store.knowledge[moduleKey].push({
+          tag: data.tag || '知识点',
+          text: (data.text || '').substring(0, 200),
+          source: data.source || '',
+          date: todayKey()
+        });
+        injectedTargets.push('📚 知识卡片→' + moduleKey);
+        injected++;
 
-    } else if(type === 'question'){
-      var qModule = data.module || '常识判断';
-      var qType = data.subType || '综合';
-      var bankKey = qModule + '|' + qType;
-      if(!window.QUESTION_BANK[bankKey]) window.QUESTION_BANK[bankKey] = [];
-      window.QUESTION_BANK[bankKey].push({
-        q: data.question || data.q || '',
-        options: data.options || [],
-        answer: data.answer !== undefined ? data.answer : 0,
-        explain: data.explain || ''
-      });
-      injected++;
+      } else if(type === 'question'){
+        var qModule = data.module || '常识判断';
+        var qType = data.subType || '综合';
+        var bankKey = qModule + '|' + qType;
+        if(!QUESTION_BANK[bankKey]) QUESTION_BANK[bankKey] = [];
+        QUESTION_BANK[bankKey].push({
+          q: data.question || data.q || '',
+          options: data.options || [],
+          answer: data.answer !== undefined ? data.answer : 0,
+          explain: data.explain || ''
+        });
+        injectedTargets.push('✍️ 考题→题库[' + bankKey + ']');
+        injected++;
 
-    } else if(type === 'error_log'){
-      store.errors.push({
-        id: 'err' + Date.now() + Math.random().toString(36).substring(2,6),
-        module: data.module || '常识判断',
-        content: data.content || data.question || '',
-        photos: data.photos || [],
-        date: todayKey()
-      });
-      injected++;
+      } else if(type === 'error_log'){
+        store.errors.push({
+          id: 'err' + Date.now() + Math.random().toString(36).substring(2,6),
+          module: data.module || '常识判断',
+          content: data.content || data.question || '',
+          photos: data.photos || [],
+          date: todayKey()
+        });
+        injectedTargets.push('❌ 错题→store.errors');
+        injected++;
 
-    } else if(type === 'exam_record'){
-      store.exams.push({
-        id: 'e' + Date.now() + Math.random().toString(36).substring(2,6),
-        name: data.name || 'AI导入试卷',
-        type: data.type || data.examType || '行测',
-        date: data.date || todayKey(),
-        time: data.time || 0,
-        totalScore: data.totalScore || 100,
-        score: data.score || 0,
-        sections: data.sections || '',
-        notes: data.notes || ''
-      });
-      injected++;
+      } else if(type === 'exam_record'){
+        store.exams.push({
+          id: 'e' + Date.now() + Math.random().toString(36).substring(2,6),
+          name: data.name || 'AI导入试卷',
+          type: data.type || data.examType || '行测',
+          date: data.date || todayKey(),
+          time: data.time || 0,
+          totalScore: data.totalScore || 100,
+          score: data.score || 0,
+          sections: data.sections || '',
+          notes: data.notes || ''
+        });
+        injectedTargets.push('📄 试卷→store.exams');
+        injected++;
 
-    } else if(type === 'plan_task'){
-      var planDate = data.date || todayKey();
-      if(!store.plans[planDate]) store.plans[planDate] = [];
-      store.plans[planDate].push({
-        id: 'p' + Date.now() + Math.random().toString(36).substring(2,6),
-        text: data.text || '',
-        module: data.module || '其他',
-        count: data.count || 0,
-        done: false
-      });
-      injected++;
+      } else if(type === 'plan_task'){
+        var planDate = data.date || todayKey();
+        if(!store.plans[planDate]) store.plans[planDate] = [];
+        store.plans[planDate].push({
+          id: 'p' + Date.now() + Math.random().toString(36).substring(2,6),
+          text: data.text || '',
+          module: data.module || '其他',
+          count: data.count || 0,
+          done: false
+        });
+        injectedTargets.push('📝 计划→store.plans[' + planDate + ']');
+        injected++;
+      }
+    } catch(e){
+      console.warn('注入失败:', e, ins);
     }
   });
 
   if(injected > 0){
     saveStore();
     closeAiInjectModal();
-    toast('✅ 成功注入 ' + injected + ' 条数据到工作台');
+    // 展示去向汇总
+    var targets = {};
+    injectedTargets.forEach(function(t){ targets[t] = (targets[t] || 0) + 1; });
+    var detail = Object.keys(targets).map(function(k){ return k + ' ×' + targets[k]; }).join('  ');
+    toast('✅ 注入 ' + injected + ' 条：' + detail);
+    // 刷新当前页面
+    var activePage = document.querySelector('.nav-item.active').dataset.page;
+    onPageShow(activePage);
   } else {
     toast('⚠️ 没有匹配到可注入的数据类型');
   }
