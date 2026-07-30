@@ -1861,28 +1861,29 @@ function getQuestions(module, type){
   return QUESTION_BANK[key] || [];
 }
 
-// AI 导入页单题刷题（复用 quiz 弹窗）
-function startAiDrill(bankKey, idx){
-  var bank = QUESTION_BANK[bankKey];
-  if(!bank || !bank[idx]){ toast('该题目不可用'); return; }
-  var q = bank[idx];
-  // 打乱选项顺序，记录正确答案
-  var opts = [...(q.options || [])];
-  var correctText = opts[q.answer !== undefined ? q.answer : 0];
-  var shuffledOpts = opts.sort(function(){ return Math.random() - 0.5; });
-  quizState.questions = [{
-    q: q.q,
-    options: shuffledOpts,
-    answer: shuffledOpts.indexOf(correctText),
-    explain: q.explain || ''
-  }];
+// AI 导入页刷题（收集全部 AI 注入考题，跨题库汇总打乱）
+function startAiDrill(clickBankKey, clickIdx){
+  var allAiQ = [];
+  Object.keys(QUESTION_BANK).forEach(function(key){
+    (QUESTION_BANK[key] || []).forEach(function(q){
+      if(q._aiInjected && q.q){
+        var opts = [...(q.options || [])];
+        var correctText = opts[q.answer !== undefined ? q.answer : 0];
+        var shuffledOpts = opts.sort(function(){ return Math.random() - 0.5; });
+        allAiQ.push({q: q.q, options: shuffledOpts, answer: shuffledOpts.indexOf(correctText), explain: q.explain || ''});
+      }
+    });
+  });
+  if(allAiQ.length === 0){ toast('暂无 AI 注入的考题'); return; }
+  var shuffled = allAiQ.sort(function(){ return Math.random() - 0.5; });
+  quizState.questions = shuffled.slice(0, Math.min(10, shuffled.length));
   quizState.currentIdx = 0;
   quizState.selected = -1;
   quizState.answered = false;
   quizState.correctCount = 0;
   quizState.module = 'AI导入';
   quizState.type = '考题';
-  document.getElementById('quizTitle').textContent = '🤖 AI 导入 · 考题';
+  document.getElementById('quizTitle').textContent = '🤖 AI 导入 · 考题（共' + quizState.questions.length + '题）';
   document.getElementById('quizOverlay').classList.add('show');
   renderQuestion();
 }
@@ -2974,7 +2975,7 @@ function renderAiImport(){
   var qHtml = '';
   if(allQuestions.length > 0){
     qHtml = allQuestions.reverse().map(function(q){
-      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;cursor:pointer;" onclick="startAiDrill(\'' + q.bankKey.replace(/'/g, "\\'") + '\',' + q.bankIdx + ')">'
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;cursor:pointer;" onclick="startAiDrill()">'
         + '<div style="flex:1;">'
         + '<div style="font-size:12px;font-weight:600;margin-bottom:4px;">' + escapeHtml(q.q.substring(0, 100)) + '</div>'
         + '<div style="font-size:11px;color:#999;">📦 ' + escapeHtml(q.bankKey) + '</div>'
