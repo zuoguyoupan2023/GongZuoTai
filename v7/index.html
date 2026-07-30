@@ -3183,7 +3183,7 @@ function testAiConnection(cfg){
   result.innerHTML = '🔄 正在测试连接…';
   result.style.color = 'var(--text-sub)';
 
-  callAiApi('回复"ok"表示连接正常', '', cfg)
+  callAiApi('回复"ok"表示连接正常', null, cfg, '')
     .then(function(res){
       result.innerHTML = '✅ 连接成功！模型响应正常';
       result.style.color = '#7BC99E';
@@ -3195,12 +3195,15 @@ function testAiConnection(cfg){
 }
 
 // --- AI API 调用 ---
-function callAiApi(userText, schemaJson, cfg){
+function callAiApi(userText, schemaJson, cfg, extraPrompt){
   if(!cfg || !cfg.apiKey){
     return Promise.reject(new Error('AI 未配置，请在设置中填写 API Key'));
   }
 
   var sysPrompt = '你是一个工作台数据注入助手。你的任务是根据工作台的 JSON Schema，理解用户文档内容，判断它属于什么类型，并输出符合 Schema 的结构化注入指令。';
+  if(extraPrompt){
+    sysPrompt += '\n\n## 用户的注入要求\n' + extraPrompt;
+  }
 
   // 如果有 schema，传给 AI
   if(schemaJson){
@@ -3252,26 +3255,86 @@ function loadV7Schema(){
 
 function addAiInjectToolbarButton(){
   if(!fpViewer || !fpViewer._toolbar) return;
+  // 已存在则不再重复添加
   if(fpViewer._toolbar.querySelector('.fp-ai-inject-btn')) return;
 
   // AI 注入按钮
   var btn = document.createElement('button');
-  btn.className = 'fp-viewer-export';
+  btn.className = 'fp-viewer-export fp-ai-inject-btn';
   btn.textContent = '🤖 AI 注入';
   btn.title = 'AI 理解文档内容并注入到工作台';
-  btn.onclick = function(){ startAiInject(); };
+  btn.onclick = function(){ showInjectModeSelector(); };
   fpViewer._toolbar.appendChild(btn);
 
   // AI 设置按钮
   var setBtn = document.createElement('button');
-  setBtn.className = 'fp-viewer-export';
+  setBtn.className = 'fp-viewer-export fp-ai-inject-btn';
   setBtn.textContent = '⚙️';
   setBtn.title = 'AI 设置';
   setBtn.onclick = function(){ openAiSettings(); };
   fpViewer._toolbar.appendChild(setBtn);
 }
 
-function startAiInject(){
+// 注入模式选择
+const INJECT_MODES = [
+  { id: 'auto',      label: '自动识别',         desc: 'AI 判断内容类型，按性质分流注入' },
+  { id: 'knowledge', label: '📚 知识卡片',        desc: '全部转为知识卡片，注入各模块' },
+  { id: 'question',  label: '✍️ 考题',          desc: '从内容中提取/生成考题，注入题库' },
+  { id: 'error',     label: '❌ 错题',           desc: '从内容中提取错题，加入错题本' },
+  { id: 'exam',      label: '📄 试卷记录',        desc: '从内容中提取考试分数，填入试卷' },
+  { id: 'plan',      label: '📝 计划任务',        desc: '从内容中提取任务，生成每日计划' },
+];
+
+function showInjectModeSelector(){
+  if(!fpViewer || !fpViewer._files || fpViewer._files.length === 0){
+    toast('⚠️ 请先解析文件');
+    return;
+  }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){
+    toast('⚠️ 请先配置 AI 设置');
+    openAiSettings();
+    return;
+  }
+
+  // 用简单的确认弹窗选模式
+  var html = '<div style="font-size:13px;color:var(--text-sub);margin-bottom:12px;">选择 AI 注入方式：</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:6px;">';
+  INJECT_MODES.forEach(function(m){
+    html += '<div class="inject-mode-opt" data-mode="' + m.id + '" style="padding:10px 12px;border:2px solid #FFF0F3;border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.borderColor=\'var(--pink-btn)\';this.style.background=\'var(--pink-main)\'" onmouseout="this.style.borderColor=\'#FFF0F3\';this.style.background=\'\'">'
+      + '<span style="font-size:16px;">' + m.label.charAt(0) + '</span>'
+      + '<div><div style="font-weight:600;font-size:13px;">' + m.label + '</div><div style="font-size:11px;color:var(--text-sub);">' + m.desc + '</div></div>'
+      + '</div>';
+  });
+  html += '</div>';
+
+  // 显示在 toast 位置的上方，用轻量弹窗
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:9997;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
+  overlay.onclick = function(e){ if(e.target === this) document.body.removeChild(overlay); };
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:380px;width:90vw;box-shadow:0 16px 48px rgba(0,0,0,0.2);';
+  box.innerHTML = '<div style="font-size:17px;font-weight:700;margin-bottom:4px;">🤖 选择注入模式</div>'
+    + html
+    + '<div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;">'
+    + '<button class="btn btn-outline" onclick="this.closest(\'[style]\').parentNode.remove()">取消</button>'
+    + '</div>';
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // 绑定选项点击事件
+  box.querySelectorAll('.inject-mode-opt').forEach(function(el){
+    el.addEventListener('click', function(){
+      var mode = this.dataset.mode;
+      document.body.removeChild(overlay);
+      startAiInject(mode);
+    });
+  });
+}
+
+function startAiInject(mode){
   if(!fpViewer || !fpViewer._files || fpViewer._files.length === 0){
     toast('⚠️ 请先解析文件');
     return;
@@ -3304,10 +3367,10 @@ function startAiInject(){
   }
 
   // 显示注入弹窗
-  showAiInjectModal(text, activeFile.result.fileName);
+  showAiInjectModal(text, activeFile.result.fileName, mode || 'auto');
 }
 
-function showAiInjectModal(text, fileName){
+function showAiInjectModal(text, fileName, mode){
   var modal = document.getElementById('aiInjectModal');
   var preview = document.getElementById('aiInjectPreview');
   var desc = document.getElementById('aiInjectDesc');
@@ -3317,13 +3380,25 @@ function showAiInjectModal(text, fileName){
   modal.classList.add('show');
   confirmBtn.style.display = 'none';
   preview.innerHTML = '<div class="fp-loading">🤖 AI 正在分析文档…</div>';
-  desc.textContent = '📄 ' + escapeHtml(fileName) + ' — AI 语义理解中，请稍候';
+  desc.textContent = '📄 ' + escapeHtml(fileName) + ' — AI 正在分析，请稍候';
   status.textContent = '';
+
+  // 注入模式 → Prompt 指令
+  var modeInstructions = {
+    auto:      '请分析文档内容，判断每段属于什么类型（knowledge_card / question / error_log / exam_record / plan_task），输出符合对应 schema 的注入指令。',
+    knowledge: '请将文档内容全部提炼为知识卡片（knowledge_card），每条卡片包含 tag 和 text。如果内容有标题或分类，请提取为 tag。',
+    question:  '请从文档内容中识别试题（选择题/判断题/简答题等），输出为 question 类型。如果内容不是试题，请根据内容自动生成合适的考题。',
+    error:     '请从文档内容中识别错题（包含题目+我的答案+正确答案+解析等），输出为 error_log 类型。',
+    exam:      '请从文档内容中提取考试记录信息（试卷名称、得分、总分、日期、各板块得分等），输出为 exam_record 类型。',
+    plan:      '请从文档内容中提取学习计划、待办任务等，输出为 plan_task 类型。提取时要包含任务描述和可选的模块归属。'
+  };
+
+  var modePrompt = modeInstructions[mode] || modeInstructions.auto;
 
   // 异步加载 schema + 调用 AI
   loadV7Schema().then(function(schema){
     var cfg = loadAiConfig();
-    return callAiApi(text, schema, cfg);
+    return callAiApi(text, schema, cfg, modePrompt);
   }).then(function(aiReply){
     // 解析 AI 返回的 JSON
     var instructions = null;
