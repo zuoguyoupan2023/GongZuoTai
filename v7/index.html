@@ -518,6 +518,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 .ctx-ai-response{
   margin-top:8px;padding:8px 10px;background:#fff;border-radius:8px;
   font-size:12px;line-height:1.7;display:none;white-space:pre-wrap;
+  max-height:300px;overflow-y:auto;
 }
 .ctx-ai-response.show{display:block;}
 
@@ -1226,7 +1227,7 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div id="aiImportKnowledge"></div>
   </div>
   <div class="card">
-    <div class="card-title"><span class="dot"></span>✍️ AI 导入的考题</span></div>
+    <div class="card-title"><span class="dot"></span>✍️ AI 导入的考题</div>
     <div id="aiImportQuestions"></div>
   </div>
   <div class="card">
@@ -2139,7 +2140,7 @@ function showQuizAi(){
   panel.innerHTML = '<div style="padding:10px 14px;background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));color:#fff;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;">'
     + '<span style="flex:1;">🤖 考题讲解 · ' + escapeHtml(title) + '</span>'
     + '<span style="cursor:pointer;font-size:16px;" onclick="this.parentElement.parentElement.remove()">✕</span></div>'
-    + '<div style="padding:10px 12px;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<div style="padding:10px 12px;max-height:360px;overflow-y:auto;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
     + '<textarea class="ctx-ai-input" id="itemAiInput" placeholder="或输入你的问题…" rows="1" style="margin-top:6px;"></textarea>'
     + '<button class="ctx-ai-send" onclick="sendItemAi()" style="margin-top:6px;">发送</button>'
     + '<div class="ctx-ai-response" id="itemAiResponse" style="margin-top:6px;"></div></div>';
@@ -3906,6 +3907,37 @@ function bindAiInjectEvents(){
   if(confirmBtn) confirmBtn.onclick = handleConfirmAiInject;
 }
 
+// --- 通用 AI 聊天（无注入提示词，用于条目级对话） ---
+function callAiChat(userText, cfg){
+  if(!cfg || !cfg.apiKey){
+    return Promise.reject(new Error('AI 未配置，请在设置中填写 API Key'));
+  }
+  var body = {
+    model: cfg.model || 'glm-5.2',
+    messages: [
+      { role:'system', content:'你是一个智能学习助手。请用通俗易懂的语言回答用户的问题，不需要输出 JSON 或结构化数据。回答内容要详细、准确、有帮助。' },
+      { role:'user', content: userText.substring(0, 6000) }
+    ],
+    temperature: 0.7,
+    max_tokens: 2048
+  };
+  return fetch(cfg.endpoint, {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer ' + cfg.apiKey
+    }
+  }).then(function(resp){
+    if(!resp.ok) return resp.text().then(function(txt){ throw new Error('API 返回 ' + resp.status + ': ' + txt.substring(0,200)); });
+    return resp.json();
+  }).then(function(json){
+    if(json.error) throw new Error(json.error.message || JSON.stringify(json.error));
+    var reply = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content;
+    if(!reply) throw new Error('AI 返回格式异常');
+    return reply;
+  });
+}
+
 // ====================================================
 //  上下文 AI 助手（每个内容区域内的 AI 按钮）
 // ====================================================
@@ -3978,7 +4010,7 @@ function showItemAi(btn){
     + '<span style="flex:1;">🤖 AI · ' + title + '</span>'
     + '<span style="font-size:10px;color:rgba(255,255,255,0.7);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + content.substring(0,30) + '…</span>'
     + '<span style="cursor:pointer;font-size:16px;" onclick="this.parentElement.parentElement.remove()">✕</span></div>'
-    + '<div style="padding:10px 12px;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<div style="padding:10px 12px;max-height:360px;overflow-y:auto;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
     + '<textarea class="ctx-ai-input" id="itemAiInput" placeholder="或输入你的问题…" rows="1" style="margin-top:6px;"></textarea>'
     + '<button class="ctx-ai-send" onclick="sendItemAi()" style="margin-top:6px;">发送</button>'
     + '<div class="ctx-ai-response" id="itemAiResponse" style="margin-top:6px;"></div></div>';
@@ -4004,7 +4036,7 @@ function sendItemAi(){
   resDiv.className = 'ctx-ai-response show';
   resDiv.innerHTML = '<div class="fp-loading">思考中…</div>';
   var prompt = '## 上下文内容（仅本条条目）\n' + context.substring(0, 2000) + '\n\n## 用户请求\n' + text;
-  callAiApi(prompt, null, cfg, '').then(function(reply){
+  callAiChat(prompt, cfg).then(function(reply){
     var html = '<div>' + escapeHtml(reply) + '</div>';
     html += '<div style="display:flex;gap:6px;margin-top:4px;">';
     html += '<button class="ctx-ai-preset" onclick="var t=this.parentElement.parentElement.textContent.replace(\'复制\',\'\').trim();navigator.clipboard.writeText(t).then(function(){toast(\'已复制\');})">复制</button>';
