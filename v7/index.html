@@ -778,6 +778,7 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div class="nav-item" data-page="stats"><span class="nav-icon">📈</span>时长统计</div>
     <div class="nav-item" data-page="exam"><span class="nav-icon">📄</span>试卷分析</div>
     <div class="nav-item" data-page="fileparser"><span class="nav-icon">📂</span>文件学习</div>
+    <div class="nav-item" data-page="aiinject"><span class="nav-icon">🤖</span>AI 注入</div>
     <div class="nav-item" data-page="error"><span class="nav-icon">❌</span>错题记录</div>
   </div>
   <div class="sidebar-footer">
@@ -1118,6 +1119,14 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
   <div class="card">
     <div class="card-title"><span class="dot"></span>试卷记录列表</div>
     <div class="exam-list" id="examList"></div>
+  </div>
+</div>
+
+<!-- ===== AI 注入 ===== -->
+<div class="page" id="page-aiinject">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>🤖 AI 注入内容</div>
+    <div id="aiInjectList" style="font-size:13px;color:var(--text-sub);">暂无 AI 注入记录</div>
   </div>
 </div>
 
@@ -1614,6 +1623,7 @@ function onPageShow(page){
   if(page==='exam') renderExam();
   if(page==='error') renderErrors();
   if(page==='fileparser') initFileParser();
+  if(page==='aiinject') renderAiInjectPage();
   if(TOPICS[page]) renderTopic(page);
 }
 
@@ -3625,6 +3635,25 @@ function handleConfirmAiInject(){
     var targets = {};
     injectedTargets.forEach(function(t){ targets[t] = (targets[t] || 0) + 1; });
     var detail = Object.keys(targets).map(function(k){ return k + ' ×' + targets[k]; }).join('  ');
+    // 保存注入日志（供 AI 注入页面使用）
+    if(!store.aiLog) store.aiLog = [];
+    // 获取当前文件名
+    var curFile = '';
+    if(fpViewer && fpViewer._files){
+      for(var fi = 0; fi < fpViewer._files.length; fi++){
+        if(fpViewer._files[fi].id === fpViewer._activeTabId){
+          curFile = fpViewer._files[fi].result.fileName || '';
+          break;
+        }
+      }
+    }
+    store.aiLog.push({
+      id: Date.now(),
+      fileName: curFile,
+      date: todayKey(),
+      summary: detail
+    });
+    saveStore();
     toast('✅ 注入 ' + injected + ' 条：' + detail);
     // 刷新当前页面
     var activePage = document.querySelector('.nav-item.active').dataset.page;
@@ -3654,6 +3683,65 @@ function bindAiInjectEvents(){
   }
 
   if(confirmBtn) confirmBtn.onclick = handleConfirmAiInject;
+}
+
+
+// ====================================================
+//  AI 注入页面渲染
+// ====================================================
+function renderAiInjectPage(){
+  var list = document.getElementById('aiInjectList');
+  // 查询所有 store 中标记了 source 的知识卡片，按文件分组
+  var fileGroups = {};
+  var moduleNames = {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
+
+  Object.keys(store.knowledge || {}).forEach(function(mod){
+    (store.knowledge[mod] || []).forEach(function(item){
+      var f = item.source || '未分组';
+      if(!fileGroups[f]) fileGroups[f] = [];
+      fileGroups[f].push({type:'knowledge_card',module:mod,moduleName:moduleNames[mod]||mod,data:item});
+    });
+  });
+
+  var keys = Object.keys(fileGroups);
+  if(keys.length === 0){
+    list.innerHTML = '<div class="empty-state"><span class="emoji">🤖</span>暂无 AI 注入记录<br><span style="font-size:12px;">先去「文件学习」解析文档，然后点「🤖 AI 注入」</span></div>';
+    return;
+  }
+
+  var html = '';
+  keys.sort().forEach(function(file, fi){
+    var items = fileGroups[file];
+    var isActive = (window._aiFilter === undefined || window._aiFilter === null || window._aiFilter[file] !== false);
+
+    html += '<div style="margin-bottom:14px;border:2px solid #FFF0F3;border-radius:12px;overflow:hidden;">';
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--pink-main);cursor:pointer;" onclick="toggleAiFile(\'' + file.replace(/'/g,"\\'") + '\')">';
+    html += '<span id="aiCheck_' + fi + '" style="font-size:16px;">' + (isActive ? '☑️' : '⬜') + '</span>';
+    html += '<span style="font-weight:600;font-size:13px;">📄 ' + escapeHtml(file) + '</span>';
+    html += '<span style="font-size:11px;color:#999;margin-left:auto;">' + items.length + ' 条</span>';
+    html += '</div>';
+
+    if(isActive){
+      html += '<div style="padding:8px 14px 12px;">';
+      items.forEach(function(item, i){
+        if(item.type === 'knowledge_card'){
+          html += '<div class="knowledge-item" style="margin-bottom:6px;"><span class="tag">' + escapeHtml(item.data.tag || '') + '</span>' + escapeHtml(item.data.text || '') + '</div>';
+        }
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+  });
+
+  list.innerHTML = html;
+}
+
+// 切换文件分组显示
+function toggleAiFile(file){
+  if(!window._aiFilter) window._aiFilter = {};
+  window._aiFilter[file] = (window._aiFilter[file] === false) ? true : false;
+  renderAiInjectPage();
 }
 
 // ====================================================
