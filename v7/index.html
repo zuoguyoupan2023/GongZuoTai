@@ -485,6 +485,41 @@ input,textarea,select{font-family:inherit;outline:none;}
 .overview-hero .hero-stat .big{font-size:32px;font-weight:700;color:#fff;text-shadow:0 2px 4px rgba(248,200,208,0.5);}
 .overview-hero .hero-stat .lbl{font-size:11px;color:#fff;opacity:.85;}
 
+/* 上下文 AI 面板 */
+.ctx-ai-btn{
+  display:inline-flex;align-items:center;gap:4px;margin-left:8px;
+  padding:2px 8px;border-radius:10px;font-size:11px;cursor:pointer;
+  background:var(--pink-main);color:#E8919B;border:1px solid var(--pink-btn);
+  transition:all .2s;font-family:inherit;
+}
+.ctx-ai-btn:hover{background:var(--pink-btn);color:#fff;}
+.ctx-ai-panel{
+  display:none;margin-top:10px;padding:12px;background:#FFFAFB;
+  border:1px solid #FFF0F3;border-radius:10px;font-size:13px;
+}
+.ctx-ai-panel.show{display:block;}
+.ctx-ai-presets{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.ctx-ai-preset{
+  padding:3px 10px;border-radius:10px;font-size:11px;border:1px solid var(--pink-btn);
+  background:#fff;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.ctx-ai-preset:hover{background:var(--pink-main);}
+.ctx-ai-input{
+  width:100%;border:1px solid #eee;border-radius:8px;padding:6px 10px;
+  font-size:12px;font-family:inherit;resize:none;min-height:32px;outline:none;
+}
+.ctx-ai-input:focus{border-color:var(--pink-btn);}
+.ctx-ai-send{
+  margin-top:6px;padding:4px 14px;border-radius:12px;
+  background:var(--pink-btn);color:#fff;border:none;cursor:pointer;
+  font-size:12px;font-family:inherit;
+}
+.ctx-ai-send:hover{background:#E8919B;}
+.ctx-ai-response{
+  margin-top:8px;padding:8px 10px;background:#fff;border-radius:8px;
+  font-size:12px;line-height:1.7;display:none;white-space:pre-wrap;
+}
+.ctx-ai-response.show{display:block;}
 /* 空状态 */
 .empty-state{text-align:center;padding:30px 20px;color:var(--text-sub);font-size:13px;}
 .empty-state .emoji{font-size:36px;margin-bottom:8px;display:block;}
@@ -1689,6 +1724,9 @@ function renderKnowledge(key){
 
   if(!html) html = '<div class="empty-state"><span class="emoji">📝</span>暂无积累</div>';
   container.innerHTML = html;
+
+  // 知识区域底部加 AI 按钮
+  addContextualAi(container, key);
 }
 
 function refreshKnowledge(key){ renderKnowledge(key); toast('已刷新知识点'); }
@@ -3704,6 +3742,76 @@ function bindAiInjectEvents(){
 }
 
 // ====================================================
+//  上下文 AI 助手（每个内容区域内的 AI 按钮）
+// ====================================================
+var CTX_PRESETS = [
+  { id:'explain',  label:'💡 解释',    prompt:'请用通俗易懂的方式解释以下知识点：' },
+  { id:'translate',label:'🌐 翻译',    prompt:'请将以下内容翻译成英文：' },
+  { id:'summary',  label:'📝 总结',    prompt:'请总结以下知识点的核心要点：' },
+  { id:'quiz',     label:'✍️ 出题',    prompt:'请根据以下知识点出2道选择题（带答案和解析）：' },
+];
+
+function addContextualAi(container, moduleKey){
+  if(!container) return;
+  if(container.querySelector('.ctx-ai-btn')) return;
+  var presets = CONTEXTUAL_PRESETS.knowledge;
+  var btn = document.createElement('button');
+  btn.className = 'ctx-ai-btn';
+  btn.textContent = '\u{1F916} AI';
+  btn.onclick = function(){ toggleCtxPanel(container); };
+  container.appendChild(btn);
+  var panel = document.createElement('div');
+  panel.className = 'ctx-ai-panel';
+  var presetsHtml = presets.map(function(p){
+    return '<button class="ctx-ai-preset" data-prompt="' + p.prompt.replace(/"/g,'&quot;') + '">' + p.label + '</button>';
+  }).join('');
+  panel.innerHTML = '<div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<textarea class="ctx-ai-input" placeholder="\u6216\u8F93\u5165\u4F60\u7684\u95EE\u9898\u2026" rows="1"></textarea>'
+    + '<button class="ctx-ai-send" onclick="sendCtxAi(this)">\u53D1\u9001</button>'
+    + '<div class="ctx-ai-response"></div>';
+  container.appendChild(panel);
+  panel.querySelectorAll('.ctx-ai-preset').forEach(function(b){
+    b.onclick = function(){
+      var inp = panel.querySelector('.ctx-ai-input');
+      inp.value = b.dataset.prompt;
+      sendCtxAi(panel.querySelector('.ctx-ai-send'));
+    };
+  });
+}
+
+function toggleCtxPanel(container){
+  var panel = container.querySelector('.ctx-ai-panel');
+  if(!panel) return;
+  panel.classList.toggle('show');
+  if(panel.classList.contains('show')) panel.querySelector('.ctx-ai-input').focus();
+}
+
+function sendCtxAi(sendBtn){
+  var panel = sendBtn.closest('.ctx-ai-panel');
+  if(!panel) return;
+  var input = panel.querySelector('.ctx-ai-input');
+  var text = input.value.trim();
+  if(!text){ toast('\u8BF7\u8F93\u5165\u5185\u5BB9'); return; }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){ toast('\u8BF7\u5148\u914D\u7F6E AI'); openAiSettings(); return; }
+  var container = panel.parentElement;
+  var ctxItems = container.querySelectorAll('.knowledge-item');
+  var context = '';
+  ctxItems.forEach(function(item){ context += item.textContent.trim() + ' '; });
+  if(!context) context = '(\u5F53\u524D\u9875\u9762\u5185\u5BB9)';
+  var resDiv = panel.querySelector('.ctx-ai-response');
+  resDiv.className = 'ctx-ai-response show';
+  resDiv.innerHTML = '<div class="fp-loading">\u601D\u8003\u4E2D\u2026</div>';
+  var prompt = '## 上下文内容\n' + context.substring(0, 2000) + '\n\n## 用户请求\n' + text;
+  callAiApi(prompt, null, cfg, '').then(function(reply){
+    resDiv.innerHTML = '<div>' + escapeHtml(reply) + '</div>'
+      + '<div style="display:flex;gap:6px;margin-top:4px;">'
+      + '<button class="ctx-ai-preset" onclick="var t=this.parentElement.parentElement.textContent.replace(/\u590D\u5236/g,\"\").trim();navigator.clipboard.writeText(t).then(function(){toast(\'\u5DF2\u590D\u5236\');})">\u590D\u5236</button>'
+      + '</div>';
+  }).catch(function(err){
+    resDiv.innerHTML = '\u274C ' + escapeHtml(err.message);
+  });
+}
 //  动态 viewport 高度（解决移动端 100vh 底部被遮挡）
 // ====================================================
 function setAppHeight(){
