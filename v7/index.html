@@ -1198,9 +1198,12 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div style="margin-bottom:14px;">
       <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API 提供商</label>
       <select id="aiProvider" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
-        <option value="zhipu">智谱 AI（Zhipu / GLM）</option>
-        <option value="deepseek">DeepSeek</option>
-        <option value="openai">OpenAI（ChatGPT）</option>
+        <option value="zhipu">智谱 AI（GLM-5.2）</option>
+        <option value="deepseek">DeepSeek（V4-Flash / V4-Pro）</option>
+        <option value="openai">OpenAI（GPT-5.4 / GPT-5.4-mini）</option>
+        <option value="anthropic">Anthropic（Claude Sonnet 5 / Opus 4.8）</option>
+        <option value="minimax">MiniMax（M3 / M2.7）</option>
+        <option value="qwen">阿里通义（Qwen 3.8-Max / 3.7-Plus）</option>
         <option value="kimi">Kimi（月之暗面）</option>
       </select>
     </div>
@@ -3108,10 +3111,13 @@ function escapeHtml(s){
 const AI_CONFIG_KEY = 'xiaowang_ai_config';
 
 const AI_PROVIDERS = {
-  zhipu:   { endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', model: 'glm-5.2' },
-  deepseek:{ endpoint: 'https://api.deepseek.com/v1/chat/completions',           model: 'deepseek-chat' },
-  openai:  { endpoint: 'https://api.openai.com/v1/chat/completions',             model: 'gpt-4o-mini' },
-  kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',            model: 'moonshot-v1-8k' },
+  zhipu:   { endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',         model: 'glm-5.2' },
+  deepseek:{ endpoint: 'https://api.deepseek.com/v1/chat/completions',                  model: 'deepseek-v4-flash' },
+  openai:  { endpoint: 'https://api.openai.com/v1/chat/completions',                    model: 'gpt-5.4-mini' },
+  anthropic:{endpoint: 'https://api.anthropic.com/v1/messages',                         model: 'claude-sonnet-5' },
+  minimax: { endpoint: 'https://platform.minimax.io/v1/text/chatcompletions',           model: 'MiniMax-M3' },
+  qwen:    { endpoint: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model: 'qwen3.8-max' },
+  kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',                   model: 'moonshot-v1-8k' },
 };
 
 function loadAiConfig(){
