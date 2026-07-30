@@ -520,6 +520,17 @@ input,textarea,select{font-family:inherit;outline:none;}
   font-size:12px;line-height:1.7;display:none;white-space:pre-wrap;
 }
 .ctx-ai-response.show{display:block;}
+
+/* 条目级 AI 按钮（每个知识点/错题/试卷右上角） */
+.item-ai-btn{
+  cursor:pointer;font-size:13px;opacity:0.35;
+  transition:all .2s;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:6px;
+  margin-left:auto;
+}
+.item-ai-btn:hover{opacity:1;background:var(--pink-btn);color:#fff;}
+.knowledge-item:hover .item-ai-btn,.error-item:hover .item-ai-btn,.exam-row:hover .item-ai-btn{opacity:0.8;}
 /* 空状态 */
 .empty-state{text-align:center;padding:30px 20px;color:var(--text-sub);font-size:13px;}
 .empty-state .emoji{font-size:36px;margin-bottom:8px;display:block;}
@@ -1705,7 +1716,10 @@ function renderKnowledge(key){
   // 默认知识
   if(pickedDefaults.length > 0){
     html += pickedDefaults.map(function(k){
-      return '<div class="knowledge-item"><span class="tag">'+k.tag+'</span>'+k.text+'</div>';
+      return '<div class="knowledge-item" style="display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;"><span class="tag">'+k.tag+'</span>'+k.text+'</div>'
+        + '<span class="item-ai-btn" data-type="knowledge" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
     }).join('');
   }
 
@@ -1715,9 +1729,11 @@ function renderKnowledge(key){
     html += '<div style="font-size:11px;font-weight:600;color:#E8919B;margin-bottom:6px;">🤖 AI 注入（' + injected.length + '条）</div>';
     html += injected.map(function(k){
       var fileName = k.source || '';
-      return '<div class="knowledge-item" style="border-left-color:#E8919B;">'
-        + '<span class="tag">'+(k.tag||'知识点')+'</span>'+k.text
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;"><span class="tag">'+(k.tag||'知识点')+'</span>'+k.text
         + (fileName ? '<span style="font-size:10px;color:#ccc;display:block;margin-top:2px;">📄 '+escapeHtml(fileName)+'</span>' : '')
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="knowledge" onclick="showItemAi(this)">🤖</span>'
         + '</div>';
     }).join('');
     html += '</div>';
@@ -1725,9 +1741,6 @@ function renderKnowledge(key){
 
   if(!html) html = '<div class="empty-state"><span class="emoji">📝</span>暂无积累</div>';
   container.innerHTML = html;
-
-  // 知识区域底部加 AI 按钮
-  addContextualAi(container, key);
 }
 
 function refreshKnowledge(key){ renderKnowledge(key); toast('已刷新知识点'); }
@@ -1740,12 +1753,13 @@ function renderTopicErrors(key, moduleName){
     return;
   }
   el.innerHTML = errors.slice(-5).reverse().map(e=>`
-    <div class="error-item">
+    <div class="error-item" style="position:relative;">
       <span class="type-tag">${e.module}</span>
-      <div class="content">
+      <div class="content" style="flex:1;">
         <div class="q">${e.content.substring(0,100)}</div>
         <div class="a">${e.date}</div>
       </div>
+      <span class="item-ai-btn" data-type="error" onclick="event.stopPropagation();showItemAi(this)" style="margin-left:auto;">🤖</span>
       <span class="del" onclick="deleteError('${e.id}')">✕</span>
     </div>
   `).join('');
@@ -2564,6 +2578,7 @@ function renderExamList(){
         <div>${e.date}</div>
         <div class="ex-score">${e.score}/${e.totalScore}</div>
         <div style="color:#7BC99E;font-weight:600;">${e.rate}%</div>
+        <span class="item-ai-btn" data-type="exam" onclick="event.stopPropagation();showItemAi(this)" style="font-size:12px;">🤖</span>
         <div class="ex-del" onclick="event.stopPropagation();deleteExam('${e.id}')">✕</div>
         <div class="exam-detail" id="detail-${e.id}">
           <div style="margin-bottom:6px;">⏱️ 做题时长：${e.time}分钟 ｜ 📅 日期：${e.date} ｜ 📊 得分率：${e.rate}%</div>
@@ -2729,11 +2744,12 @@ function renderErrors(){
     return;
   }
   list.innerHTML = errors.map(e=>`
-    <div class="error-item" style="flex-direction:column;align-items:stretch;">
+    <div class="error-item" style="flex-direction:column;align-items:stretch;position:relative;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
         <span class="type-tag">${e.module}</span>
         <span style="font-size:11px;color:var(--text-sub);">${e.date}</span>
-        <span class="del" style="margin-left:auto;" onclick="deleteError('${e.id}')">✕</span>
+        <span class="item-ai-btn" data-type="error" onclick="event.stopPropagation();showItemAi(this)" style="margin-left:auto;">🤖</span>
+        <span class="del" onclick="deleteError('${e.id}')">✕</span>
       </div>
       <div class="content">
         <div class="q">${e.content.replace(/\n/g,'<br>')}</div>
@@ -3757,7 +3773,102 @@ var CTX_PRESETS_DRILL = [
   { id:'analyze',  label:'🔍 分析考点', prompt:'请分析这道题考查的知识点和常见陷阱：' },
   { id:'summary',  label:'📝 知识总结', prompt:'请总结这个考点的核心知识：' },
 ];
+var CTX_PRESETS_ERROR = [
+  { id:'explain',  label:'💡 解析',    prompt:'请解答这道错题，给出正确答案和详细解析：' },
+  { id:'similar',  label:'🔁 同类题',  prompt:'请出1道同类型的题目（带答案和解析）：' },
+  { id:'analyze',  label:'🔍 分析',    prompt:'请分析这道题的考查知识点和易错陷阱：' },
+  { id:'expand',   label:'📖 拓展',    prompt:'请围绕这个知识点做详细的拓展讲解：' },
+];
+var CTX_PRESETS_EXAM = [
+  { id:'analyze',  label:'📊 分析',   prompt:'请分析这份试卷的成绩表现，指出强弱项和提升空间：' },
+  { id:'improve',  label:'📈 提分',   prompt:'请根据试卷成绩给出具体的提分建议和复习重点：' },
+  { id:'review',   label:'🔍 复盘',   prompt:'请帮我对试卷做一次详细复盘，找出薄弱环节：' },
+];
 
+// ====================================================
+//  条目级 AI 按钮（每个知识点/错题/试卷独立 AI 面板）
+// ====================================================
+function showItemAi(btn){
+  // 从父元素提取该条目的文本内容（只取这一条，不取整个列表）
+  var item = btn.closest('.knowledge-item, .error-item, .exam-row');
+  if(!item){ toast('无法获取条目内容'); return; }
+  var content = '';
+  // 提取文字内容（排除按钮自身的图标和操作文字）
+  var textParts = [];
+  item.childNodes.forEach(function(n){
+    if(n.nodeType === 3) textParts.push(n.textContent.trim());
+    else if(n.nodeType === 1 && !n.classList.contains('item-ai-btn') && !n.classList.contains('del') && !n.classList.contains('ex-del')){
+      textParts.push(n.textContent.trim());
+    }
+  });
+  content = textParts.filter(Boolean).join(' ').trim();
+  if(!content) content = item.textContent.replace(/[🤖✕]/g,'').trim();
+
+  var type = btn.dataset.type || 'knowledge';
+  var typeNames = {knowledge:'知识点',error:'错题',exam:'试卷'};
+  var title = typeNames[type] || '条目';
+  var presets = type === 'error' ? CTX_PRESETS_ERROR
+    : type === 'exam' ? CTX_PRESETS_EXAM
+    : CTX_PRESETS_KNOWLEDGE;
+
+  // 移除旧面板
+  var old = document.getElementById('itemAiPanel');
+  if(old) old.remove();
+
+  var panel = document.createElement('div');
+  panel.id = 'itemAiPanel';
+  panel.style.cssText = 'position:fixed;bottom:100px;right:20px;width:360px;max-width:calc(100vw-40px);background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9996;overflow:hidden;animation:panelPop .25s ease;';
+
+  // 保存上下文内容到面板
+  panel.dataset.context = content;
+
+  var presetsHtml = presets.map(function(p){
+    return '<button class="ctx-ai-preset" data-prompt="' + p.prompt.replace(/"/g,'&quot;') + '">' + p.label + '</button>';
+  }).join('');
+
+  panel.innerHTML = '<div style="padding:10px 14px;background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));color:#fff;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;">'
+    + '<span style="flex:1;">🤖 AI · ' + title + '</span>'
+    + '<span style="font-size:10px;color:rgba(255,255,255,0.7);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + content.substring(0,30) + '…</span>'
+    + '<span style="cursor:pointer;font-size:16px;" onclick="this.parentElement.parentElement.remove()">✕</span></div>'
+    + '<div style="padding:10px 12px;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<textarea class="ctx-ai-input" id="itemAiInput" placeholder="或输入你的问题…" rows="1" style="margin-top:6px;"></textarea>'
+    + '<button class="ctx-ai-send" onclick="sendItemAi()" style="margin-top:6px;">发送</button>'
+    + '<div class="ctx-ai-response" id="itemAiResponse" style="margin-top:6px;"></div></div>';
+  document.body.appendChild(panel);
+
+  panel.querySelectorAll('.ctx-ai-preset').forEach(function(b){
+    b.onclick = function(){
+      document.getElementById('itemAiInput').value = b.dataset.prompt;
+      sendItemAi();
+    };
+  });
+}
+
+function sendItemAi(){
+  var input = document.getElementById('itemAiInput');
+  var text = input.value.trim();
+  if(!text){ toast('请输入内容'); return; }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){ toast('请先配置 AI'); openAiSettings(); return; }
+  var panel = document.getElementById('itemAiPanel');
+  var context = panel ? panel.dataset.context || '' : '';
+  var resDiv = document.getElementById('itemAiResponse');
+  resDiv.className = 'ctx-ai-response show';
+  resDiv.innerHTML = '<div class="fp-loading">思考中…</div>';
+  var prompt = '## 上下文内容（仅本条条目）\n' + context.substring(0, 2000) + '\n\n## 用户请求\n' + text;
+  callAiApi(prompt, null, cfg, '').then(function(reply){
+    var html = '<div>' + escapeHtml(reply) + '</div>';
+    html += '<div style="display:flex;gap:6px;margin-top:4px;">';
+    html += '<button class="ctx-ai-preset" onclick="var t=this.parentElement.parentElement.textContent.replace(\'复制\',\'\').trim();navigator.clipboard.writeText(t).then(function(){toast(\'已复制\');})">复制</button>';
+    html += '</div>';
+    resDiv.innerHTML = html;
+  }).catch(function(err){
+    resDiv.innerHTML = '❌ ' + escapeHtml(err.message);
+  });
+}
+// ====================================================
+//  上下文 AI 助手（按题型）
+// ====================================================
 function showDrillAi(moduleName, drillName){
   var cfg = loadAiConfig();
   var old = document.getElementById('drillAiPanel');
