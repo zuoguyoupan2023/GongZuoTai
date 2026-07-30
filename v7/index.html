@@ -2936,20 +2936,76 @@ function renderAiImport(){
   }
   document.getElementById('aiImportKnowledge').innerHTML = kHtml;
 
-  // AI 注入的考题（QUESTION_BANK 中以 | 分隔且含有 "AI" 标记的）
+  // AI 注入的考题（标记了 _aiInjected 的题目）
   var allQuestions = [];
   Object.keys(QUESTION_BANK).forEach(function(key){
-    // 检查 key 中是否包含 "综合" 或人工判断为 AI 注入的 format
-    // 简单处理：显示所有题库也可以，但更合理的是标记 AI 注入的题目
-    // 目前没有标记，先留空
+    (QUESTION_BANK[key] || []).forEach(function(q){
+      if(q._aiInjected){
+        allQuestions.push({bankKey: key, q: q.q, options: q.options || [], answer: q.answer, explain: q.explain || ''});
+      }
+    });
   });
-  document.getElementById('aiImportQuestions').innerHTML = '<div class="empty-state"><span class="emoji">✍️</span>AI 注入的考题将显示在这里</div>';
+  var qHtml = '';
+  if(allQuestions.length > 0){
+    allQuestions.reverse().forEach(function(q){
+      var optsHtml = q.options.map(function(o, oi){
+        return '<div style="font-size:12px;' + (oi === q.answer ? 'color:#E8919B;font-weight:600;' : '') + '">'
+          + String.fromCharCode(65 + oi) + '. ' + escapeHtml(o)
+          + (oi === q.answer ? ' ✓' : '') + '</div>';
+      }).join('');
+      qHtml += '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;">'
+        + '<div style="font-size:12px;font-weight:600;margin-bottom:4px;">' + escapeHtml(q.q.substring(0, 100)) + '</div>'
+        + optsHtml
+        + (q.explain ? '<div style="font-size:11px;color:#999;margin-top:4px;">💡 ' + escapeHtml(q.explain.substring(0, 150)) + '</div>' : '')
+        + '<div style="font-size:10px;color:#ccc;margin-top:2px;">📦 ' + escapeHtml(q.bankKey) + '</div>'
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="question" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    });
+  } else {
+    qHtml = '<div class="empty-state"><span class="emoji">✍️</span>暂无 AI 注入的考题</div>';
+  }
+  document.getElementById('aiImportQuestions').innerHTML = qHtml;
 
-  // AI 注入的错题（暂无法区分 AI 注入 vs 手动添加，留空）
-  document.getElementById('aiImportErrors').innerHTML = '<div class="empty-state"><span class="emoji">❌</span>AI 注入的错题将显示在这里</div>';
+  // AI 注入的错题（标记了 _aiInjected 的）
+  var aiErrors = (store.errors || []).filter(function(e){ return e._aiInjected; });
+  var eHtml = '';
+  if(aiErrors.length > 0){
+    eHtml = aiErrors.reverse().map(function(e){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;">'
+        + '<span class="tag">' + escapeHtml(e.module) + '</span>'
+        + escapeHtml((e.content || '').substring(0, 120))
+        + '<div style="font-size:10px;color:#ccc;margin-top:2px;">📅 ' + (e.date || '') + '</div>'
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="error" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  } else {
+    eHtml = '<div class="empty-state"><span class="emoji">❌</span>暂无 AI 注入的错题</div>';
+  }
+  document.getElementById('aiImportErrors').innerHTML = eHtml;
 
-  // AI 注入的试卷（暂无法区分）
-  document.getElementById('aiImportExams').innerHTML = '<div class="empty-state"><span class="emoji">📄</span>AI 注入的试卷将显示在这里</div>';
+  // AI 注入的试卷（标记了 _aiInjected 的）
+  var aiExams = (store.exams || []).filter(function(e){ return e._aiInjected; });
+  var xHtml = '';
+  if(aiExams.length > 0){
+    xHtml = aiExams.reverse().map(function(e){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;">'
+        + '<div style="font-weight:600;font-size:13px;">' + escapeHtml(e.name) + '</div>'
+        + '<div style="font-size:12px;color:var(--text-sub);">' + escapeHtml(e.type || '') + ' · 得分 ' + e.score + '/' + e.totalScore
+        + (e.time ? ' · ' + e.time + '分钟' : '') + '</div>'
+        + '<div style="font-size:10px;color:#ccc;margin-top:2px;">📅 ' + (e.date || '') + '</div>'
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="exam" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  } else {
+    xHtml = '<div class="empty-state"><span class="emoji">📄</span>暂无 AI 注入的试卷</div>';
+  }
+  document.getElementById('aiImportExams').innerHTML = xHtml;
 }
 function getAllData(){
   return {
@@ -3839,7 +3895,10 @@ function handleConfirmAiInject(){
           q: data.question || data.q || '',
           options: data.options || [],
           answer: data.answer !== undefined ? data.answer : 0,
-          explain: data.explain || ''
+          explain: data.explain || '',
+          _aiInjected: true,
+          _aiInjectedModule: qModule,
+          _aiInjectedDate: todayKey()
         });
         injectedTargets.push('✍️ 考题→题库[' + bankKey + ']');
         injected++;
@@ -3850,7 +3909,8 @@ function handleConfirmAiInject(){
           module: data.module || '常识判断',
           content: data.content || data.question || '',
           photos: data.photos || [],
-          date: todayKey()
+          date: todayKey(),
+          _aiInjected: true
         });
         injectedTargets.push('❌ 错题→store.errors');
         injected++;
@@ -3865,7 +3925,8 @@ function handleConfirmAiInject(){
           totalScore: data.totalScore || 100,
           score: data.score || 0,
           sections: data.sections || '',
-          notes: data.notes || ''
+          notes: data.notes || '',
+          _aiInjected: true
         });
         injectedTargets.push('📄 试卷→store.exams');
         injected++;
