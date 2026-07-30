@@ -3442,63 +3442,84 @@ function showAiInjectModal(text, fileName, mode){
       return;
     }
 
-    // 过滤掉 skip 项
-    var valid = instructions.filter(function(ins){ return ins.type !== 'skip' && ins.confidence >= 0.5; });
-    var skipped = instructions.filter(function(ins){ return ins.type === 'skip' || ins.confidence < 0.5; });
-
-    if(valid.length === 0){
-      preview.innerHTML = '<div style="padding:30px;text-align:center;">'
-        + '<div style="font-size:42px;margin-bottom:10px;">📭</div>'
-        + '<div style="font-weight:600;">没有识别到可注入的内容</div>'
-        + '<div style="font-size:12px;color:#999;margin-top:6px;">AI 判断文档内容不适合注入工作台</div>'
-        + '</div>';
-      status.textContent = '共 ' + instructions.length + ' 条，' + skipped.length + ' 条已跳过';
-      return;
-    }
-
-    // 按类型分组展示
-    var byType = {};
-    valid.forEach(function(ins){
-      if(!byType[ins.type]) byType[ins.type] = [];
-      byType[ins.type].push(ins);
-    });
-
+    // 不过滤 skip 项——用户自己决定是否注入
+    // 映射每条的注入目标位置
     var typeLabels = {
       knowledge_card: '📚 知识卡片',
       question: '✍️ 考题',
       error_log: '❌ 错题',
       exam_record: '📄 试卷记录',
-      plan_task: '📝 计划任务'
+      plan_task: '📝 计划任务',
+      skip: '⏭️ 跳过'
     };
 
-    var html = '';
-    Object.keys(byType).forEach(function(type){
-      var items = byType[type];
+    var moduleKeyToName = {
+      common: '常识判断', politics: '时政热点', verbal: '言语理解',
+      reasoning: '判断推理', quantity: '数量关系', data: '资料分析'
+    };
+    var moduleNameToKey = {
+      '常识判断':'common','时政热点':'politics','言语理解':'verbal',
+      '判断推理':'reasoning','数量关系':'quantity','资料分析':'data'
+    };
+
+    function describeTarget(ins){
+      var data = ins.data || {};
+      var type = ins.type;
+      if(type === 'knowledge_card'){
+        var mk = data.module || 'common';
+        return '📚 知识卡片 → store.knowledge.' + mk + '（' + (moduleKeyToName[mk] || mk) + '）';
+      } else if(type === 'question'){
+        var qm = data.module || '常识判断';
+        var qt = data.subType || '综合';
+        return '✍️ 考题 → 题库[' + qm + '|' + qt + ']';
+      } else if(type === 'error_log'){
+        return '❌ 错题 → store.errors（模块：' + (data.module || '常识判断') + '）';
+      } else if(type === 'exam_record'){
+        return '📄 试卷记录 → store.exams';
+      } else if(type === 'plan_task'){
+        return '📝 计划任务 → store.plans[今日]';
+      }
+      return '⏭️ 跳过（AI 认为不适合注入）';
+    }
+
+    var html = '<div style="font-size:12px;color:var(--text-sub);margin-bottom:8px;">共识别 ' + instructions.length + ' 条内容，请逐条确认是否注入：</div>';
+    instructions.forEach(function(ins, idx){
+      var data = ins.data || {};
+      var type = ins.type;
       var label = typeLabels[type] || '📦 ' + type;
-      html += '<div style="margin-bottom:10px;">';
-      html += '<div style="font-weight:600;font-size:13px;margin-bottom:6px;">' + label + '（' + items.length + '条）</div>';
-      items.forEach(function(ins, i){
-        var dataPreview = JSON.stringify(ins.data || {}).substring(0, 120);
-        html += '<div style="padding:6px 8px;background:#FFFAFB;border-radius:6px;margin-bottom:4px;font-size:12px;border-left:3px solid var(--pink-btn);">'
-          + '<div style="color:#999;font-size:11px;margin-bottom:2px;">' + escapeHtml(ins.reason || '') + '</div>'
-          + '<div style="color:var(--text-main);">' + escapeHtml(dataPreview) + (dataPreview.length >= 120 ? '…' : '') + '</div>'
-          + '</div>';
-      });
-      html += '</div>';
+      var targetDesc = describeTarget(ins);
+      var reason = ins.reason || (type === 'skip' ? 'AI 认为这段内容不适合注入' : '');
+      var dataPreview = JSON.stringify(data).substring(0, 100);
+
+      // 低置信度或 skip 的用灰色标注
+      var isSkip = (type === 'skip' || (ins.confidence !== undefined && ins.confidence < 0.5));
+      var opacity = isSkip ? '0.5' : '1';
+      var borderColor = isSkip ? '#eee' : 'var(--pink-btn)';
+      var bgColor = isSkip ? '#fafafa' : '#FFFAFB';
+
+      html += '<div style="opacity:' + opacity + ';padding:8px 10px;background:' + bgColor + ';border-radius:8px;margin-bottom:6px;border-left:3px solid ' + borderColor + ';">'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'
+        + '<span style="font-size:11px;color:#999;width:24px;">#' + (idx+1) + '</span>'
+        + '<span style="font-weight:600;font-size:12px;">' + label + '</span>'
+        + (ins.confidence !== undefined ? '<span style="font-size:10px;color:#999;">' + Math.round(ins.confidence*100) + '%</span>' : '')
+        + (isSkip ? '<span style="font-size:10px;color:#e88;margin-left:auto;">⏭️ 建议跳过</span>' : '')
+        + '</div>'
+        + '<div style="font-size:11px;color:#E8919B;margin-bottom:3px;padding-left:30px;">→ ' + escapeHtml(targetDesc) + '</div>'
+        + (reason ? '<div style="font-size:11px;color:#999;margin-bottom:2px;padding-left:30px;">💬 ' + escapeHtml(reason) + '</div>' : '')
+        + '<div style="font-size:11px;color:var(--text-sub);padding-left:30px;word-break:break-all;">' + escapeHtml(dataPreview) + (dataPreview.length >= 100 ? '…' : '') + '</div>'
+        + '</div>';
     });
 
     preview.innerHTML = html;
 
     // 统计
-    var totalItems = valid.length;
-    var typesSummary = Object.keys(byType).map(function(t){
-      return (typeLabels[t] || t) + ' ' + byType[t].length + '条';
-    }).join('、');
-    desc.textContent = '📄 ' + escapeHtml(fileName) + ' — 共 ' + totalItems + ' 条注入指令';
-    status.textContent = '✅ 识别到：' + typesSummary + (skipped.length > 0 ? '（已跳过 ' + skipped.length + ' 条无意义内容）' : '');
+    var validCount = instructions.filter(function(ins){ return ins.type !== 'skip'; }).length;
+    var skipCount = instructions.filter(function(ins){ return ins.type === 'skip'; }).length;
+    desc.textContent = '📄 ' + escapeHtml(fileName) + ' — 共 ' + validCount + ' 条可注入，' + skipCount + ' 条建议跳过';
+    status.textContent = '请逐条确认后点击「确认注入」';
 
-    // 存储供确认使用
-    modal._aiInstructions = valid;
+    // 存储供确认使用（保留全部，让用户自己决定）
+    modal._aiInstructions = instructions;
     confirmBtn.style.display = '';
   }).catch(function(err){
     preview.innerHTML = '<div style="padding:20px;text-align:center;">'
