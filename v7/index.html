@@ -3205,10 +3205,26 @@ function callAiApi(userText, schemaJson, cfg, extraPrompt){
     sysPrompt += '\n\n## 用户的注入要求\n' + extraPrompt;
   }
 
+  // 工作台可用模块列表（AI 注入时只能使用以下模块，不得自创）
+  var moduleList = '## 可用模块（注入时请使用以下 module/key）\n'
+    + '| 模块 key | 模块名称 | 可用的题型名称（question 的 subType） |\n'
+    + '|----------|---------|-----------------------------------|\n'
+    + '| common   | 常识判断 | 法律常识、人文历史、科技常识、地理常识 |\n'
+    + '| politics | 时政热点 | 近12个月时政、党政热点专项、重要会议文件、重大事件 |\n'
+    + '| verbal   | 言语理解 | 逻辑填空、片段阅读、语句排序、细节判断 |\n'
+    + '| reasoning| 判断推理 | 图形推理、定义判断、类比推理、逻辑判断 |\n'
+    + '| quantity | 数量关系 | 工程问题、行程问题、利润问题、排列组合 |\n'
+    + '| data     | 资料分析 | 图文资料、表格资料、综合资料、套题训练 |\n'
+    + '\n知识卡片的 module 字段必须使用上表中的 key（common/politics/verbal/reasoning/quantity/data）。\n'
+    + '考题的 module 字段必须使用上表中的"模块名称"（如"常识判断""言语理解"），subType 必须使用对应模块的可用题型。\n'
+    + '错题的 module 字段必须使用上表中的"模块名称"。\n';
+
   // 如果有 schema，传给 AI
   if(schemaJson){
     sysPrompt += '\n\n## 工作台 JSON Schema\n' + JSON.stringify(schemaJson, null, 2);
   }
+
+  sysPrompt += '\n\n' + moduleList;
 
   sysPrompt += '\n\n## 输出格式要求\n输出一个 JSON 数组，每个元素表示一条注入指令：\n[{\n  "type": "knowledge_card | question | error_log | exam_record | plan_task | skip",\n  "confidence": 0.5-1.0,\n  "target": {"store": "目标 store 名称", ...},\n  "data": {符合目标 schema 的数据},\n  "reason": "为什么判断为这个类型"\n}]\n注：如果一段内容没有意义（标题、引导语、页码等），设 confidence<0.5 且 type="skip"。';
 
