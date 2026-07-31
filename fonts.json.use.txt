@@ -1,0 +1,117 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ fonts.json · 免费商用字体使用说明
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+来源：zeoseven 字体 API（https://fonts.zeoseven.com/）
+授权：每款字体的 license 字段标注了授权方式（OFL / 作者声明 / 免费商用 等）
+注意：使用前请确认目标字体的 license 是否符合你的使用场景
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 一、数据结构说明
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+每款字体在 fonts.json 中记录以下字段：
+
+  url              → zeoseven 字体详情页链接
+  name             → 字体名称
+  license          → 授权方式（如 "OFL-1.1" / "作者声明" / "免费商用"）
+  licenseUrl       → 授权详情页
+  designer         → 设计师/字库
+  category         → 分类（手写/黑体/宋体/圆体/创意等）
+  languages        → 支持语言
+  embedCodeCSS     → 【方式一】CSS @import 方式
+  embedCodeHTML    → 【方式二】HTML 强化加载方式（推荐）
+  downloadLinks    → 下载链接（百度网盘/夸克/直链/官网）
+  tags             → 标签
+  lang             → 语言代码
+  cats             → 分类代码
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 二、两种引入方式
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+【方式一】CSS @import（简单快速，适合纯 CSS 项目）
+
+  在样式表顶部添加：
+
+  @import url("https://fontsapi.zeoseven.com/{FONT_ID}/main/result.css");
+
+  body {
+      font-family: "{FONT_NAME}";
+      font-weight: normal;
+  }
+
+  说明：
+  - {FONT_ID} 和 {FONT_NAME} 从 fonts.json 的对应字段获取
+  - @import 必须放在 CSS 最顶部，否则无效
+  - 简单场景用这个就够了
+
+【方式二】HTML 强化加载（推荐，适合生产环境）
+
+  在 <head> 中添加：
+
+  <link href="https://fontsapi.zeoseven.com/{FONT_ID}/main/result.css"
+        onload="this.rel='stylesheet'"
+        rel="preload" as="style" crossorigin />
+  <noscript>
+    <link rel="stylesheet" href="https://fontsapi.zeoseven.com/{FONT_ID}/main/result.css" />
+  </noscript>
+  <style>
+      body {
+          font-family: "{FONT_NAME}";
+          font-weight: normal;
+      }
+  </style>
+
+  说明：
+  - 使用 preload + onload 延迟加载，不阻塞首次渲染
+  - noscript 兜底（用户禁用了 JS 也能加载）
+  - 生产环境推荐用这个方式
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 三、从 fonts.json 中提取信息
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+每个字体对象中的 embedCodeCSS 和 embedCodeHTML 字段已经包含了
+完整的嵌入代码，可以直接复制使用。
+
+示例（从 JSON 中提取）：
+
+  var font = fontsArray[0];  // 第一个字体
+  console.log(font.embedCodeCSS);   // → 方式一的完整代码
+  console.log(font.embedCodeHTML);  // → 方式二的完整代码
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 四、注意事项
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. API 调用频率
+   - 不要频繁请求同一个字体 URL，浏览器会缓存
+   - 用户切换字体时，建议先检查是否已加载
+   - 字体文件加载后浏览器会缓存，后续不再请求
+
+2. 字体授权确认
+   - 使用前查看 license + licenseUrl 确认授权范围
+   - "作者声明" 类字体建议访问原文确认具体条款
+   - 商业项目请务必确认 license 允许商用
+
+3. 跨域（CORS）
+   - zeoseven 的字体 API 已配置 CORS，无需额外处理
+   - 在 file:// 协议下可能受限，建议通过 HTTP 服务访问
+
+4. 性能
+   - 同时加载太多字体样式会影响页面性能
+   - 建议最多同时加载 3 个字体的样式
+   - 使用方式二的 preload 方案可以优化加载
+
+5. 降级
+   - 始终在 font-family 中保留后备字体
+   - 示例：font-family: "Huiwen-mincho", "Noto Serif SC", serif;
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 五、参考链接
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- zeoseven 字体平台：https://fonts.zeoseven.com/
+- OFL 协议原文：https://openfontlicense.org/
+- 字体家（部分字体来源）：https://www.zitijia.com/
