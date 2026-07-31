@@ -1275,11 +1275,11 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
       <select id="aiProvider" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
         <option value="deepseek">DeepSeek（V4-Flash / V4-Pro）</option>
         <option value="zhipu">智谱 AI（GLM-5.2 / 4.7）</option>
-        <option value="openai">OpenAI（GPT-5.4 / GPT-5.4-mini）</option>
-        <option value="anthropic">Anthropic（Claude Sonnet 5 / Opus 4.8）</option>
+        <option value="openai">OpenAI（GPT-5.6 Sol / Luna）</option>
+        <option value="anthropic">Anthropic（Claude Fable 5 / Opus 5）</option>
         <option value="minimax">MiniMax（M3 / M2.7）</option>
         <option value="qwen">阿里通义（Qwen 3.8-Max / 3.7-Plus）</option>
-        <option value="kimi">Kimi（月之暗面）</option>
+        <option value="kimi">Kimi（K3）</option>
       </select>
     </div>
     <div style="margin-bottom:14px;">
@@ -3429,11 +3429,11 @@ const AI_CONFIG_KEY = 'xiaowang_ai_config';
 const AI_PROVIDERS = {
   zhipu:   { endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',         model: 'glm-5.2' },
   deepseek:{ endpoint: 'https://api.deepseek.com/v1/chat/completions',                  model: 'deepseek-v4-flash' },
-  openai:  { endpoint: 'https://api.openai.com/v1/chat/completions',                    model: 'gpt-5.4-mini' },
+  openai:  { endpoint: 'https://api.openai.com/v1/chat/completions',                    model: 'gpt-5.6-luna' },
   anthropic:{endpoint: 'https://api.anthropic.com/v1/messages',                         model: 'claude-sonnet-5' },
   minimax: { endpoint: 'https://platform.minimax.io/v1/text/chatcompletions',           model: 'MiniMax-M3' },
   qwen:    { endpoint: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model: 'qwen3.8-max' },
-  kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',                   model: 'moonshot-v1-8k' },
+  kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',                   model: 'kimi-k3' },
 };
 
 const PROVIDER_API_URLS = {
@@ -3447,13 +3447,13 @@ const PROVIDER_API_URLS = {
 };
 
 const PROVIDER_MODELS = {
-  deepseek: ['deepseek-v4-flash', 'deepseek-v4-pro', 'deepseek-chat', 'deepseek-coder'],
+  deepseek: ['deepseek-v4-flash', 'deepseek-v4-pro'],
   zhipu: ['glm-5.2', 'glm-4.7', 'glm-4.7v', 'glm-4.7-long', 'glm-4.7-flash'],
-  openai: ['gpt-5.4', 'gpt-5.4-mini', 'gpt-5.4-turbo', 'gpt-4.1'],
-  anthropic: ['claude-sonnet-5', 'claude-opus-4.8', 'claude-haiku-4.5'],
+  openai: ['gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna', 'gpt-5.4', 'gpt-5.4-mini'],
+  anthropic: ['claude-fable-5', 'claude-opus-5', 'claude-sonnet-5', 'claude-haiku-4-5', 'claude-opus-4-8'],
   minimax: ['MiniMax-M3', 'MiniMax-M2.7'],
   qwen: ['qwen3.8-max', 'qwen3.7-plus', 'qwen3.8-plus'],
-  kimi: ['moonshot-v1-8k', 'moonshot-v1-32k'],
+  kimi: ['kimi-k3'],
 };
 
 function loadAiConfig(){
