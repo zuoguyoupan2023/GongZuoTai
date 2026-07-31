@@ -1,0 +1,110 @@
+{
+  "workbench": "v7",
+  "name": "小王备考工作台",
+  "domain": "exam-prep",
+  "version": "1.0",
+
+  "stores": {
+    "knowledge": {
+      "description": "知识卡片，按模块分组。每个元素是学习资料中提取的知识点。",
+      "type": "object",
+      "properties": {
+        "common":    { "$ref": "#/definitions/KnowledgeCardList" },
+        "politics":  { "$ref": "#/definitions/KnowledgeCardList" },
+        "verbal":    { "$ref": "#/definitions/KnowledgeCardList" },
+        "reasoning": { "$ref": "#/definitions/KnowledgeCardList" },
+        "quantity":  { "$ref": "#/definitions/KnowledgeCardList" },
+        "data":      { "$ref": "#/definitions/KnowledgeCardList" }
+      }
+    },
+    "QUESTION_BANK": {
+      "description": "题库，key 为 '模块|题型' 格式。如 '常识判断|法律常识'。",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "$ref": "#/definitions/Question" }
+      }
+    },
+    "errors": {
+      "description": "错题记录列表。记录做错的题目及其解析。",
+      "type": "array",
+      "items": { "$ref": "#/definitions/ErrorLog" }
+    },
+    "exams": {
+      "description": "试卷记录列表。记录每次模考的成绩和分析。",
+      "type": "array",
+      "items": { "$ref": "#/definitions/ExamRecord" }
+    },
+    "plans": {
+      "description": "每日学习计划，key 为 'YYYY-MM-DD' 格式的日期字符串。",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "$ref": "#/definitions/PlanTask" }
+      }
+    }
+  },
+
+  "definitions": {
+    "KnowledgeCard": {
+      "type": "object",
+      "properties": {
+        "tag":    { "type": "string", "maxLength": 20, "description": "标签/分类，如'法律''公式''成语'" },
+        "text":   { "type": "string", "maxLength": 200, "description": "知识卡片正文" },
+        "source": { "type": "string", "description": "来源文件名" },
+        "date":   { "type": "string", "description": "注入日期，YYYY-MM-DD格式" }
+      },
+      "required": ["tag", "text"]
+    },
+    "KnowledgeCardList": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/KnowledgeCard" }
+    },
+    "Question": {
+      "type": "object",
+      "properties": {
+        "q":       { "type": "string", "description": "题干/题目内容" },
+        "options": { "type": "array", "items": { "type": "string" }, "minItems": 2, "description": "选项列表，如 ['选项A', '选项B', '选项C', '选项D']" },
+        "answer":  { "type": "integer", "minimum": 0, "description": "正确答案在options中的索引（0-based）" },
+        "explain": { "type": "string", "description": "题目解析/答案解释" }
+      },
+      "required": ["q", "options", "answer"]
+    },
+    "ErrorLog": {
+      "type": "object",
+      "properties": {
+        "id":      { "type": "string", "description": "唯一标识，自动生成" },
+        "module":  { "type": "string", "description": "所属模块，如'常识判断''言语理解'等" },
+        "content": { "type": "string", "description": "错题内容/正文" },
+        "photos":  { "type": "array", "items": { "type": "string" }, "description": "错题相关图片（data URL）" },
+        "date":    { "type": "string", "description": "记录日期，YYYY-MM-DD格式" }
+      },
+      "required": ["module", "content"]
+    },
+    "ExamRecord": {
+      "type": "object",
+      "properties": {
+        "name":       { "type": "string", "description": "试卷名称，如'2024国考行测真题'" },
+        "type":       { "type": "string", "enum": ["行测", "申论", "综应"], "description": "试卷类型" },
+        "date":       { "type": "string", "description": "做题日期" },
+        "time":       { "type": "integer", "minimum": 0, "description": "做题时长（分钟）" },
+        "totalScore": { "type": "number", "minimum": 0, "description": "试卷总分" },
+        "score":      { "type": "number", "minimum": 0, "description": "实际得分" },
+        "sections":   { "type": "string", "description": "各板块得分详情，如'常识8/10,言语30/40,判断25/35,数量5/10,资料12/15'" },
+        "notes":      { "type": "string", "description": "备注/错题与遗忘知识点" }
+      },
+      "required": ["name", "date", "totalScore", "score"]
+    },
+    "PlanTask": {
+      "type": "object",
+      "properties": {
+        "id":     { "type": "string", "description": "唯一标识，自动生成" },
+        "text":   { "type": "string", "description": "计划内容描述" },
+        "module": { "type": "string", "description": "所属模块/科目" },
+        "count":  { "type": "integer", "minimum": 0, "description": "计划做题数量" },
+        "done":   { "type": "boolean", "description": "是否已完成" }
+      },
+      "required": ["text"]
+    }
+  }
+}

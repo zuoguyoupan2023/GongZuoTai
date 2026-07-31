@@ -40,6 +40,7 @@
   --radius:16px;
   --nav-w:210px;
   --cute-font:"PingFang SC","Microsoft YaHei",-apple-system,sans-serif;
+  --app-height:100vh;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
@@ -55,13 +56,13 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;}
 input,textarea,select{font-family:inherit;outline:none;}
 
 /* ========== 整体布局 ========== */
-.app{display:flex;height:100vh;width:100vw;}
+.app{display:flex;height:var(--app-height);width:100vw;}
 
 /* ========== 左侧导航栏 ========== */
 .sidebar{
   width:var(--nav-w);
   min-width:var(--nav-w);
-  height:100vh;
+  height:var(--app-height);
   background:linear-gradient(180deg,#FFFFFF 0%,#FFF8FA 100%);
   box-shadow:3px 0 16px rgba(248,200,208,0.2);
   display:flex;
@@ -113,7 +114,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 /* ========== 右侧主内容区 ========== */
 .main{
   flex:1;
-  height:100vh;
+  height:var(--app-height);
   overflow-y:auto;
   padding:20px 24px;
   -webkit-overflow-scrolling:touch;
@@ -484,6 +485,53 @@ input,textarea,select{font-family:inherit;outline:none;}
 .overview-hero .hero-stat .big{font-size:32px;font-weight:700;color:#fff;text-shadow:0 2px 4px rgba(248,200,208,0.5);}
 .overview-hero .hero-stat .lbl{font-size:11px;color:#fff;opacity:.85;}
 
+/* 上下文 AI 面板 */
+.ctx-ai-btn{
+  display:inline-flex;align-items:center;gap:4px;margin-left:8px;
+  padding:2px 8px;border-radius:10px;font-size:11px;cursor:pointer;
+  background:var(--pink-main);color:#E8919B;border:1px solid var(--pink-btn);
+  transition:all .2s;font-family:inherit;
+}
+.ctx-ai-btn:hover{background:var(--pink-btn);color:#fff;}
+.ctx-ai-panel{
+  display:none;margin-top:10px;padding:12px;background:#FFFAFB;
+  border:1px solid #FFF0F3;border-radius:10px;font-size:13px;
+}
+.ctx-ai-panel.show{display:block;}
+.ctx-ai-presets{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.ctx-ai-preset{
+  padding:3px 10px;border-radius:10px;font-size:11px;border:1px solid var(--pink-btn);
+  background:#fff;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.ctx-ai-preset:hover{background:var(--pink-main);}
+.ctx-ai-input{
+  width:100%;border:1px solid #eee;border-radius:8px;padding:6px 10px;
+  font-size:12px;font-family:inherit;resize:none;min-height:32px;outline:none;
+}
+.ctx-ai-input:focus{border-color:var(--pink-btn);}
+.ctx-ai-send{
+  margin-top:6px;padding:4px 14px;border-radius:12px;
+  background:var(--pink-btn);color:#fff;border:none;cursor:pointer;
+  font-size:12px;font-family:inherit;
+}
+.ctx-ai-send:hover{background:#E8919B;}
+.ctx-ai-response{
+  margin-top:8px;padding:8px 10px;background:#fff;border-radius:8px;
+  font-size:12px;line-height:1.7;display:none;white-space:pre-wrap;
+  max-height:300px;overflow-y:auto;
+}
+.ctx-ai-response.show{display:block;}
+
+/* 条目级 AI 按钮（每个知识点/错题/试卷右上角） */
+.item-ai-btn{
+  cursor:pointer;font-size:13px;opacity:0.35;
+  transition:all .2s;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:6px;
+  margin-left:auto;
+}
+.item-ai-btn:hover{opacity:1;background:var(--pink-btn);color:#fff;}
+.knowledge-item:hover .item-ai-btn,.error-item:hover .item-ai-btn,.exam-row:hover .item-ai-btn{opacity:0.8;}
 /* 空状态 */
 .empty-state{text-align:center;padding:30px 20px;color:var(--text-sub);font-size:13px;}
 .empty-state .emoji{font-size:36px;margin-bottom:8px;display:block;}
@@ -555,12 +603,15 @@ input,textarea,select{font-family:inherit;outline:none;}
   .nav-item .nav-icon{width:auto;font-size:20px;}
   .nav-item:not(.active){background:transparent;}
   .nav-badge,.nav-item .arrow{display:none;}
-  .sidebar-footer{padding:8px 4px;}
-  .sidebar-footer .backup-btn{font-size:0;gap:0;padding:8px;width:auto;justify-content:center;border-radius:50%;min-width:36px;height:36px;}
-  .sidebar-footer .backup-btn::before{content:'💾';font-size:16px;}
+  .sidebar-footer{padding:4px 0;text-align:center;}
+  .sidebar-footer .backup-btn{
+    font-size:0;padding:0;margin:0 auto 2px;width:34px;height:34px;min-width:unset;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .sidebar-footer .backup-btn::before{content:'💾';font-size:15px;display:block;line-height:1;}
   .side-credit{font-size:0;}
-  .side-credit a::before{content:'📕';font-size:14px;}
-  .side-credit a{font-size:0;}
+  .side-credit a{font-size:0;display:inline-block;width:34px;height:26px;overflow:hidden;line-height:26px;text-align:center;text-decoration:none;}
+  .side-credit a::before{content:'📕';font-size:14px;display:inline;}
 }
 </style>
 
@@ -773,11 +824,12 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
     <div class="nav-item" data-page="checkin"><span class="nav-icon">📅</span>打卡日历</div>
     <div class="nav-item" data-page="stats"><span class="nav-icon">📈</span>时长统计</div>
     <div class="nav-item" data-page="exam"><span class="nav-icon">📄</span>试卷分析</div>
-    <div class="nav-item" data-page="fileparser"><span class="nav-icon">📂</span>文件学习</div>
     <div class="nav-item" data-page="error"><span class="nav-icon">❌</span>错题记录</div>
+    <div class="nav-item" data-page="fileparser"><span class="nav-icon">📂</span>文件学习</div>
+    <div class="nav-item" data-page="aiimport"><span class="nav-icon">🤖</span>AI 导入</div>
   </div>
   <div class="sidebar-footer">
-    <button class="backup-btn" id="openBackupBtn" style="background:var(--pink-btn);color:#fff;width:100%;justify-content:center;margin-bottom:8px;">💾 数据备份</button>
+    <button class="backup-btn" id="openBackupBtn" style="background:var(--pink-btn);color:#fff;width:100%;justify-content:center;">💾 数据备份</button>
     <div class="side-credit">
       📕 来自 <a href="https://xhslink.cn/m/4SRT3myzeDg" target="_blank" rel="noopener noreferrer">@米奇妙妙屋c9n @小红书</a>
     </div>
@@ -1161,6 +1213,33 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
   </div>
 </div>
 
+<!-- ===== AI 导入 ===== -->
+<div class="page" id="page-aiimport">
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>🤖 AI 导入总览</div>
+    <div class="mb-desc" style="margin-bottom:14px;font-size:13px;color:var(--text-sub);">
+      以下是从文件解析中由 AI 识别并注入的内容，集中展示方便查阅。
+    </div>
+    <div id="aiImportStats" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>📚 AI 导入的知识卡片</div>
+    <div id="aiImportKnowledge"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>✍️ AI 导入的考题</div>
+    <div id="aiImportQuestions"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>❌ AI 导入的错题</div>
+    <div id="aiImportErrors"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>📄 AI 导入的试卷</div>
+    <div id="aiImportExams"></div>
+  </div>
+</div>
+
 
 <!-- ===== 文件学习（FileParser 方案011 Phase A） ===== -->
 <div class="page" id="page-fileparser">
@@ -1174,13 +1253,75 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
       <div id="fpDropzone"></div>
     </div>
   </div>
-  <div id="fpViewer" style="height:calc(100vh - 180px);"></div>
+  <div id="fpViewer" style="height:calc(var(--app-height) - 180px);"></div>
 </div>
 
 </div><!-- /main -->
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
+
+<!-- ===== AI 设置弹窗 ===== -->
+<div class="modal-overlay" id="aiSettingsModal">
+  <div class="modal-box" style="max-width:480px;">
+    <button class="modal-close" id="closeAiSettingsBtn" onclick="closeAiSettings()">✕</button>
+    <div class="mb-title">🤖 AI 注入设置</div>
+    <div class="mb-desc">
+      AI Agent 负责理解文档内容并按工作台的数据格式生成注入指令。
+      需要自备 API Key。默认模型为 DeepSeek V4 Flash。
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API 提供商</label>
+      <select id="aiProvider" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+        <option value="deepseek">DeepSeek（V4-Flash / V4-Pro）</option>
+        <option value="zhipu">智谱 AI（GLM-5.2 / 4.7）</option>
+        <option value="openai">OpenAI（GPT-5.6 Sol / Luna）</option>
+        <option value="anthropic">Anthropic（Claude Fable 5 / Opus 5）</option>
+        <option value="minimax">MiniMax（M3 / M2.7）</option>
+        <option value="qwen">阿里通义（Qwen 3.8-Max / 3.7-Plus）</option>
+        <option value="kimi">Kimi（K3 / K2.6 / K2.7-Code）</option>
+      </select>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API 地址（Endpoint）</label>
+      <input type="text" id="aiEndpoint" placeholder="https://open.bigmodel.cn/api/paas/v4/chat/completions" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">
+        模型名称
+        <a id="apiKeyLink" href="#" target="_blank" style="float:right;font-size:12px;color:var(--pink-btn);font-weight:400;">🔑 获取 API Key</a>
+      </label>
+      <select id="aiModelSelect" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;"></select>
+      <div id="aiModelCustomWrap" style="margin-top:6px;display:none;">
+        <input type="text" id="aiModel" placeholder="输入自定义模型名称" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">API Key</label>
+      <input type="password" id="aiApiKey" placeholder="输入你的 API Key" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;">
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-outline" id="testAiBtn" onclick="handleTestAi()">🔍 测试连接</button>
+      <button class="btn" id="saveAiBtn" onclick="handleSaveAi()">💾 保存配置</button>
+    </div>
+    <div id="aiTestResult" style="margin-top:10px;font-size:12px;display:none;"></div>
+  </div>
+</div>
+
+<!-- ===== 知识注入（AI 结果预览）弹窗 ===== -->
+<div class="modal-overlay" id="aiInjectModal">
+  <div class="modal-box" style="max-width:600px;">
+    <button class="modal-close" id="closeAiInjectBtn" onclick="closeAiInjectModal()">✕</button>
+    <div class="mb-title">📥 AI 知识注入</div>
+    <div class="mb-desc" id="aiInjectDesc">AI 正在分析文档内容…</div>
+    <div id="aiInjectPreview" style="max-height:350px;overflow-y:auto;margin-bottom:14px;border:1px solid #FFF0F3;border-radius:10px;padding:10px;font-size:13px;line-height:1.6;"></div>
+    <div id="aiInjectStatus" style="font-size:12px;color:var(--text-sub);margin-bottom:10px;"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-outline" id="cancelAiInjectBtn">取消</button>
+      <button class="btn" id="confirmAiInjectBtn" style="display:none;" onclick="handleConfirmAiInject()">✅ 确认注入</button>
+    </div>
+  </div>
+</div>
 
 <!-- ===== 备份弹窗 ===== -->
 <div class="modal-overlay" id="backupModal">
@@ -1199,16 +1340,110 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
       <button class="mb-btn mb-btn-dan" id="modalResetBtn">🔄 重置为默认</button>
     </div>
     <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--pink-highlight);">
-      <div style="font-size:12px;font-weight:600;color:var(--text-main);margin-bottom:6px;">⏱️ 定时自动导出测试</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:600;color:var(--text-main);">⏰ 定时自动备份</span>
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-sub);cursor:pointer;">
+          <input type="checkbox" id="scheduleEnable" onchange="toggleSchedule()"> 启用
+        </label>
+      </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <select id="timerSelect" style="padding:6px 8px;border:1px solid #ddd;border-radius:8px;font-size:12px;">
-          <option value="1">1 分钟后</option>
-          <option value="2">2 分钟后</option>
-          <option value="5">5 分钟后</option>
-          <option value="10">10 分钟后</option>
+        <span style="font-size:12px;color:var(--text-sub);">每天</span>
+        <select id="scheduleHour" style="padding:4px 6px;border:1px solid #ddd;border-radius:6px;font-size:12px;width:64px;">
+          <option value="0">00</option>
+          <option value="1">01</option>
+          <option value="2">02</option>
+          <option value="3">03</option>
+          <option value="4">04</option>
+          <option value="5">05</option>
+          <option value="6">06</option>
+          <option value="7">07</option>
+          <option value="8">08</option>
+          <option value="9">09</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+          <option value="19">19</option>
+          <option value="20">20</option>
+          <option value="21">21</option>
+          <option value="22">22</option>
+          <option value="23" selected>23</option>
         </select>
-        <button class="mb-btn mb-btn-out" id="startTimerBtn" style="font-size:12px;padding:6px 14px;">▶ 开始倒计时</button>
-        <span id="timerDisplay" style="font-size:13px;font-weight:700;color:#E8919B;min-width:80px;"></span>
+        <span style="font-size:12px;color:var(--text-sub);">:</span>
+        <select id="scheduleMinute" style="padding:4px 6px;border:1px solid #ddd;border-radius:6px;font-size:12px;width:64px;">
+          <option value="0" selected>00</option>
+          <option value="1">01</option>
+          <option value="2">02</option>
+          <option value="3">03</option>
+          <option value="4">04</option>
+          <option value="5">05</option>
+          <option value="6">06</option>
+          <option value="7">07</option>
+          <option value="8">08</option>
+          <option value="9">09</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+          <option value="19">19</option>
+          <option value="20">20</option>
+          <option value="21">21</option>
+          <option value="22">22</option>
+          <option value="23">23</option>
+          <option value="24">24</option>
+          <option value="25">25</option>
+          <option value="26">26</option>
+          <option value="27">27</option>
+          <option value="28">28</option>
+          <option value="29">29</option>
+          <option value="30">30</option>
+          <option value="31">31</option>
+          <option value="32">32</option>
+          <option value="33">33</option>
+          <option value="34">34</option>
+          <option value="35">35</option>
+          <option value="36">36</option>
+          <option value="37">37</option>
+          <option value="38">38</option>
+          <option value="39">39</option>
+          <option value="40">40</option>
+          <option value="41">41</option>
+          <option value="42">42</option>
+          <option value="43">43</option>
+          <option value="44">44</option>
+          <option value="45">45</option>
+          <option value="46">46</option>
+          <option value="47">47</option>
+          <option value="48">48</option>
+          <option value="49">49</option>
+          <option value="50">50</option>
+          <option value="51">51</option>
+          <option value="52">52</option>
+          <option value="53">53</option>
+          <option value="54">54</option>
+          <option value="55">55</option>
+          <option value="56">56</option>
+          <option value="57">57</option>
+          <option value="58">58</option>
+          <option value="59">59</option>
+        </select>
+        <span id="scheduleStatus" style="font-size:12px;color:var(--text-sub);">已关闭</span>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--pink-highlight);">
+      <div style="font-size:12px;font-weight:600;color:var(--text-main);margin-bottom:6px;">📋 备份记录</div>
+      <div id="backupHistory" style="font-size:11px;color:var(--text-sub);max-height:120px;overflow-y:auto;">
+        <span style="color:#999;">暂无备份记录</span>
       </div>
     </div>
   </div>
@@ -1219,7 +1454,10 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
   <div class="quiz-modal">
     <div class="quiz-header">
       <span class="qh-title" id="quizTitle">专项练习</span>
-      <span class="qh-close" onclick="closeQuiz()">✕</span>
+      <span style="display:flex;align-items:center;gap:6px;">
+        <span class="item-ai-btn" id="quizAiBtn" onclick="showQuizAi()" style="opacity:0.5;font-size:15px;display:none;" title="AI 讲解本题">🤖</span>
+        <span class="qh-close" onclick="closeQuiz()">✕</span>
+      </span>
     </div>
     <div class="quiz-progress" id="quizProgressArea">
       <span id="quizProgressText">第 1/5 题</span>
@@ -1268,13 +1506,24 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
         r.onsuccess = function(){ res(r.result); };
         r.onerror = function(){ rej(r.error); };
       });
-      keys.forEach(function(k, i){ _cache[k] = vals[i]; });
+      // ⚠️ 不覆盖已被 saveStore 同步写入的 _cache 条目
+      // 防止以下时序竞态：
+      // 1. saveStore() → _cache[key] = value（已写入）
+      // 2. __idbInit() 异步读取完成 → 旧数据覆盖 _cache[key]
+      keys.forEach(function(k, i){
+        if(vals[i] !== undefined && !(k in _cache)){
+          _cache[k] = vals[i];
+        } else if(k in _cache && vals[i] !== undefined){
+          console.log('[IDB] 跳过覆盖 ' + k + '（已被 newer 数据占据）');
+        }
+      });
       _keys.forEach(function(k){
         if(!(k in _cache)){
           try{ var v = localStorage.getItem(k); if(v !== null) _cache[k] = JSON.parse(v); }catch(e){}
         }
       });
       _ready = true;
+      console.log('[IDB] 初始化完成，_cache 包含 key:', Object.keys(_cache));
     }catch(e){ _ready = false; }
   };
 
@@ -1298,6 +1547,24 @@ mark.fp-highlight{background:#FFD700;color:#333;padding:1px 3px;border-radius:3p
 // ====================================================
 const STORE_KEY = 'xiaowang_workbench';
 let store = loadStore();
+// 模块名称映射（全局，供 renderKnowledge / renderAiImport 使用）
+var moduleKeyNames = {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
+// 确保 store 包含所有默认字段（兼容旧版本 store）
+migrateStore();
+
+function migrateStore(){
+  var def = defaultStore();
+  Object.keys(def).forEach(function(k){
+    if(store[k] === undefined) store[k] = JSON.parse(JSON.stringify(def[k]));
+  });
+  // 确保 knowledge 的子字段也存在
+  if(store.knowledge){
+    var defKnowledge = def.knowledge || {};
+    Object.keys(defKnowledge).forEach(function(k){
+      if(!store.knowledge[k]) store.knowledge[k] = [];
+    });
+  }
+}
 
 function loadStore(){
   var c = window.__idbCache;
@@ -1316,6 +1583,10 @@ function defaultStore(){
     exams: [],        // [{id,name,type,date,time,totalScore,score,sections,notes}]
     errors: [],       // [{id,module,content,photos,date}]
     stats: {common:0,politics:0,verbal:0,reasoning:0,quantity:0,data:0}, // 累计做题数
+    knowledge: {      // 文件解析注入的知识卡片
+      common: [], politics: [], verbal: [],
+      reasoning: [], quantity: [], data: []
+    },
   };
 }
 function saveStore(){
@@ -1458,6 +1729,7 @@ function onPageShow(page){
   if(page==='stats') renderStats();
   if(page==='exam') renderExam();
   if(page==='error') renderErrors();
+  if(page==='aiimport') renderAiImport();
   if(page==='fileparser') initFileParser();
   if(TOPICS[page]) renderTopic(page);
 }
@@ -1482,10 +1754,10 @@ function renderTopic(key){
   `;
   // 刷题入口
   document.getElementById('drill-'+key).innerHTML = t.drills.map(d=>`
-    <div class="drill-item" onclick="startDrill('${t.name}','${d.nm}')">
-      <span class="ic">${d.ic}</span>
-      <span class="nm">${d.nm}</span>
-      <span class="ct">${d.ct}</span>
+    <div class="drill-item" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--pink-main);border-radius:12px;cursor:pointer;transition:all .25s;border:2px solid transparent;">
+      <span style="font-size:20px;flex-shrink:0;">${d.ic}</span>
+      <span style="font-size:13px;font-weight:600;flex:1;" onclick="startDrill('${t.name}','${d.nm}')">${d.nm}</span>
+      <span style="font-size:11px;color:var(--text-sub);background:#fff;padding:2px 8px;border-radius:8px;">${d.ct}</span>
     </div>
   `).join('');
   // 知识积累
@@ -1495,13 +1767,47 @@ function renderTopic(key){
 }
 
 function renderKnowledge(key){
-  const list = KNOWLEDGE[key];
-  // 随机取10条（或全部）
-  const shuffled = [...list].sort(()=>Math.random()-0.5);
-  const picked = shuffled.slice(0, Math.min(10, list.length));
-  document.getElementById('knowledge-'+key).innerHTML = picked.map(k=>`
-    <div class="knowledge-item"><span class="tag">${k.tag}</span>${k.text}</div>
-  `).join('');
+  var container = document.getElementById('knowledge-'+key);
+  moduleKeyNames = moduleKeyNames || {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
+
+  // 硬编码默认知识
+  var defaults = KNOWLEDGE[key] || [];
+  // AI 注入的知识卡片
+  var injected = store.knowledge[key] || [];
+
+  // 默认知识部分（随机取8条）
+  var shuffDefaults = [...defaults].sort(function(){ return Math.random()-0.5; });
+  var pickedDefaults = shuffDefaults.slice(0, Math.min(8, shuffDefaults.length));
+
+  var html = '';
+  // 默认知识
+  if(pickedDefaults.length > 0){
+    html += pickedDefaults.map(function(k){
+      return '<div class="knowledge-item" style="display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;"><span class="tag">'+k.tag+'</span>'+k.text+'</div>'
+        + '<span class="item-ai-btn" data-type="knowledge" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  }
+
+  // AI 注入部分
+  if(injected.length > 0){
+    html += '<div style="margin-top:10px;padding-top:8px;border-top:2px dashed var(--pink-highlight);">';
+    html += '<div style="font-size:11px;font-weight:600;color:#E8919B;margin-bottom:6px;">🤖 AI 注入（' + injected.length + '条）</div>';
+    html += injected.map(function(k){
+      var fileName = k.source || '';
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;"><span class="tag">'+(k.tag||'知识点')+'</span>'+k.text
+        + (fileName ? '<span style="font-size:10px;color:#ccc;display:block;margin-top:2px;">📄 '+escapeHtml(fileName)+'</span>' : '')
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="knowledge" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+    html += '</div>';
+  }
+
+  if(!html) html = '<div class="empty-state"><span class="emoji">📝</span>暂无积累</div>';
+  container.innerHTML = html;
 }
 
 function refreshKnowledge(key){ renderKnowledge(key); toast('已刷新知识点'); }
@@ -1514,12 +1820,13 @@ function renderTopicErrors(key, moduleName){
     return;
   }
   el.innerHTML = errors.slice(-5).reverse().map(e=>`
-    <div class="error-item">
+    <div class="error-item" style="position:relative;">
       <span class="type-tag">${e.module}</span>
-      <div class="content">
+      <div class="content" style="flex:1;">
         <div class="q">${e.content.substring(0,100)}</div>
         <div class="a">${e.date}</div>
       </div>
+      <span class="item-ai-btn" data-type="error" onclick="event.stopPropagation();showItemAi(this)" style="margin-left:auto;">🤖</span>
       <span class="del" onclick="deleteError('${e.id}')">✕</span>
     </div>
   `).join('');
@@ -1558,6 +1865,33 @@ function startDrill(module, type){
 function getQuestions(module, type){
   const key = module+'|'+type;
   return QUESTION_BANK[key] || [];
+}
+
+// AI 导入页刷题（收集全部 AI 注入考题，跨题库汇总打乱）
+function startAiDrill(clickBankKey, clickIdx){
+  var allAiQ = [];
+  Object.keys(QUESTION_BANK).forEach(function(key){
+    (QUESTION_BANK[key] || []).forEach(function(q){
+      if(q._aiInjected && q.q){
+        var opts = [...(q.options || [])];
+        var correctText = opts[q.answer !== undefined ? q.answer : 0];
+        var shuffledOpts = opts.sort(function(){ return Math.random() - 0.5; });
+        allAiQ.push({q: q.q, options: shuffledOpts, answer: shuffledOpts.indexOf(correctText), explain: q.explain || ''});
+      }
+    });
+  });
+  if(allAiQ.length === 0){ toast('暂无 AI 注入的考题'); return; }
+  var shuffled = allAiQ.sort(function(){ return Math.random() - 0.5; });
+  quizState.questions = shuffled.slice(0, Math.min(10, shuffled.length));
+  quizState.currentIdx = 0;
+  quizState.selected = -1;
+  quizState.answered = false;
+  quizState.correctCount = 0;
+  quizState.module = 'AI导入';
+  quizState.type = '考题';
+  document.getElementById('quizTitle').textContent = '🤖 AI 导入 · 考题（共' + quizState.questions.length + '题）';
+  document.getElementById('quizOverlay').classList.add('show');
+  renderQuestion();
 }
 
 const QUESTION_BANK = {
@@ -1712,6 +2046,8 @@ function renderQuestion(){
   document.getElementById('quizProgressFill').style.width = `${(quizState.currentIdx+1)/total*100}%`;
   document.getElementById('quizTip').textContent = '选择答案后点击「确认」';
   document.getElementById('quizSubmitBtn').textContent = '确认';
+  // 显示 AI 按钮
+  document.getElementById('quizAiBtn').style.display = 'inline-flex';
 
   document.getElementById('quizBody').innerHTML = `
     <div class="quiz-q"><span class="q-tag">${quizState.type}</span>${q.q}</div>
@@ -1821,9 +2157,63 @@ function closeQuiz(){
   document.getElementById('quizOverlay').classList.remove('show');
   document.getElementById('quizProgressArea').style.display = '';
   document.getElementById('quizFooter').style.display = '';
+  // 隐藏 AI 按钮
+  document.getElementById('quizAiBtn').style.display = 'none';
   // 刷新当前页面数据
   const activePage = document.querySelector('.nav-item.active').dataset.page;
   onPageShow(activePage);
+}
+
+// 弹出每道考题的 AI 讲解面板
+function showQuizAi(){
+  const q = quizState.questions[quizState.currentIdx];
+  if(!q){ toast('没有题目内容'); return; }
+  // 构造完整的题目内容
+  var content = '题目：' + q.q;
+  content += '\n选项：\n' + q.options.map(function(o,i){ return '  ' + String.fromCharCode(65+i) + '. ' + o; }).join('\n');
+  content += '\n正确答案：' + String.fromCharCode(65+q.answer);
+  content += '\n解析：' + q.explain;
+
+  var moduleName = quizState.module || '';
+  var drillName = quizState.type || '';
+  var title = (moduleName ? moduleName + ' · ' : '') + (drillName ? drillName : '') + ' 第' + (quizState.currentIdx+1) + '题';
+
+  // 移除旧面板
+  var old = document.getElementById('itemAiPanel');
+  if(old) old.remove();
+
+  var panel = document.createElement('div');
+  panel.id = 'itemAiPanel';
+  panel.style.cssText = 'position:fixed;bottom:100px;right:20px;width:360px;max-width:calc(100vw-40px);background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9996;overflow:hidden;animation:panelPop .25s ease;';
+
+  panel.dataset.context = content;
+
+  var quizPresets = [
+    { id:'explain',  label:'💡 详解',    prompt:'请详细解析这道题，包括每个选项为什么对/错：' },
+    { id:'similar',  label:'🔁 同类题',  prompt:'请出一道同类型题目（带答案和解析）：' },
+    { id:'analyze',  label:'🔍 考点',    prompt:'请分析这道题考查的知识点、常见陷阱和解题技巧：' },
+    { id:'expand',   label:'📖 拓展',    prompt:'请围绕这道题考查的知识点做全面的拓展讲解：' },
+  ];
+
+  var presetsHtml = quizPresets.map(function(p){
+    return '<button class="ctx-ai-preset" data-prompt="' + p.prompt.replace(/"/g,'&quot;') + '">' + p.label + '</button>';
+  }).join('');
+
+  panel.innerHTML = '<div style="padding:10px 14px;background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));color:#fff;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;">'
+    + '<span style="flex:1;">🤖 考题讲解 · ' + escapeHtml(title) + '</span>'
+    + '<span style="cursor:pointer;font-size:16px;" onclick="this.parentElement.parentElement.remove()">✕</span></div>'
+    + '<div style="padding:10px 12px;max-height:360px;overflow-y:auto;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<textarea class="ctx-ai-input" id="itemAiInput" placeholder="或输入你的问题…" rows="1" style="margin-top:6px;"></textarea>'
+    + '<button class="ctx-ai-send" onclick="sendItemAi()" style="margin-top:6px;">发送</button>'
+    + '<div class="ctx-ai-response" id="itemAiResponse" style="margin-top:6px;"></div></div>';
+  document.body.appendChild(panel);
+
+  panel.querySelectorAll('.ctx-ai-preset').forEach(function(b){
+    b.onclick = function(){
+      document.getElementById('itemAiInput').value = b.dataset.prompt;
+      sendItemAi();
+    };
+  });
 }
 
 // ====================================================
@@ -2338,6 +2728,7 @@ function renderExamList(){
         <div>${e.date}</div>
         <div class="ex-score">${e.score}/${e.totalScore}</div>
         <div style="color:#7BC99E;font-weight:600;">${e.rate}%</div>
+        <span class="item-ai-btn" data-type="exam" onclick="event.stopPropagation();showItemAi(this)" style="font-size:12px;">🤖</span>
         <div class="ex-del" onclick="event.stopPropagation();deleteExam('${e.id}')">✕</div>
         <div class="exam-detail" id="detail-${e.id}">
           <div style="margin-bottom:6px;">⏱️ 做题时长：${e.time}分钟 ｜ 📅 日期：${e.date} ｜ 📊 得分率：${e.rate}%</div>
@@ -2503,11 +2894,12 @@ function renderErrors(){
     return;
   }
   list.innerHTML = errors.map(e=>`
-    <div class="error-item" style="flex-direction:column;align-items:stretch;">
+    <div class="error-item" style="flex-direction:column;align-items:stretch;position:relative;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
         <span class="type-tag">${e.module}</span>
         <span style="font-size:11px;color:var(--text-sub);">${e.date}</span>
-        <span class="del" style="margin-left:auto;" onclick="deleteError('${e.id}')">✕</span>
+        <span class="item-ai-btn" data-type="error" onclick="event.stopPropagation();showItemAi(this)" style="margin-left:auto;">🤖</span>
+        <span class="del" onclick="deleteError('${e.id}')">✕</span>
       </div>
       <div class="content">
         <div class="q">${e.content.replace(/\n/g,'<br>')}</div>
@@ -2528,8 +2920,119 @@ function renderErrors(){
 }
 
 // ====================================================
-//  备份功能
+//  AI 导入页面（集中展示所有 AI 注入内容）
 // ====================================================
+function renderAiImport(){
+  console.log('[AI导入页] store.knowledge:', Object.keys(store.knowledge||{}).map(function(k){return k+':'+(store.knowledge[k]||[]).length;}).join(', ')||'(空)', '| store引用===__idbCache:', window.__idbCache && window.__idbCache[STORE_KEY] === store);
+  var moduleNames = moduleKeyNames || {common:'常识判断',politics:'时政热点',verbal:'言语理解',reasoning:'判断推理',quantity:'数量关系',data:'资料分析'};
+
+  // 统计
+  var totalKnowledge = 0;
+  var moduleCounts = {};
+  Object.keys(store.knowledge || {}).forEach(function(k){
+    var arr = store.knowledge[k] || [];
+    totalKnowledge += arr.length;
+    if(arr.length > 0) moduleCounts[k] = {count:arr.length, name:moduleNames[k]||k};
+  });
+
+  document.getElementById('aiImportStats').innerHTML = Object.keys(moduleCounts).length > 0
+    ? '<div style="font-size:13px;line-height:1.8;">📊 共 <b>' + totalKnowledge + '</b> 条 AI 注入知识卡片'
+      + Object.keys(moduleCounts).map(function(k){
+          return '<span style="margin-left:12px;padding:2px 10px;background:var(--pink-main);border-radius:8px;font-size:12px;">' + escapeHtml(moduleCounts[k].name) + '：' + moduleCounts[k].count + '条</span>';
+        }).join('')
+      + '</div>'
+    : '<div style="font-size:13px;color:var(--text-sub);">暂无 AI 注入内容，请先用「文件学习」上传文档并点击「AI 注入」</div>';
+
+  // 知识卡片（全部跨模块展示）
+  var allKnowledge = [];
+  Object.keys(store.knowledge || {}).forEach(function(k){
+    (store.knowledge[k] || []).forEach(function(item){
+      allKnowledge.push({module:k, moduleName:moduleNames[k]||k, tag:item.tag, text:item.text, source:item.source, date:item.date});
+    });
+  });
+
+  var kHtml = '';
+  if(allKnowledge.length > 0){
+    kHtml = allKnowledge.reverse().map(function(k, idx){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;">'
+        + '<span style="font-size:10px;background:var(--pink-highlight);color:#c66;padding:1px 6px;border-radius:4px;margin-right:4px;">' + escapeHtml(k.moduleName) + '</span>'
+        + '<span class="tag">' + escapeHtml(k.tag||'知识点') + '</span>'
+        + escapeHtml(k.text)
+        + (k.source ? '<span style="font-size:10px;color:#ccc;display:block;margin-top:2px;">📄 ' + escapeHtml(k.source) + (k.date ? ' · ' + k.date : '') + '</span>' : '')
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="knowledge" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  } else {
+    kHtml = '<div class="empty-state"><span class="emoji">📝</span>暂无 AI 注入的知识卡片</div>';
+  }
+  document.getElementById('aiImportKnowledge').innerHTML = kHtml;
+
+  // AI 注入的考题（标记了 _aiInjected 的题目）
+  var allQuestions = [];
+  Object.keys(QUESTION_BANK).forEach(function(key){
+    (QUESTION_BANK[key] || []).forEach(function(q, idx){
+      if(q._aiInjected){
+        allQuestions.push({bankKey: key, q: q.q, options: q.options || [], answer: q.answer, explain: q.explain || '', bankIdx: idx});
+      }
+    });
+  });
+  var qHtml = '';
+  if(allQuestions.length > 0){
+    qHtml = allQuestions.reverse().map(function(q){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;cursor:pointer;" onclick="startAiDrill()">'
+        + '<div style="flex:1;">'
+        + '<div style="font-size:12px;font-weight:600;margin-bottom:4px;">' + escapeHtml(q.q.substring(0, 100)) + '</div>'
+        + '<div style="font-size:11px;color:#999;">📦 ' + escapeHtml(q.bankKey) + '</div>'
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="question" onclick="event.stopPropagation();showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  } else {
+    qHtml = '<div class="empty-state"><span class="emoji">✍️</span>暂无 AI 注入的考题</div>';
+  }
+  document.getElementById('aiImportQuestions').innerHTML = qHtml;
+
+  // AI 注入的错题（标记了 _aiInjected 的）
+  var aiErrors = (store.errors || []).filter(function(e){ return e._aiInjected; });
+  var eHtml = '';
+  if(aiErrors.length > 0){
+    eHtml = aiErrors.reverse().map(function(e){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;">'
+        + '<span class="tag">' + escapeHtml(e.module) + '</span>'
+        + escapeHtml((e.content || '').substring(0, 120))
+        + '<div style="font-size:10px;color:#ccc;margin-top:2px;">📅 ' + (e.date || '') + '</div>'
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="error" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  } else {
+    eHtml = '<div class="empty-state"><span class="emoji">❌</span>暂无 AI 注入的错题</div>';
+  }
+  document.getElementById('aiImportErrors').innerHTML = eHtml;
+
+  // AI 注入的试卷（标记了 _aiInjected 的）
+  var aiExams = (store.exams || []).filter(function(e){ return e._aiInjected; });
+  var xHtml = '';
+  if(aiExams.length > 0){
+    xHtml = aiExams.reverse().map(function(e){
+      return '<div class="knowledge-item" style="border-left-color:#E8919B;display:flex;align-items:flex-start;gap:6px;">'
+        + '<div style="flex:1;">'
+        + '<div style="font-weight:600;font-size:13px;">' + escapeHtml(e.name) + '</div>'
+        + '<div style="font-size:12px;color:var(--text-sub);">' + escapeHtml(e.type || '') + ' · 得分 ' + e.score + '/' + e.totalScore
+        + (e.time ? ' · ' + e.time + '分钟' : '') + '</div>'
+        + '<div style="font-size:10px;color:#ccc;margin-top:2px;">📅 ' + (e.date || '') + '</div>'
+        + '</div>'
+        + '<span class="item-ai-btn" data-type="exam" onclick="showItemAi(this)">🤖</span>'
+        + '</div>';
+    }).join('');
+  } else {
+    xHtml = '<div class="empty-state"><span class="emoji">📄</span>暂无 AI 注入的试卷</div>';
+  }
+  document.getElementById('aiImportExams').innerHTML = xHtml;
+}
 function getAllData(){
   return {
     plans: store.plans,
@@ -2537,7 +3040,8 @@ function getAllData(){
     checkins: store.checkins,
     exams: store.exams,
     errors: store.errors,
-    stats: store.stats
+    stats: store.stats,
+    knowledge: store.knowledge
   };
 }
 function restoreAllData(data, settings){
@@ -2553,9 +3057,23 @@ function updateBackupInfo(){
   var totalCheckins = Object.keys(store.checkins).length;
   var totalExams = store.exams.length;
   var totalErrors = store.errors.length;
+  var totalKnowledge = 0;
+  if(store.knowledge){
+    Object.keys(store.knowledge).forEach(function(k){
+      totalKnowledge += (store.knowledge[k] || []).length;
+    });
+  }
   document.getElementById('backupInfo').innerHTML =
-    '📅 计划天数 ' + totalKeys + ' 天 | 📊 做题记录 ' + totalRecs + ' 条' +
-    '<br>📆 打卡天数 ' + totalCheckins + ' 天 | 📄 试卷 ' + totalExams + ' 份 | ❌ 错题 ' + totalErrors + ' 条';
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:12px;">' +
+    '<span>📅 计划天数：<b>' + totalKeys + '</b> 天</span>' +
+    '<span>📊 做题记录：<b>' + totalRecs + '</b> 条</span>' +
+    '<span>📆 打卡天数：<b>' + totalCheckins + '</b> 天</span>' +
+    '<span>📄 试卷记录：<b>' + totalExams + '</b> 份</span>' +
+    '<span>❌ 错题记录：<b>' + totalErrors + '</b> 条</span>' +
+    '<span>📈 各科累计：<b>' + (store.stats.common+store.stats.politics+store.stats.verbal+store.stats.reasoning+store.stats.quantity+store.stats.data) + '</b> 题</span>' +
+    '<span>🃏 知识卡片：<b>' + totalKnowledge + '</b> 条</span>' +
+    '</div>' +
+    '<div style="margin-top:8px;font-size:10px;color:#999;">备份范围：计划 / 做题记录 / 打卡 / 试卷 / 错题 / 各科累计统计 / 知识卡片</div>';
 }
 
 // 弹窗事件绑定（在 DOM 就绪后绑定）
@@ -2565,6 +3083,8 @@ function bindBackupEvents(){
   var modal = document.getElementById('backupModal');
   if(openBtn) openBtn.addEventListener('click', function(){
     updateBackupInfo();
+    initScheduleUI();
+    renderBackupHistory();
     modal.classList.add('show');
   });
   if(closeBtn) closeBtn.addEventListener('click', function(){
@@ -2590,53 +3110,31 @@ function bindBackupEvents(){
     showToast('🔄 已恢复默认');
   });
 
-  // 定时导出测试
-  var timerBtn = document.getElementById('startTimerBtn');
-  var timerDisplay = document.getElementById('timerDisplay');
-  var timerSelect = document.getElementById('timerSelect');
-  var timerId = null;
-  if(timerBtn && timerDisplay && timerSelect){
-    timerBtn.addEventListener('click', function(){
-      // 如果有正在运行的计时器，先取消
-      if(timerId){
-        clearTimeout(timerId);
-        clearInterval(timerId);
-        timerId = null;
-        timerBtn.textContent = '▶ 开始倒计时';
-        timerDisplay.textContent = '';
-        timerSelect.disabled = false;
-        return;
-      }
-      var minutes = parseInt(timerSelect.value);
-      var seconds = minutes * 60;
-      timerSelect.disabled = true;
-      timerBtn.textContent = '■ 取消';
-      updateTimerDisplay(seconds);
-      // 每秒更新
-      var interval = setInterval(function(){
-        seconds--;
-        if(seconds <= 0){
-          clearInterval(interval);
-          clearTimeout(timerId);
-          timerId = null;
-          timerDisplay.textContent = '⏰ 导出中…';
-          timerBtn.textContent = '▶ 开始倒计时';
-          timerSelect.disabled = false;
-          // 自动导出
-          document.getElementById('backupModal').classList.remove('show');
-          setTimeout(exportFullData, 500);
-        } else {
-          updateTimerDisplay(seconds);
-        }
-      }, 1000);
-      timerId = interval;
-    });
-    function updateTimerDisplay(sec){
-      var m = Math.floor(sec / 60);
-      var s = sec % 60;
-      timerDisplay.textContent = '⏳ ' + m + '分' + String(s).padStart(2,'0') + '秒';
+  // 定时备份时间选择器变更 → 保存设置
+  var schedHour = document.getElementById('scheduleHour');
+  var schedMin = document.getElementById('scheduleMinute');
+  if(schedHour) schedHour.addEventListener('change', function(){
+    var sched = getSchedule();
+    if(sched && sched.enabled){
+      sched.hour = parseInt(this.value);
+      sched.lastBackupDate = null; // 时间变了，重新计时
+      saveSchedule(sched);
+      updateScheduleStatus();
+      checkScheduledBackup();
     }
-  }
+  });
+  if(schedMin) schedMin.addEventListener('change', function(){
+    var sched = getSchedule();
+    if(sched && sched.enabled){
+      sched.minute = parseInt(this.value);
+      sched.lastBackupDate = null;
+      saveSchedule(sched);
+      updateScheduleStatus();
+      checkScheduledBackup();
+    }
+  });
+
+  // 定时备份功能由 checkScheduledBackup() / toggleSchedule() 处理
 }
 
 function exportFullData(){
@@ -2647,8 +3145,176 @@ function exportFullData(){
   a.href = URL.createObjectURL(blob);
   a.download = '小王备考加油_备份_' + todayKey() + '.json';
   a.click();
+  addBackupRecord('manual');
   showToast('📦 数据已导出');
 }
+
+// ====================================================
+//  备份记录（每次导出/定时备份自动记录）
+// ====================================================
+var HISTORY_KEY = 'xiaowang_backup_history';
+var MAX_HISTORY = 30;
+
+function getBackupHistory(){
+  try{ var h = localStorage.getItem(HISTORY_KEY); return h ? JSON.parse(h) : []; }
+  catch(e){ return []; }
+}
+
+function addBackupRecord(type){
+  var now = new Date();
+  var record = {
+    id: Date.now(),
+    date: todayKey(),
+    time: String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0'),
+    type: type // 'manual' 或 'scheduled'
+  };
+  var history = getBackupHistory();
+  history.unshift(record);
+  if(history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function renderBackupHistory(){
+  var el = document.getElementById('backupHistory');
+  if(!el) return;
+  var history = getBackupHistory();
+  if(history.length === 0){
+    el.innerHTML = '<span style="color:#999;">暂无备份记录，导出或定时备份后自动记录</span>';
+    return;
+  }
+  el.innerHTML = history.slice(0, 15).map(function(r){
+    var label = r.type === 'scheduled' ? '⏰ 定时' : '📤 手动';
+    return '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f5f5f5;">' +
+      '<span>' + label + '</span>' +
+      '<span>' + r.date + ' ' + r.time + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+// ====================================================
+//  定时自动备份（方案011 Phase A 附属功能）
+//  ⚠️ 待验证：Chrome/Edge 自动下载可用；Safari 需手动点击
+// ====================================================
+var SCHEDULE_KEY = 'xiaowang_backup_schedule';
+
+function getSchedule(){
+  try{ var s = localStorage.getItem(SCHEDULE_KEY); return s ? JSON.parse(s) : null; }
+  catch(e){ return null; }
+}
+
+function saveSchedule(s){
+  localStorage.setItem(SCHEDULE_KEY, JSON.stringify(s));
+}
+
+function initScheduleUI(){
+  var sched = getSchedule();
+  var enable = document.getElementById('scheduleEnable');
+  var hour = document.getElementById('scheduleHour');
+  var min = document.getElementById('scheduleMinute');
+  if(sched){
+    if(enable) enable.checked = sched.enabled || false;
+    if(hour) hour.value = String(sched.hour || 23);
+    if(min) min.value = String(sched.minute || 0);
+    // 更新弹窗按钮时刷新状态
+    if(sched.lastBackupDate){
+      var info = document.getElementById('backupInfo');
+      if(info && sched.lastBackupDate){
+        info.innerHTML += '<div style="margin-top:6px;font-size:11px;color:#7BC99E;">✅ 上次自动备份：' + sched.lastBackupDate + '</div>';
+      }
+    }
+  }
+  updateScheduleStatus();
+  // 如果启用，检查今天是否需要备份
+  if(sched && sched.enabled) checkScheduledBackup();
+}
+
+function toggleSchedule(){
+  var enable = document.getElementById('scheduleEnable');
+  var hour = document.getElementById('scheduleHour');
+  var min = document.getElementById('scheduleMinute');
+  var old = getSchedule();
+  var sched = {
+    enabled: enable.checked,
+    hour: parseInt(hour.value),
+    minute: parseInt(min.value),
+    lastBackupDate: (old && old.lastBackupDate) ? old.lastBackupDate : null
+  };
+  saveSchedule(sched);
+  updateScheduleStatus();
+  if(sched.enabled){
+    // 立即检查今天是否需要备份
+    checkScheduledBackup();
+  }
+  toast(sched.enabled ? '⏰ 定时备份已启用' : '定时备份已关闭');
+}
+
+function updateScheduleStatus(){
+  var sched = getSchedule();
+  var status = document.getElementById('scheduleStatus');
+  if(!status) return;
+  if(!sched || !sched.enabled){
+    status.textContent = '⏸️ 已关闭';
+    return;
+  }
+  var today = todayKey();
+  if(sched.lastBackupDate === today){
+    status.textContent = '✅ 今日已备份';
+    return;
+  }
+  var now = new Date();
+  var target = new Date();
+  target.setHours(sched.hour, sched.minute, 0, 0);
+  if(target <= now) target.setDate(target.getDate() + 1);
+  var diff = target - now;
+  var h = Math.floor(diff / 3600000);
+  var m = Math.floor((diff % 3600000) / 60000);
+  status.textContent = '⏳ 距下次备份 ' + h + 'h' + m + 'm';
+}
+
+function checkScheduledBackup(){
+  var sched = getSchedule();
+  if(!sched || !sched.enabled) return;
+  var today = todayKey();
+  if(sched.lastBackupDate === today) return;
+  var now = new Date();
+  var target = new Date();
+  target.setHours(sched.hour, sched.minute, 0, 0);
+  if(now >= target){
+    doScheduledBackup();
+    return;
+  }
+  var delay = target - now;
+  window._backupTimer = setTimeout(function(){ doScheduledBackup(); }, delay);
+}
+
+function doScheduledBackup(){
+  var sched = getSchedule();
+  if(!sched || !sched.enabled) return;
+  sched.lastBackupDate = todayKey();
+  saveSchedule(sched);
+  try {
+    exportFullData();
+    // 覆盖 exportFullData 中的记录类型为 scheduled
+    addBackupRecord('scheduled');
+    updateScheduleStatus();
+  } catch(e) {
+    showToast('⏰ 该备份了！请在备份弹窗中手动导出');
+  }
+  // 排入下一次
+  window._backupTimer = setTimeout(function(){ doScheduledBackup(); }, 24 * 60 * 60 * 1000);
+}
+
+// 休眠/恢复检测
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden){
+    var sched = getSchedule();
+    if(sched && sched.enabled) checkScheduledBackup();
+  }
+});
+window.addEventListener('pageshow', function(){
+  var sched = getSchedule();
+  if(sched && sched.enabled) checkScheduledBackup();
+});
 
 function importFullData(){
   var input = document.createElement('input');
@@ -2685,6 +3351,8 @@ let fpParser = null;
 let fpDropzone = null;
 let fpViewer = null;
 let fpInitialized = false;
+
+
 
 function initFileParser(){
   if(fpInitialized) return;
@@ -2727,6 +3395,10 @@ function handleFileParse(file){
 
   fpParser.parse(file).then(function(result){
     fpViewer.render(result);
+
+    // 添加 AI 注入按钮
+    addAiInjectToolbarButton();
+
     // 解析成功自动折叠上传区，让阅读区有更多空间
     var ub = document.getElementById('fpUploadBody');
     var tb = document.getElementById('fpToggleBtn');
@@ -2748,6 +3420,921 @@ function escapeHtml(s){
 }
 
 // ====================================================
+//  AI Agent 模块（方案022）
+// ====================================================
+
+// --- AI 配置管理 ---
+const AI_CONFIG_KEY = 'xiaowang_ai_config';
+
+const AI_PROVIDERS = {
+  zhipu:   { endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',         model: 'glm-5.2' },
+  deepseek:{ endpoint: 'https://api.deepseek.com/v1/chat/completions',                  model: 'deepseek-v4-flash' },
+  openai:  { endpoint: 'https://api.openai.com/v1/chat/completions',                    model: 'gpt-5.6-luna' },
+  anthropic:{endpoint: 'https://api.anthropic.com/v1/messages',                         model: 'claude-sonnet-5' },
+  minimax: { endpoint: 'https://platform.minimax.io/v1/text/chatcompletions',           model: 'MiniMax-M3' },
+  qwen:    { endpoint: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model: 'qwen3.8-max' },
+  kimi:    { endpoint: 'https://api.moonshot.cn/v1/chat/completions',                   model: 'kimi-k3' },
+};
+
+const PROVIDER_API_URLS = {
+  deepseek: 'https://platform.deepseek.com/api_keys',
+  zhipu: 'https://open.bigmodel.cn/usercenter/apikeys',
+  openai: 'https://platform.openai.com/api-keys',
+  anthropic: 'https://console.anthropic.com/settings/keys',
+  minimax: 'https://platform.minimax.io/usercenter/api-keys',
+  qwen: 'https://bailian.console.aliyun.com/#/api-key',
+  kimi: 'https://kimi.moonshot.cn/user/api-keys',
+};
+
+const PROVIDER_MODELS = {
+  deepseek: ['deepseek-v4-flash', 'deepseek-v4-pro'],
+  zhipu: ['glm-5.2', 'glm-4.7', 'glm-4.7v', 'glm-4.7-long', 'glm-4.7-flash'],
+  openai: ['gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna', 'gpt-5.4', 'gpt-5.4-mini'],
+  anthropic: ['claude-fable-5', 'claude-opus-5', 'claude-sonnet-5', 'claude-haiku-4-5', 'claude-opus-4-8'],
+  minimax: ['MiniMax-M3', 'MiniMax-M2.7'],
+  qwen: ['qwen3.8-max', 'qwen3.7-plus', 'qwen3.8-plus'],
+  kimi: ['kimi-k3', 'kimi-k2.6', 'kimi-k2.7-code', 'kimi-k2.7-code-highspeed', 'moonshot-v1-128k', 'moonshot-v1-32k', 'moonshot-v1-8k'],
+};
+
+function loadAiConfig(){
+  try{ var c = localStorage.getItem(AI_CONFIG_KEY); return c ? JSON.parse(c) : {}; }
+  catch(e){ return {}; }
+}
+
+function saveAiConfig(cfg){
+  localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(cfg));
+}
+
+function getDefaultEndpoint(provider){
+  return AI_PROVIDERS[provider] ? AI_PROVIDERS[provider].endpoint : '';
+}
+
+function getDefaultModel(provider){
+  return AI_PROVIDERS[provider] ? AI_PROVIDERS[provider].model : '';
+}
+
+// --- AI 设置弹窗 ---
+function openAiSettings(){
+  var cfg = loadAiConfig();
+  var provider = cfg.provider || 'deepseek';
+  document.getElementById('aiProvider').value = provider;
+  document.getElementById('aiEndpoint').value = cfg.endpoint || getDefaultEndpoint(provider);
+  updateModelSelect(provider, cfg.model || 'deepseek-v4-flash');
+  document.getElementById('aiApiKey').value = cfg.apiKey || '';
+  document.getElementById('aiTestResult').style.display = 'none';
+  document.getElementById('apiKeyLink').href = PROVIDER_API_URLS[provider] || '#';
+  document.getElementById('aiSettingsModal').classList.add('show');
+}
+
+function closeAiSettings(){
+  document.getElementById('aiSettingsModal').classList.remove('show');
+}
+
+function updateModelSelect(provider, savedModel){
+  var select = document.getElementById('aiModelSelect');
+  var customWrap = document.getElementById('aiModelCustomWrap');
+  var customInput = document.getElementById('aiModel');
+  select.innerHTML = '';
+  var models = PROVIDER_MODELS[provider] || [];
+  models.forEach(function(m){
+    var opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    select.appendChild(opt);
+  });
+  var customOpt = document.createElement('option');
+  customOpt.value = '__custom__';
+  customOpt.textContent = '自定义...';
+  select.appendChild(customOpt);
+  if(savedModel && models.indexOf(savedModel) !== -1){
+    select.value = savedModel;
+    customWrap.style.display = 'none';
+  } else {
+    select.value = '__custom__';
+    customWrap.style.display = 'block';
+    customInput.value = savedModel || '';
+  }
+}
+
+function getModelValue(){
+  var select = document.getElementById('aiModelSelect');
+  var customWrap = document.getElementById('aiModelCustomWrap');
+  if(select.value === '__custom__' || customWrap.style.display === 'block'){
+    return document.getElementById('aiModel').value.trim();
+  }
+  return select.value;
+}
+
+// 全局函数，供 HTML onclick 直接调用
+function handleSaveAi(){
+  var cfg = {
+    provider: document.getElementById('aiProvider').value,
+    endpoint: document.getElementById('aiEndpoint').value.trim(),
+    model: getModelValue(),
+    apiKey: document.getElementById('aiApiKey').value.trim()
+  };
+  if(!cfg.apiKey){ toast('⚠️ 请输入 API Key'); return; }
+  if(!cfg.endpoint){ toast('⚠️ 请输入 API 地址'); return; }
+  if(!cfg.model){ toast('⚠️ 请输入模型名称'); return; }
+  saveAiConfig(cfg);
+  closeAiSettings();
+  toast('✅ AI 配置已保存');
+}
+
+function handleTestAi(){
+  var cfg = {
+    provider: document.getElementById('aiProvider').value,
+    endpoint: document.getElementById('aiEndpoint').value.trim(),
+    model: getModelValue(),
+    apiKey: document.getElementById('aiApiKey').value.trim()
+  };
+  if(!cfg.apiKey){ toast('⚠️ 请先输入 API Key'); return; }
+  testAiConnection(cfg);
+}
+
+function bindAiSettingsEvents(){
+  var modal = document.getElementById('aiSettingsModal');
+  var closeBtn = document.getElementById('closeAiSettingsBtn');
+  var provider = document.getElementById('aiProvider');
+  var saveBtn = document.getElementById('saveAiBtn');
+  var testBtn = document.getElementById('testAiBtn');
+
+  if(closeBtn) closeBtn.onclick = closeAiSettings;
+  if(modal){
+    modal.addEventListener('click', function(e){
+      if(e.target === this) closeAiSettings();
+    });
+  }
+
+  // 切换提供商时自动填充默认值
+  if(provider){
+    provider.addEventListener('change', function(){
+      var p = this.value;
+      document.getElementById('aiEndpoint').value = getDefaultEndpoint(p);
+      document.getElementById('apiKeyLink').href = PROVIDER_API_URLS[p] || '#';
+      updateModelSelect(p, getDefaultModel(p));
+    });
+  }
+
+  if(saveBtn) saveBtn.onclick = handleSaveAi;
+  if(testBtn) testBtn.onclick = handleTestAi;
+
+  // 模型选择切换：自定义时显示文本输入框
+  var modelSelect = document.getElementById('aiModelSelect');
+  if(modelSelect){
+    modelSelect.addEventListener('change', function(){
+      var customWrap = document.getElementById('aiModelCustomWrap');
+      if(this.value === '__custom__'){
+        customWrap.style.display = 'block';
+        document.getElementById('aiModel').focus();
+      } else {
+        customWrap.style.display = 'none';
+      }
+    });
+  }
+}
+
+function testAiConnection(cfg){
+  var result = document.getElementById('aiTestResult');
+  result.style.display = 'block';
+  result.innerHTML = '🔄 正在测试连接…';
+  result.style.color = 'var(--text-sub)';
+
+  callAiApi('回复"ok"表示连接正常', null, cfg, '')
+    .then(function(res){
+      result.innerHTML = '✅ 连接成功！模型响应正常';
+      result.style.color = '#7BC99E';
+    })
+    .catch(function(err){
+      result.innerHTML = '❌ 连接失败：' + escapeHtml(err.message);
+      result.style.color = '#e88';
+    });
+}
+
+// --- AI API 调用 ---
+function callAiApi(userText, schemaJson, cfg, extraPrompt, mode){
+  if(!cfg || !cfg.apiKey){
+    return Promise.reject(new Error('AI 未配置，请在设置中填写 API Key'));
+  }
+
+  var sysPrompt;
+  if(mode === 'chat'){
+    // 对话模式：无注入指令，用于条目级 AI 问答
+    sysPrompt = '你是一个智能学习助手。请用通俗易懂的语言回答用户的问题，不需要输出 JSON 或结构化数据。回答内容要详细、准确、有帮助。';
+  } else {
+    // 注入模式：用于文档 → store 的 AI 注入
+    sysPrompt = '你是一个工作台数据注入助手。你的任务是根据工作台的 JSON Schema，理解用户文档内容，判断它属于什么类型，并输出符合 Schema 的结构化注入指令。';
+    if(extraPrompt){
+      sysPrompt += '\n\n## 用户的注入要求\n' + extraPrompt;
+    }
+
+    // 工作台可用模块列表（AI 注入时只能使用以下模块，不得自创）
+    var moduleList = '## 可用模块（注入时请使用以下 module/key）\n'
+      + '| 模块 key | 模块名称 | 可用的题型名称（question 的 subType） |\n'
+      + '|----------|---------|-----------------------------------|\n'
+      + '| common   | 常识判断 | 法律常识、人文历史、科技常识、地理常识 |\n'
+      + '| politics | 时政热点 | 近12个月时政、党政热点专项、重要会议文件、重大事件 |\n'
+      + '| verbal   | 言语理解 | 逻辑填空、片段阅读、语句排序、细节判断 |\n'
+      + '| reasoning| 判断推理 | 图形推理、定义判断、类比推理、逻辑判断 |\n'
+      + '| quantity | 数量关系 | 工程问题、行程问题、利润问题、排列组合 |\n'
+      + '| data     | 资料分析 | 图文资料、表格资料、综合资料、套题训练 |\n'
+      + '\n知识卡片的 module 字段必须使用上表中的 key（common/politics/verbal/reasoning/quantity/data）。\n'
+      + '考题的 module 字段必须使用上表中的"模块名称"（如"常识判断""言语理解"），subType 必须使用对应模块的可用题型。\n'
+      + '错题的 module 字段必须使用上表中的"模块名称"。\n';
+
+    // 如果有 schema，传给 AI
+    if(schemaJson){
+      sysPrompt += '\n\n## 工作台 JSON Schema\n' + JSON.stringify(schemaJson, null, 2);
+    }
+
+    sysPrompt += '\n\n' + moduleList;
+
+    sysPrompt += '\n\n## 输出格式要求\n输出一个 JSON 数组，每个元素表示一条注入指令：\n[{\n  "type": "knowledge_card | question | error_log | exam_record | plan_task | skip",\n  "confidence": 0.5-1.0,\n  "target": {"store": "目标 store 名称", ...},\n  "data": {符合目标 schema 的数据},\n  "reason": "为什么判断为这个类型"\n}]\n注：如果一段内容没有意义（标题、引导语、页码等），设 confidence<0.5 且 type="skip"。';
+  }
+
+  var body = {
+    model: cfg.model || 'glm-5.2',
+    messages: [
+      { role: 'system', content: sysPrompt },
+      { role: 'user', content: userText.substring(0, mode === 'chat' ? 6000 : 8000) }
+    ],
+    temperature: mode === 'chat' ? 0.7 : 0.3,
+    max_tokens: mode === 'chat' ? 2048 : 4096
+  };
+
+  return fetch(cfg.endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + cfg.apiKey
+    },
+    body: JSON.stringify(body)
+  }).then(function(resp){
+    if(!resp.ok){
+      return resp.text().then(function(txt){
+        throw new Error('API 返回 ' + resp.status + ': ' + txt.substring(0, 200));
+      });
+    }
+    return resp.json();
+  }).then(function(json){
+    if(json.error){
+      throw new Error(json.error.message || JSON.stringify(json.error));
+    }
+    var reply = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content;
+    if(!reply) throw new Error('AI 返回格式异常');
+    return reply;
+  });
+}
+
+// --- AI 注入（工具函数） ---
+function loadV7Schema(){
+  return fetch('./FileParser/workbench/v7/schema.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .catch(function(){ return null; });
+}
+
+function addAiInjectToolbarButton(){
+  if(!fpViewer || !fpViewer._toolbar) return;
+  // 已存在则不再重复添加
+  if(fpViewer._toolbar.querySelector('.fp-ai-inject-btn')) return;
+
+  // AI 注入按钮
+  var btn = document.createElement('button');
+  btn.className = 'fp-viewer-export fp-ai-inject-btn';
+  btn.textContent = '🤖 AI 注入';
+  btn.title = 'AI 理解文档内容并注入到工作台';
+  btn.onclick = function(){ showInjectModeSelector(); };
+  fpViewer._toolbar.appendChild(btn);
+
+  // AI 设置按钮
+  var setBtn = document.createElement('button');
+  setBtn.className = 'fp-viewer-export fp-ai-inject-btn';
+  setBtn.textContent = '⚙️';
+  setBtn.title = 'AI 设置';
+  setBtn.onclick = function(){ openAiSettings(); };
+  fpViewer._toolbar.appendChild(setBtn);
+}
+
+// 注入模式选择
+const INJECT_MODES = [
+  { id: 'auto',      label: '自动识别',         desc: 'AI 判断内容类型，按性质分流注入' },
+  { id: 'knowledge', label: '📚 知识卡片',        desc: '全部转为知识卡片，注入各模块' },
+  { id: 'question',  label: '✍️ 考题',          desc: '从内容中提取/生成考题，注入题库' },
+  { id: 'error',     label: '❌ 错题',           desc: '从内容中提取错题，加入错题本' },
+  { id: 'exam',      label: '📄 试卷记录',        desc: '从内容中提取考试分数，填入试卷' },
+  { id: 'plan',      label: '📝 计划任务',        desc: '从内容中提取任务，生成每日计划' },
+];
+
+function showInjectModeSelector(){
+  if(!fpViewer || !fpViewer._files || fpViewer._files.length === 0){
+    toast('⚠️ 请先解析文件');
+    return;
+  }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){
+    toast('⚠️ 请先配置 AI 设置');
+    openAiSettings();
+    return;
+  }
+
+  // 用简单的确认弹窗选模式
+  var html = '<div style="font-size:13px;color:var(--text-sub);margin-bottom:12px;">选择 AI 注入方式：</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:6px;">';
+  INJECT_MODES.forEach(function(m){
+    html += '<div class="inject-mode-opt" data-mode="' + m.id + '" style="padding:10px 12px;border:2px solid #FFF0F3;border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;" onmouseover="this.style.borderColor=\'var(--pink-btn)\';this.style.background=\'var(--pink-main)\'" onmouseout="this.style.borderColor=\'#FFF0F3\';this.style.background=\'\'">'
+      + '<span style="font-size:16px;">' + m.label.charAt(0) + '</span>'
+      + '<div><div style="font-weight:600;font-size:13px;">' + m.label + '</div><div style="font-size:11px;color:var(--text-sub);">' + m.desc + '</div></div>'
+      + '</div>';
+  });
+  html += '</div>';
+
+  // 显示在 toast 位置的上方，用轻量弹窗
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:9997;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
+  overlay.onclick = function(e){ if(e.target === this) document.body.removeChild(overlay); };
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:380px;width:90vw;box-shadow:0 16px 48px rgba(0,0,0,0.2);';
+  box.innerHTML = '<div style="font-size:17px;font-weight:700;margin-bottom:4px;">🤖 选择注入模式</div>'
+    + html
+    + '<div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;">'
+    + '<button class="btn btn-outline" onclick="this.closest(\'[style]\').parentNode.remove()">取消</button>'
+    + '</div>';
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // 绑定选项点击事件
+  box.querySelectorAll('.inject-mode-opt').forEach(function(el){
+    el.addEventListener('click', function(){
+      var mode = this.dataset.mode;
+      document.body.removeChild(overlay);
+      startAiInject(mode);
+    });
+  });
+}
+
+function startAiInject(mode){
+  if(!fpViewer || !fpViewer._files || fpViewer._files.length === 0){
+    toast('⚠️ 请先解析文件');
+    return;
+  }
+
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){
+    toast('⚠️ 请先配置 AI 设置');
+    openAiSettings();
+    return;
+  }
+
+  // 获取当前激活文件的文本内容
+  var activeFile = null;
+  for(var i = 0; i < fpViewer._files.length; i++){
+    if(fpViewer._files[i].id === fpViewer._activeTabId){
+      activeFile = fpViewer._files[i];
+      break;
+    }
+  }
+  if(!activeFile || !activeFile.result){
+    toast('⚠️ 没有可注入的文档内容');
+    return;
+  }
+
+  var text = activeFile.result.text || '';
+  if(text.length < 10){
+    toast('⚠️ 文档内容过短，无法注入');
+    return;
+  }
+
+  // 显示注入弹窗
+  showAiInjectModal(text, activeFile.result.fileName, mode || 'auto');
+}
+
+function showAiInjectModal(text, fileName, mode){
+  var modal = document.getElementById('aiInjectModal');
+  var preview = document.getElementById('aiInjectPreview');
+  var desc = document.getElementById('aiInjectDesc');
+  var status = document.getElementById('aiInjectStatus');
+  var confirmBtn = document.getElementById('confirmAiInjectBtn');
+
+  modal.classList.add('show');
+  confirmBtn.style.display = 'none';
+  preview.innerHTML = '<div class="fp-loading">🤖 AI 正在分析文档…</div>';
+  desc.textContent = '📄 ' + escapeHtml(fileName) + ' — AI 正在分析，请稍候';
+  status.textContent = '';
+
+  // 注入模式 → Prompt 指令
+  var modeInstructions = {
+    auto:      '请分析文档内容，判断每段属于什么类型（knowledge_card / question / error_log / exam_record / plan_task），输出符合对应 schema 的注入指令。',
+    knowledge: '请将文档内容全部提炼为知识卡片（knowledge_card），每条卡片包含 tag 和 text。如果内容有标题或分类，请提取为 tag。',
+    question:  '请从文档内容中识别试题（选择题/判断题/简答题等），输出为 question 类型。如果内容不是试题，请根据内容自动生成合适的考题。',
+    error:     '请从文档内容中识别错题（包含题目+我的答案+正确答案+解析等），输出为 error_log 类型。',
+    exam:      '请从文档内容中提取考试记录信息（试卷名称、得分、总分、日期、各板块得分等），输出为 exam_record 类型。',
+    plan:      '请从文档内容中提取学习计划、待办任务等，输出为 plan_task 类型。提取时要包含任务描述和可选的模块归属。'
+  };
+
+  var modePrompt = modeInstructions[mode] || modeInstructions.auto;
+
+  // 异步加载 schema + 调用 AI
+  loadV7Schema().then(function(schema){
+    var cfg = loadAiConfig();
+    return callAiApi(text, schema, cfg, modePrompt);
+  }).then(function(aiReply){
+    // 解析 AI 返回的 JSON
+    var instructions = null;
+    try {
+      // 尝试从 markdown 代码块中提取 JSON
+      var jsonMatch = aiReply.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if(jsonMatch){
+        instructions = JSON.parse(jsonMatch[1]);
+      } else {
+        instructions = JSON.parse(aiReply);
+      }
+    } catch(e){
+      preview.innerHTML = '<div style="padding:20px;text-align:center;">'
+        + '<div style="font-size:36px;margin-bottom:10px;">❌</div>'
+        + '<div style="font-weight:600;margin-bottom:8px;">AI 返回格式异常</div>'
+        + '<div style="font-size:12px;color:#999;margin-bottom:10px;">AI 返回了无法解析的响应，请重试或检查 API Key</div>'
+        + '<pre style="background:#f8f8f8;padding:10px;border-radius:8px;font-size:11px;text-align:left;max-height:200px;overflow:auto;">' + escapeHtml(aiReply.substring(0, 1000)) + '</pre>'
+        + '</div>';
+      status.textContent = '❌ 注入失败';
+      return;
+    }
+
+    if(!Array.isArray(instructions)){
+      preview.innerHTML = '<div style="padding:20px;text-align:center;color:#e88;">❌ AI 返回格式不是数组，请重试</div>';
+      return;
+    }
+
+    // 不过滤 skip 项——用户自己决定是否注入
+    // 映射每条的注入目标位置
+    var typeLabels = {
+      knowledge_card: '📚 知识卡片',
+      question: '✍️ 考题',
+      error_log: '❌ 错题',
+      exam_record: '📄 试卷记录',
+      plan_task: '📝 计划任务',
+      skip: '⏭️ 跳过'
+    };
+
+    var moduleKeyToName = {
+      common: '常识判断', politics: '时政热点', verbal: '言语理解',
+      reasoning: '判断推理', quantity: '数量关系', data: '资料分析'
+    };
+    var moduleNameToKey = {
+      '常识判断':'common','时政热点':'politics','言语理解':'verbal',
+      '判断推理':'reasoning','数量关系':'quantity','资料分析':'data'
+    };
+
+    function describeTarget(ins){
+      var data = ins.data || {};
+      var type = ins.type;
+      if(type === 'knowledge_card'){
+        var mk = data.module || 'common';
+        return '📚 知识卡片 → store.knowledge.' + mk + '（' + (moduleKeyToName[mk] || mk) + '）';
+      } else if(type === 'question'){
+        var qm = data.module || '常识判断';
+        var qt = data.subType || '综合';
+        return '✍️ 考题 → 题库[' + qm + '|' + qt + ']';
+      } else if(type === 'error_log'){
+        return '❌ 错题 → store.errors（模块：' + (data.module || '常识判断') + '）';
+      } else if(type === 'exam_record'){
+        return '📄 试卷记录 → store.exams';
+      } else if(type === 'plan_task'){
+        return '📝 计划任务 → store.plans[今日]';
+      }
+      return '⏭️ 跳过（AI 认为不适合注入）';
+    }
+
+    var html = '<div style="font-size:12px;color:var(--text-sub);margin-bottom:8px;">共识别 ' + instructions.length + ' 条内容，请逐条确认是否注入：</div>';
+    instructions.forEach(function(ins, idx){
+      var data = ins.data || {};
+      var type = ins.type;
+      var label = typeLabels[type] || '📦 ' + type;
+      var targetDesc = describeTarget(ins);
+      var reason = ins.reason || (type === 'skip' ? 'AI 认为这段内容不适合注入' : '');
+      var dataPreview = JSON.stringify(data).substring(0, 100);
+
+      // 低置信度或 skip 的用灰色标注
+      var isSkip = (type === 'skip' || (ins.confidence !== undefined && ins.confidence < 0.5));
+      var opacity = isSkip ? '0.5' : '1';
+      var borderColor = isSkip ? '#eee' : 'var(--pink-btn)';
+      var bgColor = isSkip ? '#fafafa' : '#FFFAFB';
+
+      html += '<div style="opacity:' + opacity + ';padding:8px 10px;background:' + bgColor + ';border-radius:8px;margin-bottom:6px;border-left:3px solid ' + borderColor + ';">'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'
+        + '<span style="font-size:11px;color:#999;width:24px;">#' + (idx+1) + '</span>'
+        + '<span style="font-weight:600;font-size:12px;">' + label + '</span>'
+        + (ins.confidence !== undefined ? '<span style="font-size:10px;color:#999;">' + Math.round(ins.confidence*100) + '%</span>' : '')
+        + (isSkip ? '<span style="font-size:10px;color:#e88;margin-left:auto;">⏭️ 建议跳过</span>' : '')
+        + '</div>'
+        + '<div style="font-size:11px;color:#E8919B;margin-bottom:3px;padding-left:30px;">→ ' + escapeHtml(targetDesc) + '</div>'
+        + (reason ? '<div style="font-size:11px;color:#999;margin-bottom:2px;padding-left:30px;">💬 ' + escapeHtml(reason) + '</div>' : '')
+        + '<div style="font-size:11px;color:var(--text-sub);padding-left:30px;word-break:break-all;">' + escapeHtml(dataPreview) + (dataPreview.length >= 100 ? '…' : '') + '</div>'
+        + '</div>';
+    });
+
+    preview.innerHTML = html;
+
+    // 统计
+    var validCount = instructions.filter(function(ins){ return ins.type !== 'skip'; }).length;
+    var skipCount = instructions.filter(function(ins){ return ins.type === 'skip'; }).length;
+    desc.textContent = '📄 ' + escapeHtml(fileName) + ' — 共 ' + validCount + ' 条可注入，' + skipCount + ' 条建议跳过';
+    status.textContent = '请逐条确认后点击「确认注入」';
+
+    // 存储供确认使用（保留全部，让用户自己决定）
+    modal._aiInstructions = instructions;
+    confirmBtn.style.display = '';
+  }).catch(function(err){
+    preview.innerHTML = '<div style="padding:20px;text-align:center;">'
+      + '<div style="font-size:36px;margin-bottom:10px;">❌</div>'
+      + '<div style="font-weight:600;margin-bottom:8px;">AI 调用失败</div>'
+      + '<div style="font-size:12px;color:#e88;">' + escapeHtml(err.message) + '</div>'
+      + '</div>';
+    status.textContent = '❌ 注入失败';
+  });
+}
+
+function handleConfirmAiInject(){
+  console.log('[AI注入] 写入前 store.knowledge:', JSON.parse(JSON.stringify(store.knowledge)));
+  var modal = document.getElementById('aiInjectModal');
+  var instructions = modal._aiInstructions;
+  if(!instructions || instructions.length === 0){
+    toast('⚠️ 没有可注入的指令');
+    return;
+  }
+
+  // 按类型分流注入 + 统计去向
+  var injected = 0;
+  var injectedTargets = []; // 记录去向
+
+  instructions.forEach(function(ins){
+    var data = ins.data || {};
+    var type = ins.type;
+
+    try {
+      if(type === 'knowledge_card'){
+        var moduleKey = data.module || (ins.target && ins.target.module) || 'common';
+        if(!store.knowledge[moduleKey]) store.knowledge[moduleKey] = [];
+        store.knowledge[moduleKey].push({
+          tag: data.tag || '知识点',
+          text: (data.text || '').substring(0, 200),
+          source: data.source || '',
+          date: todayKey()
+        });
+        injectedTargets.push('📚 知识卡片→' + moduleKey);
+        injected++;
+
+      } else if(type === 'question'){
+        var qModule = data.module || '常识判断';
+        var qType = data.subType || '综合';
+        var bankKey = qModule + '|' + qType;
+        if(!QUESTION_BANK[bankKey]) QUESTION_BANK[bankKey] = [];
+        QUESTION_BANK[bankKey].push({
+          q: data.question || data.q || '',
+          options: data.options || [],
+          answer: data.answer !== undefined ? data.answer : 0,
+          explain: data.explain || '',
+          _aiInjected: true,
+          _aiInjectedModule: qModule,
+          _aiInjectedDate: todayKey()
+        });
+        injectedTargets.push('✍️ 考题→题库[' + bankKey + ']');
+        injected++;
+
+      } else if(type === 'error_log'){
+        store.errors.push({
+          id: 'err' + Date.now() + Math.random().toString(36).substring(2,6),
+          module: data.module || '常识判断',
+          content: data.content || data.question || '',
+          photos: data.photos || [],
+          date: todayKey(),
+          _aiInjected: true
+        });
+        injectedTargets.push('❌ 错题→store.errors');
+        injected++;
+
+      } else if(type === 'exam_record'){
+        store.exams.push({
+          id: 'e' + Date.now() + Math.random().toString(36).substring(2,6),
+          name: data.name || 'AI导入试卷',
+          type: data.type || data.examType || '行测',
+          date: data.date || todayKey(),
+          time: data.time || 0,
+          totalScore: data.totalScore || 100,
+          score: data.score || 0,
+          sections: data.sections || '',
+          notes: data.notes || '',
+          _aiInjected: true
+        });
+        injectedTargets.push('📄 试卷→store.exams');
+        injected++;
+
+      } else if(type === 'plan_task'){
+        var planDate = data.date || todayKey();
+        if(!store.plans[planDate]) store.plans[planDate] = [];
+        store.plans[planDate].push({
+          id: 'p' + Date.now() + Math.random().toString(36).substring(2,6),
+          text: data.text || '',
+          module: data.module || '其他',
+          count: data.count || 0,
+          done: false
+        });
+        injectedTargets.push('📝 计划→store.plans[' + planDate + ']');
+        injected++;
+      }
+    } catch(e){
+      console.warn('注入失败:', e, ins);
+    }
+  });
+
+  if(injected > 0){
+    console.log('[AI注入] 写入后 store.knowledge:', JSON.parse(JSON.stringify(store.knowledge)), '| 缓存指向:', window.__idbCache && window.__idbCache[STORE_KEY] === store);
+    saveStore();
+    closeAiInjectModal();
+    // 展示去向汇总
+    var targets = {};
+    injectedTargets.forEach(function(t){ targets[t] = (targets[t] || 0) + 1; });
+    var detail = Object.keys(targets).map(function(k){ return k + ' ×' + targets[k]; }).join('  ');
+    // 保存注入日志（供 AI 注入页面使用）
+    if(!store.aiLog) store.aiLog = [];
+    // 获取当前文件名
+    var curFile = '';
+    if(fpViewer && fpViewer._files){
+      for(var fi = 0; fi < fpViewer._files.length; fi++){
+        if(fpViewer._files[fi].id === fpViewer._activeTabId){
+          curFile = fpViewer._files[fi].result.fileName || '';
+          break;
+        }
+      }
+    }
+    store.aiLog.push({
+      id: Date.now(),
+      fileName: curFile,
+      date: todayKey(),
+      summary: detail
+    });
+    saveStore();
+    toast('✅ 注入 ' + injected + ' 条：' + detail);
+    // 刷新当前页面
+    var activePage = document.querySelector('.nav-item.active').dataset.page;
+    onPageShow(activePage);
+  } else {
+    toast('⚠️ 没有匹配到可注入的数据类型');
+  }
+}
+
+function closeAiInjectModal(){
+  document.getElementById('aiInjectModal').classList.remove('show');
+}
+
+// 绑定 AI 注入弹窗事件
+function bindAiInjectEvents(){
+  var injectModal = document.getElementById('aiInjectModal');
+  var closeBtn = document.getElementById('closeAiInjectBtn');
+  var cancelBtn = document.getElementById('cancelAiInjectBtn');
+  var confirmBtn = document.getElementById('confirmAiInjectBtn');
+
+  if(closeBtn) closeBtn.onclick = closeAiInjectModal;
+  if(cancelBtn) cancelBtn.onclick = closeAiInjectModal;
+  if(injectModal){
+    injectModal.addEventListener('click', function(e){
+      if(e.target === this) closeAiInjectModal();
+    });
+  }
+
+  if(confirmBtn) confirmBtn.onclick = handleConfirmAiInject;
+}
+
+// ====================================================
+//  上下文 AI 助手（每个内容区域内的 AI 按钮）
+// ====================================================
+var CTX_PRESETS_KNOWLEDGE = [
+  { id:'explain',  label:'💡 解释',    prompt:'请用通俗易懂的方式解释以下知识点：' },
+  { id:'translate',label:'🌐 翻译',    prompt:'请将以下内容翻译成英文：' },
+  { id:'summary',  label:'📝 总结',    prompt:'请总结以下知识点的核心要点：' },
+  { id:'quiz',     label:'✍️ 出题',    prompt:'请根据以下知识点出2道选择题（带答案和解析）：' },
+];
+var CTX_PRESETS_DRILL = [
+  { id:'explain',  label:'💡 解题思路', prompt:'请解释这类题型的解题思路和技巧：' },
+  { id:'similar',  label:'🔁 出类似题', prompt:'请出一道类似的题目（带答案和解析）：' },
+  { id:'analyze',  label:'🔍 分析考点', prompt:'请分析这道题考查的知识点和常见陷阱：' },
+  { id:'summary',  label:'📝 知识总结', prompt:'请总结这个考点的核心知识：' },
+];
+var CTX_PRESETS_ERROR = [
+  { id:'explain',  label:'💡 解析',    prompt:'请解答这道错题，给出正确答案和详细解析：' },
+  { id:'similar',  label:'🔁 同类题',  prompt:'请出1道同类型的题目（带答案和解析）：' },
+  { id:'analyze',  label:'🔍 分析',    prompt:'请分析这道题的考查知识点和易错陷阱：' },
+  { id:'expand',   label:'📖 拓展',    prompt:'请围绕这个知识点做详细的拓展讲解：' },
+];
+var CTX_PRESETS_EXAM = [
+  { id:'analyze',  label:'📊 分析',   prompt:'请分析这份试卷的成绩表现，指出强弱项和提升空间：' },
+  { id:'improve',  label:'📈 提分',   prompt:'请根据试卷成绩给出具体的提分建议和复习重点：' },
+  { id:'review',   label:'🔍 复盘',   prompt:'请帮我对试卷做一次详细复盘，找出薄弱环节：' },
+];
+
+// ====================================================
+//  条目级 AI 按钮（每个知识点/错题/试卷独立 AI 面板）
+// ====================================================
+function showItemAi(btn){
+  // 从父元素提取该条目的文本内容（只取这一条，不取整个列表）
+  var item = btn.closest('.knowledge-item, .error-item, .exam-row');
+  if(!item){ toast('无法获取条目内容'); return; }
+  var content = '';
+  // 提取文字内容（排除按钮自身的图标和操作文字）
+  var textParts = [];
+  item.childNodes.forEach(function(n){
+    if(n.nodeType === 3) textParts.push(n.textContent.trim());
+    else if(n.nodeType === 1 && !n.classList.contains('item-ai-btn') && !n.classList.contains('del') && !n.classList.contains('ex-del')){
+      textParts.push(n.textContent.trim());
+    }
+  });
+  content = textParts.filter(Boolean).join(' ').trim();
+  if(!content) content = item.textContent.replace(/[🤖✕]/g,'').trim();
+
+  var type = btn.dataset.type || 'knowledge';
+  var typeNames = {knowledge:'知识点',error:'错题',exam:'试卷'};
+  var title = typeNames[type] || '条目';
+  var presets = type === 'error' ? CTX_PRESETS_ERROR
+    : type === 'exam' ? CTX_PRESETS_EXAM
+    : CTX_PRESETS_KNOWLEDGE;
+
+  // 移除旧面板
+  var old = document.getElementById('itemAiPanel');
+  if(old) old.remove();
+
+  var panel = document.createElement('div');
+  panel.id = 'itemAiPanel';
+  panel.style.cssText = 'position:fixed;bottom:100px;right:20px;width:360px;max-width:calc(100vw-40px);background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9996;overflow:hidden;animation:panelPop .25s ease;';
+
+  // 保存上下文内容到面板
+  panel.dataset.context = content;
+
+  var presetsHtml = presets.map(function(p){
+    return '<button class="ctx-ai-preset" data-prompt="' + p.prompt.replace(/"/g,'&quot;') + '">' + p.label + '</button>';
+  }).join('');
+
+  panel.innerHTML = '<div style="padding:10px 14px;background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));color:#fff;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;">'
+    + '<span style="flex:1;">🤖 AI · ' + title + '</span>'
+    + '<span style="font-size:10px;color:rgba(255,255,255,0.7);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + content.substring(0,30) + '…</span>'
+    + '<span style="cursor:pointer;font-size:16px;" onclick="this.parentElement.parentElement.remove()">✕</span></div>'
+    + '<div style="padding:10px 12px;max-height:360px;overflow-y:auto;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<textarea class="ctx-ai-input" id="itemAiInput" placeholder="或输入你的问题…" rows="1" style="margin-top:6px;"></textarea>'
+    + '<button class="ctx-ai-send" onclick="sendItemAi()" style="margin-top:6px;">发送</button>'
+    + '<div class="ctx-ai-response" id="itemAiResponse" style="margin-top:6px;"></div></div>';
+  document.body.appendChild(panel);
+
+  panel.querySelectorAll('.ctx-ai-preset').forEach(function(b){
+    b.onclick = function(){
+      document.getElementById('itemAiInput').value = b.dataset.prompt;
+      sendItemAi();
+    };
+  });
+}
+
+function sendItemAi(){
+  var input = document.getElementById('itemAiInput');
+  var text = input.value.trim();
+  if(!text){ toast('请输入内容'); return; }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){ toast('请先配置 AI'); openAiSettings(); return; }
+  var panel = document.getElementById('itemAiPanel');
+  var context = panel ? panel.dataset.context || '' : '';
+  var resDiv = document.getElementById('itemAiResponse');
+  resDiv.className = 'ctx-ai-response show';
+  resDiv.innerHTML = '<div class="fp-loading">思考中…</div>';
+  var prompt = '## 上下文内容（仅本条条目）\n' + context.substring(0, 2000) + '\n\n## 用户请求\n' + text;
+  callAiApi(prompt, null, cfg, '', 'chat').then(function(reply){
+    var html = '<div>' + escapeHtml(reply) + '</div>';
+    html += '<div style="display:flex;gap:6px;margin-top:4px;">';
+    html += '<button class="ctx-ai-preset" onclick="var t=this.parentElement.parentElement.textContent.replace(\'复制\',\'\').trim();navigator.clipboard.writeText(t).then(function(){toast(\'已复制\');})">复制</button>';
+    html += '</div>';
+    resDiv.innerHTML = html;
+  }).catch(function(err){
+    resDiv.innerHTML = '❌ ' + escapeHtml(err.message);
+  });
+}
+// ====================================================
+//  上下文 AI 助手（按题型）
+// ====================================================
+function showDrillAi(moduleName, drillName){
+  var cfg = loadAiConfig();
+  var old = document.getElementById('drillAiPanel');
+  if(old) old.remove();
+  var panel = document.createElement('div');
+  panel.id = 'drillAiPanel';
+  panel.style.cssText = 'position:fixed;bottom:100px;right:20px;width:360px;max-width:calc(100vw-40px);background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9996;overflow:hidden;animation:panelPop .25s ease;';
+  var presetsHtml = CTX_PRESETS_DRILL.map(function(p){
+    return '<button class="ctx-ai-preset" data-prompt="' + p.prompt.replace(/"/g,'&quot;') + '">' + p.label + '</button>';
+  }).join('');
+  panel.innerHTML = '<div style="padding:10px 14px;background:linear-gradient(135deg,var(--pink-highlight),var(--pink-btn));color:#fff;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;"><span style="flex:1;">' + moduleName + ' - ' + drillName + '</span><span style="cursor:pointer;font-size:16px;" onclick="this.parentElement.parentElement.remove()">✕</span></div>'
+    + '<div style="padding:10px 12px;"><div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<textarea class="ctx-ai-input" id="drillAiInput" placeholder="或输入你的问题…" rows="1" style="margin-top:6px;"></textarea>'
+    + '<button class="ctx-ai-send" onclick="sendDrillAi()" style="margin-top:6px;">发送</button>'
+    + '<div class="ctx-ai-response" id="drillAiResponse" style="margin-top:6px;"></div></div>';
+  document.body.appendChild(panel);
+  panel.querySelectorAll('.ctx-ai-preset').forEach(function(b){
+    b.onclick = function(){ document.getElementById('drillAiInput').value = b.dataset.prompt; sendDrillAi(); };
+  });
+}
+
+function sendDrillAi(){
+  var input = document.getElementById('drillAiInput');
+  var text = input.value.trim();
+  if(!text){ toast('请输入内容'); return; }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){ toast('请先配置 AI'); openAiSettings(); return; }
+  var resDiv = document.getElementById('drillAiResponse');
+  resDiv.className = 'ctx-ai-response show';
+  resDiv.innerHTML = '<div class="fp-loading">思考中…</div>';
+  callAiApi(text, null, cfg, '').then(function(reply){
+    var html = '<div>' + escapeHtml(reply) + '</div>';
+    html += '<div style="display:flex;gap:6px;margin-top:4px;">';
+    html += '<button class="ctx-ai-preset" id="drillCopyBtn">复制</button>';
+    html += '</div>';
+    resDiv.innerHTML = html;
+    document.getElementById('drillCopyBtn').onclick = function(){
+      var t = resDiv.textContent.replace('复制','').trim();
+      navigator.clipboard.writeText(t).then(function(){ toast('已复制'); });
+    };
+  }).catch(function(err){
+    resDiv.innerHTML = '❌ ' + escapeHtml(err.message);
+  });
+}
+
+function addContextualAi(container, moduleKey){
+  if(!container) return;
+  if(container.querySelector('.ctx-ai-btn')) return;
+  var presets = CONTEXTUAL_PRESETS.knowledge;
+  var btn = document.createElement('button');
+  btn.className = 'ctx-ai-btn';
+  btn.textContent = '\u{1F916} AI';
+  btn.onclick = function(){ toggleCtxPanel(container); };
+  container.appendChild(btn);
+  var panel = document.createElement('div');
+  panel.className = 'ctx-ai-panel';
+  var presetsHtml = presets.map(function(p){
+    return '<button class="ctx-ai-preset" data-prompt="' + p.prompt.replace(/"/g,'&quot;') + '">' + p.label + '</button>';
+  }).join('');
+  panel.innerHTML = '<div class="ctx-ai-presets">' + presetsHtml + '</div>'
+    + '<textarea class="ctx-ai-input" placeholder="\u6216\u8F93\u5165\u4F60\u7684\u95EE\u9898\u2026" rows="1"></textarea>'
+    + '<button class="ctx-ai-send" onclick="sendCtxAi(this)">\u53D1\u9001</button>'
+    + '<div class="ctx-ai-response"></div>';
+  container.appendChild(panel);
+  panel.querySelectorAll('.ctx-ai-preset').forEach(function(b){
+    b.onclick = function(){
+      var inp = panel.querySelector('.ctx-ai-input');
+      inp.value = b.dataset.prompt;
+      sendCtxAi(panel.querySelector('.ctx-ai-send'));
+    };
+  });
+}
+
+function toggleCtxPanel(container){
+  var panel = container.querySelector('.ctx-ai-panel');
+  if(!panel) return;
+  panel.classList.toggle('show');
+  if(panel.classList.contains('show')) panel.querySelector('.ctx-ai-input').focus();
+}
+
+function sendCtxAi(sendBtn){
+  var panel = sendBtn.closest('.ctx-ai-panel');
+  if(!panel) return;
+  var input = panel.querySelector('.ctx-ai-input');
+  var text = input.value.trim();
+  if(!text){ toast('\u8BF7\u8F93\u5165\u5185\u5BB9'); return; }
+  var cfg = loadAiConfig();
+  if(!cfg.apiKey){ toast('\u8BF7\u5148\u914D\u7F6E AI'); openAiSettings(); return; }
+  var container = panel.parentElement;
+  var ctxItems = container.querySelectorAll('.knowledge-item');
+  var context = '';
+  ctxItems.forEach(function(item){ context += item.textContent.trim() + ' '; });
+  if(!context) context = '(\u5F53\u524D\u9875\u9762\u5185\u5BB9)';
+  var resDiv = panel.querySelector('.ctx-ai-response');
+  resDiv.className = 'ctx-ai-response show';
+  resDiv.innerHTML = '<div class="fp-loading">\u601D\u8003\u4E2D\u2026</div>';
+  var prompt = '## 上下文内容\n' + context.substring(0, 2000) + '\n\n## 用户请求\n' + text;
+  callAiApi(prompt, null, cfg, '').then(function(reply){
+    resDiv.innerHTML = '<div>' + escapeHtml(reply) + '</div>'
+      + '<div style="display:flex;gap:6px;margin-top:4px;">'
+      + '<button class="ctx-ai-preset" onclick="var t=this.parentElement.parentElement.textContent.replace(/\u590D\u5236/g,\"\").trim();navigator.clipboard.writeText(t).then(function(){toast(\'\u5DF2\u590D\u5236\');})">\u590D\u5236</button>'
+      + '</div>';
+  }).catch(function(err){
+    resDiv.innerHTML = '\u274C ' + escapeHtml(err.message);
+  });
+}
+//  动态 viewport 高度（解决移动端 100vh 底部被遮挡）
+// ====================================================
+function setAppHeight(){
+  var vh = window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', vh + 'px');
+}
+// 页面加载 + 方向变化 + 显示/隐藏时重新计算
+setAppHeight();
+window.addEventListener('resize', setAppHeight);
+window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight, 100); });
+
+// ====================================================
 //  初始化
 // ====================================================
 (async function(){
@@ -2756,10 +4343,14 @@ function escapeHtml(s){
   if(window.__idbCache && window.__idbCache[STORE_KEY]){
     store = window.__idbCache[STORE_KEY];
   }
+  // 二次迁移：确保 store 包含所有默认字段（兼容旧版本 store）
+  migrateStore();
   document.getElementById('examDate').value = todayKey();
   renderHome();
   renderErrors();
   bindBackupEvents();
+  bindAiSettingsEvents();
+  bindAiInjectEvents();
 
   // 如果没有数据，添加一些示例打卡数据（仅首次）
   if(Object.keys(store.checkins).length===0 && !localStorage.getItem('xiaowang_initialized')){
